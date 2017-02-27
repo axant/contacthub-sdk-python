@@ -4,11 +4,12 @@ except ImportError:
     from distutils.core import setup
 
 install_requires=[
-    "nose==1.3.7"
+
 ]
 
 testpkgs = [
-
+    "nose==1.3.7",
+    "coverage"
 ]
 setup(description='ContactHub SDK Python',
       author='Axant',
