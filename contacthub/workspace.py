@@ -12,7 +12,11 @@ class Workspace(object):
     @classmethod
     def from_ini_file(cls, file_path):
         options = WorkspaceConfigParser(file_path).get_options()
-        return Workspace(options.get('workspace_id', ''), options.get('token', ''))
+        workspace_id = options.get('workspace_id', '')
+        token = options.get('token', '')
+        if workspace_id and token:
+            return Workspace(workspace_id=workspace_id,token=token)
+        raise KeyError("workspace_id or token parameter not found in INI file")
 
     def get_node(self, node_id):
         return Node(self, node_id)

@@ -17,6 +17,13 @@ class TestWorkspace(TestSuite):
         assert w._workspace_id == str(123), w._workspace_id
         assert w._token == str(456), w._token
 
+    def test_workspace_from_incorrect_ini_file(self):
+        try:
+            w = Workspace.from_ini_file('tests/util/wrong_config.ini')
+        except KeyError as e:
+            assert e.message == 'workspace_id or token parameter not found in INI file', e.message
+
+
     def test_get_node(self):
         w = Workspace('123', '456')
         n = Node(w, 'nodo')
