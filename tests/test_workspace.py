@@ -21,8 +21,7 @@ class TestWorkspace(TestSuite):
         try:
             w = Workspace.from_ini_file('tests/util/wrong_config.ini')
         except KeyError as e:
-            assert e.message == 'workspace_id or token parameter not found in INI file', e.message
-
+            assert e.args[0] == 'workspace_id or token parameter not found in INI file', e.message
 
     def test_get_node(self):
         w = Workspace('123', '456')
