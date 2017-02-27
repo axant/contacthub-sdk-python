@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 
 DEFAULT_SECTION_HEADER = "DEFAULT"
 
@@ -10,7 +10,7 @@ class WorkspaceConfigParser(object):
 
     def __init__(self, config_file_path):
         self.parser = ConfigParser()
-        self.parser.readfp(DefaultSectionHeaderConfigFile(config_file_path))
+        self.parser.read_file(DefaultSectionHeaderConfigFile(config_file_path))
 
     def get_options(self):
         options = dict(self.parser.items(DEFAULT_SECTION_HEADER))
@@ -32,3 +32,9 @@ class DefaultSectionHeaderConfigFile(object):
             return "[%s]" % DEFAULT_SECTION_HEADER
         else:
             return self.config_file.readline()
+
+    def __iter__(self):
+        line = self.readline()
+        while line:
+            yield line
+            line = self.readline()

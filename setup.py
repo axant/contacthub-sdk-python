@@ -4,7 +4,7 @@ except ImportError:
     from distutils.core import setup
 
 install_requires=[
-
+    "configparser"
 ]
 
 testpkgs = [
