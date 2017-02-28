@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
+from contacthub.DeclarativeAPIManager.declarative_api_customer import CustomerDeclarativeApiManager
 
 
 class Node(object):
 
-    def __init__(self, workspace=None, node_id=None,):
-        self._workspace = workspace
-        self._node_id = node_id
+    def __init__(self, workspace, node_id):
+        self.workspace = workspace
+        self.node_id = node_id
+
+    @property
+    def customers(self):
+        return CustomerDeclarativeApiManager(self).get_all

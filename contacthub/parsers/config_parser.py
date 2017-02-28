@@ -4,7 +4,7 @@ from configparser import ConfigParser
 DEFAULT_SECTION_HEADER = "DEFAULT"
 
 
-class WorkspaceConfigParser(object):
+class GeneralConfigParser(object):
     config_file = None
     parser = None
 
