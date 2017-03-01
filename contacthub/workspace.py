@@ -6,9 +6,9 @@ from contacthub.parsers.config_parser import GeneralConfigParser
 class Workspace(object):
 
     def __init__(self, workspace_id, token, base_url='https://api.contactlab.it/hub/v1/workspaces'):
-        self.workspace_id = workspace_id
-        self.token = token
-        self.base_url = base_url
+        self.workspace_id = str(workspace_id)
+        self.token = str(token)
+        self.base_url = str(base_url)
 
 
     @classmethod

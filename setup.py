@@ -9,7 +9,8 @@ install_requires=[
 
 testpkgs = [
     "nose==1.3.7",
-    "coverage"
+    "coverage",
+    "mock"
 ]
 setup(description='ContactHub SDK Python',
       author='Axant',

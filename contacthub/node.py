@@ -6,7 +6,7 @@ class Node(object):
 
     def __init__(self, workspace, node_id):
         self.workspace = workspace
-        self.node_id = node_id
+        self.node_id = str(node_id)
 
     @property
     def customers(self):
