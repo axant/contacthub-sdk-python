@@ -1,10 +1,6 @@
-from httplib import HTTPResponse
-
 import mock as mock
-import requests
 from contacthub.workspace import Workspace, Node
 from unittest import TestSuite
-from contacthub.APIManager.api_customer import CustomerAPIManager
 
 
 class FakeHTTPResponse:
