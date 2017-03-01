@@ -1,12 +1,8 @@
 import mock as mock
-from contacthub.workspace import Workspace, Node
+from contacthub.workspace import Workspace
 from unittest import TestSuite
 
-
-class FakeHTTPResponse:
-    def __init__(self):
-        fake_response = open('tests/util/fake_response', 'r')
-        self.text = fake_response.read()
+from tests.utility import FakeHTTPResponse
 
 
 class TestWorkspace(TestSuite):

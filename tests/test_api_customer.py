@@ -1,22 +1,29 @@
 from unittest import TestSuite
 
-from contacthub.workspace import Workspace
+from mock import mock
 
+from contacthub.workspace import Workspace
+from contacthub.APIManager.api_customer import CustomerAPIManager
+from tests.utility import FakeHTTPResponse
 
 class TestNode(TestSuite):
 
     @classmethod
     def setUp(cls):
-        cls.workspace_id = '0aea7919-57cd-4260-910e-8b1ae53a7259'
-        cls.node_id = '91316725-a4c2-420b-a3f3-2556b3630444'
-        cls.token = 'dcf93c15263a44df842a22086c6087d5bf9c01cd9540451b871175eb570e7794'
+        w = Workspace(workspace_id=123, token=456)
+        cls.customer_manager = CustomerAPIManager(w.get_node(123))
+
 
     @classmethod
     def tearDown(cls):
         pass
 
-    def test_get_custumer(self):
-        pass
+    @mock.patch('requests.get', return_value=FakeHTTPResponse())
+    def test_get_custumer(self, mock_get):
+        resp = self.customer_manager.get_all()
+        assert type(resp) is dict, type(resp)
+        assert 'elements' in resp, resp
+
 
 
 

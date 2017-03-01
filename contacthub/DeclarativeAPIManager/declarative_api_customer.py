@@ -8,9 +8,6 @@ class CustomerDeclarativeApiManager(object):
     def __init__(self, node):
         self.node = node
 
-    def get(self):
-        pass
-
     @property
     def get_all(self):
         customers = []

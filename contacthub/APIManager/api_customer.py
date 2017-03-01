@@ -11,18 +11,6 @@ class CustomerAPIManager(object):
         self.request_url = self.node.workspace.base_url + '/' + self.node.workspace.workspace_id + '/' + self.entity
         self.headers = {'Authorization': 'Bearer ' + self.node.workspace.token}
 
-    def add(self, force_update=False):
-        pass
-
-    def update(self, full_update):
-        pass
-
-    def delete(self):
-        pass
-
-    def get(self, customer_id, external_id):
-        pass
-
     def get_all(self, external_id=None, fields=None, query=None, pagination=None):
         params = {'nodeId': self.node.node_id}
         resp = requests.get(self.request_url, params=params, headers=self.headers)
