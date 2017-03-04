@@ -1,15 +1,14 @@
 import requests
 import json
+
+from contacthub.APIManager.api_base import BaseAPIManager
 from contacthub.parsers.config_parser import GeneralConfigParser
 
 
-class CustomerAPIManager(object):
+class CustomerAPIManager(BaseAPIManager):
 
     def __init__(self, node):
-        self.node = node
-        self.entity = 'customers'
-        self.request_url = self.node.workspace.base_url + '/' + self.node.workspace.workspace_id + '/' + self.entity
-        self.headers = {'Authorization': 'Bearer ' + self.node.workspace.token}
+        super(CustomerAPIManager, self).__init__(node, 'customers')
 
     def get_all(self, external_id=None, fields=None, query=None, pagination=None):
         params = {'nodeId': self.node.node_id}

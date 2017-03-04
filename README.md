@@ -13,19 +13,30 @@
 <a name="installing"/>
 ## Installing and importing the SDK
 
+The ContactHub SDK can be installed from PyPi:
+
+```
+pip install contacthub
+```
+After installing, for importing the contacthub SDK just:
+
+```
+import contacthub
+```
+
 <a name="authentication"/>
 ## Authentication
 
 <a name="workspace"/>
 ### Workspace
 
-You can create a `Workspace` object that allows the control of the workspace's nodes, passing it the given workspace id and the access token
+You can create a `Workspace` object that allows the control of the workspace's nodes. Pass to it the given workspace id and the access token
 
 ```
 my_workspace = Workspace(workspace_id, token)
 ```
 
-By default the SDK will use the default URL for the ConctactHub API: https://api.contactlab.it/hub/v1
+If not specified, the SDK will use the default URL for the ConctactHub API: https://api.contactlab.it/hub/v1
 You can also specify a different base URL for the API:
 
 ```

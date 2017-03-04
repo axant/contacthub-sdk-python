@@ -1,4 +1,4 @@
-import mock as mock
+import mock
 from contacthub.workspace import Workspace
 from unittest import TestSuite
 

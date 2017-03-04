@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 from contacthub.APIManager.api_customer import CustomerAPIManager
-from contacthub.customer import Customer
+from contacthub.DeclarativeAPIManager.declarative_api_base import BaseDeclarativeApiManager
+from contacthub.models.customer import Customer
 
 
-class CustomerDeclarativeApiManager(object):
+class CustomerDeclarativeApiManager(BaseDeclarativeApiManager):
 
-    def __init__(self, node):
-        self.node = node
-
-    @property
     def get_all(self):
         customers = []
         resp = CustomerAPIManager(node=self.node).get_all()

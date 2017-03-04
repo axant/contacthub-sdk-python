@@ -1,6 +1,6 @@
 from unittest import TestSuite
 
-from mock import mock
+import mock
 
 from contacthub.workspace import Workspace
 from contacthub.APIManager.api_customer import CustomerAPIManager
@@ -23,7 +23,6 @@ class TestNode(TestSuite):
         resp = self.customer_manager.get_all()
         assert type(resp) is dict, type(resp)
         assert 'elements' in resp, resp
-
 
 
 

@@ -10,4 +10,4 @@ class Node(object):
 
     @property
     def customers(self):
-        return CustomerDeclarativeApiManager(self).get_all
+        return CustomerDeclarativeApiManager(self).get_all()
