@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from contacthub.DeclarativeAPIManager.declarative_api_customer import CustomerDeclarativeApiManager
+from contacthub.models.query_builder import QueryBuilder
 
 
 class Node(object):
@@ -11,3 +12,6 @@ class Node(object):
     @property
     def customers(self):
         return CustomerDeclarativeApiManager(self).get_all()
+
+    def query(self, entity):
+        return QueryBuilder(self, entity)

@@ -6,9 +6,9 @@ from contacthub.models.customer import Customer
 
 class CustomerDeclarativeApiManager(BaseDeclarativeApiManager):
 
-    def get_all(self):
+    def get_all(self, query=None):
         customers = []
-        resp = CustomerAPIManager(node=self.node).get_all()
+        resp = CustomerAPIManager(node=self.node).get_all(query=query)
         for customer in resp['elements']:
             customers.append(Customer(customer))
         return customers

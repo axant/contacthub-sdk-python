@@ -5,6 +5,7 @@ from datetime import datetime
 
 from contacthub.models.address import Address, Geo
 from contacthub.models.contacts import Contacts, OtherContact, MobileDevice
+from contacthub.models.customer import Customer
 from contacthub.models.customer_base_properties import CustomerBaseProperties
 from contacthub.models.education import Education
 from contacthub.models.job import Job
@@ -21,8 +22,8 @@ class TestCustomer(TestSuite):
     @mock.patch('requests.get', return_value=FakeHTTPResponse())
     def setUp(cls, mock_get):
         w = Workspace(workspace_id=123, token=456)
-        node = w.get_node(123)
-        cls.customers = node.customers
+        cls.node = w.get_node(123)
+        cls.customers = cls.node.customers
 
     @classmethod
     def tearDown(cls):
@@ -198,6 +199,11 @@ class TestCustomer(TestSuite):
     def test_customer_social_profile_empty(self):
         social_profile = self.customers[1].base.socialProfile
         assert social_profile is None, social_profile
+
+    # def test(self):
+    #     ret = self.node.query(Customer).filter((Customer.base.contacts == 'marco.bosi@axant.it')).all()
+    #     assert False, ret
+
 
 
 

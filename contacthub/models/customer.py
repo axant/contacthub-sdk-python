@@ -1,4 +1,5 @@
 from contacthub.models.customer_base_properties import CustomerBaseProperties
+from contacthub.models.entity import Entity
 from contacthub.models.tags import Tags
 
 
@@ -22,3 +23,5 @@ class Customer(object):
             return super(Customer, self).__setattr__(attr, val)
         else:
             self.customer_properties[attr] = val
+
+    __metaclass__ = Entity
