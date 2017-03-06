@@ -1,0 +1,1 @@
+from .customer_base_properties import CustomerBaseProperties

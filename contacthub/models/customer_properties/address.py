@@ -1,8 +1,9 @@
-from contacthub.models.base_property import BaseProperty
+from contacthub.models.customer_properties.base_property import BaseProperty
 
 
 class Geo(BaseProperty):
     pass
+
 
 class Address(BaseProperty):
     SUBPROPERTIES = {'geo': Geo}

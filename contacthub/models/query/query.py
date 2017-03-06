@@ -5,11 +5,11 @@ from contacthub.DeclarativeAPIManager.declarative_api_customer import CustomerDe
 
 class Query(object):
 
-    def __init__(self, node, criterion):
+    def __init__(self, node, query):
         self.node = node
-        self.criterion = criterion
+        self.query = json.dumps(query)
 
     def all(self):
-        return CustomerDeclarativeApiManager(self.node).get_all(query=self.criterion)
+        return CustomerDeclarativeApiManager(self.node).get_all(query=self.query)
 
 

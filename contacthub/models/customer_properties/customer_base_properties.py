@@ -1,13 +1,15 @@
 from datetime import datetime
+
+from contacthub.models.customer_properties.address import Address
+from contacthub.models.customer_properties.login_credentials import LoginCredentials
+from contacthub.models.customer_properties.social_profile import SocialProfile
+from contacthub.models.customer_properties.subscription import Subscription
+
 from contacthub.lib.utils import list_item
-from contacthub.models.address import Address
-from contacthub.models.contacts import Contacts
+from contacthub.models.customer_properties.contacts import Contacts
 from contacthub.models.education import Education
 from contacthub.models.job import Job
 from contacthub.models.like import Like
-from contacthub.models.login_credentials import LoginCredentials
-from contacthub.models.social_profile import SocialProfile
-from contacthub.models.subscription import Subscription
 
 
 class CustomerBaseProperties(object):

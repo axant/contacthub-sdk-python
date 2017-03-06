@@ -1,17 +1,15 @@
+from datetime import datetime
 from unittest import TestSuite
 
 import mock
-from datetime import datetime
-
-from contacthub.models.address import Address, Geo
-from contacthub.models.contacts import Contacts, OtherContact, MobileDevice
-from contacthub.models.customer import Customer
-from contacthub.models.customer_base_properties import CustomerBaseProperties
+from contacthub.models.customer_properties.address import Address, Geo
+from contacthub.models.customer_properties.login_credentials import LoginCredentials
+from contacthub.models.customer_properties.subscription import Subscription, Preference
+from contacthub.models.customer_properties.tags import Tags
+from contacthub.models.customer_properties import CustomerBaseProperties
+from contacthub.models.customer_properties.contacts import Contacts, OtherContact, MobileDevice
 from contacthub.models.education import Education
 from contacthub.models.job import Job
-from contacthub.models.login_credentials import LoginCredentials
-from contacthub.models.subscription import Subscription, Preference
-from contacthub.models.tags import Tags
 from contacthub.workspace import Workspace
 from tests.utility import FakeHTTPResponse
 
@@ -201,12 +199,6 @@ class TestCustomer(TestSuite):
         assert social_profile is None, social_profile
 
     # def test(self):
-    #     ret = self.node.query(Customer).filter((Customer.base.contacts == 'marco.bosi@axant.it')).all()
+    #     ret = self.node.query(Customer). \
+    #         filter(Customer.base.contacts.email._in(['marco.bosi@axant.it', 'marco.bosio@gmail.com'])).all()
     #     assert False, ret
-
-
-
-
-
-
-

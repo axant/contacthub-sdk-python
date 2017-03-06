@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from contacthub.DeclarativeAPIManager.declarative_api_customer import CustomerDeclarativeApiManager
-from contacthub.models.query_builder import QueryBuilder
+from contacthub.models.query.query_builder import QueryBuilder
 
 
 class Node(object):

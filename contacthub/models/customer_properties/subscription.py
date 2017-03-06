@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from contacthub.lib.utils import list_item
-from contacthub.models.base_property import BaseProperty
+from contacthub.models.customer_properties.base_property import BaseProperty
 
 
 class Preference(BaseProperty):
