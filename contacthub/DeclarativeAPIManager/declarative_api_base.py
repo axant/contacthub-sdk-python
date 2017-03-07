@@ -3,6 +3,9 @@ from abc import abstractmethod, ABCMeta
 
 
 class BaseDeclarativeApiManager(object):
+    """
+    Base class for DeclarativeAPIManager classes, every DeclarativeAPIManager should implements the following methods.
+    """
     __metaclass__ = ABCMeta
 
     def __init__(self, node):
@@ -10,4 +13,6 @@ class BaseDeclarativeApiManager(object):
 
     @abstractmethod
     def get_all(self):
-        pass
+        """
+        Get all elements associated to an entity.
+        """

@@ -1,1 +1,1 @@
-from .customer_base_properties import CustomerBaseProperties
+from contacthub.models.customer_properties.base.customer_base_properties import CustomerBaseProperties

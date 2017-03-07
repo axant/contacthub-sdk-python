@@ -35,6 +35,12 @@ class TestWorkspace(TestSuite):
         except IOError as e:
             assert 'No such file or directory' == e.args[1], e.args[1]
 
+    def test_workspace_from_ini_file_base_url(self):
+        w = Workspace.from_ini_file('tests/util/config_base.ini')
+        assert w.workspace_id == str(123), w.workspace_id
+        assert w.token == str(456), w.token
+        assert w.base_url == 'http', w.base_url
+
     @mock.patch('requests.get', return_value=FakeHTTPResponse())
     def test_get_node(self, mock_get):
         w = Workspace(workspace_id=self.workspace_id, token=self.token)

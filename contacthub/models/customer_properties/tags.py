@@ -1,5 +1,8 @@
-from contacthub.models.customer_properties.base_property import BaseProperty
+from contacthub.models.customer_properties.property import Property
 
 
-class Tags(BaseProperty):
+class Tags(Property):
+    """
+    Tags property of the Customer model
+    """
     pass

@@ -25,7 +25,6 @@ class BaseAPIManager(object):
         """
         GET method for retrieving all resources of an entity
         """
-        pass
 
     # @abstractmethod
     # def get(self, res_id):

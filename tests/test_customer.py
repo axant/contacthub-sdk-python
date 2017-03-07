@@ -1,20 +1,23 @@
+import unittest
 from datetime import datetime
-from unittest import TestSuite
 
 import mock
-from contacthub.models.customer_properties.address import Address, Geo
-from contacthub.models.customer_properties.login_credentials import LoginCredentials
-from contacthub.models.customer_properties.subscription import Subscription, Preference
+
+from contacthub.models.customer_properties.base.address import Address, Geo
+from contacthub.models.customer_properties.base.contacts import Contacts, OtherContact, MobileDevice
+from contacthub.models.customer_properties.base.login_credentials import LoginCredentials
+
+from contacthub.models.customer_properties.base.customer_base_properties import CustomerBaseProperties
+from contacthub.models.customer_properties.base.subscription import Subscription, Preference
+from contacthub.models.customer_properties.property import Property
 from contacthub.models.customer_properties.tags import Tags
-from contacthub.models.customer_properties import CustomerBaseProperties
-from contacthub.models.customer_properties.contacts import Contacts, OtherContact, MobileDevice
 from contacthub.models.education import Education
 from contacthub.models.job import Job
 from contacthub.workspace import Workspace
 from tests.utility import FakeHTTPResponse
 
 
-class TestCustomer(TestSuite):
+class TestCustomer(unittest.TestCase):
 
     @classmethod
     @mock.patch('requests.get', return_value=FakeHTTPResponse())
@@ -26,10 +29,6 @@ class TestCustomer(TestSuite):
     @classmethod
     def tearDown(cls):
         pass
-
-    def test_customer(self):
-        assert type(self.customers) is list, type(self.customers)
-        assert self.customers[0].enabled, self.customers[0]
 
     def test_customer_base(self):
         for customer in self.customers:
@@ -197,6 +196,66 @@ class TestCustomer(TestSuite):
     def test_customer_social_profile_empty(self):
         social_profile = self.customers[1].base.socialProfile
         assert social_profile is None, social_profile
+
+    def test_customer_unexistent_attr(self):
+        with self.assertRaises(AttributeError) as context:
+            attr = self.customers[0].attr
+        self.assertTrue('attr' in str(context.exception))
+
+    def test_customer_sett_attr(self):
+        self.customers[0].externalId = 3
+        assert self.customers[0].externalId == 3, self.customers[0].externalId
+
+    def test_customer_address_unexistent_attr(self):
+        with self.assertRaises(AttributeError) as context:
+            attr = self.customers[0].base.address.attr
+        self.assertTrue('attr' in str(context.exception))
+
+    def test_customer_contacts_unexistent_attr(self):
+        with self.assertRaises(AttributeError) as context:
+            attr = self.customers[0].base.contacts.attr
+        self.assertTrue('attr' in str(context.exception))
+
+    def test_customer_dob(self):
+        dob = self.customers[0].base.dob
+        assert type(dob) is datetime, type(dob)
+
+    def test_customer_base_unexistent_attr(self):
+        with self.assertRaises(AttributeError) as context:
+            attr = self.customers[0].base.attr
+        self.assertTrue('attr' in str(context.exception))
+
+    def test_customer_subscription_unexistent_attr(self):
+        with self.assertRaises(AttributeError) as context:
+            attr = self.customers[0].base.subscriptions[0].attr
+        self.assertTrue('attr' in str(context.exception))
+
+    def test_customer_property_unexistent_attr(self):
+        with self.assertRaises(AttributeError) as context:
+            p = Property({'attributo':1})
+            attr = p.attr
+        self.assertTrue('attr' in str(context.exception))
+
+    def test_customer_job_unexistent_attr(self):
+        with self.assertRaises(AttributeError) as context:
+            attr = self.customers[0].base.jobs[0].attr
+        self.assertTrue('attr' in str(context.exception))
+
+    def test_customer_like_unexistent_attr(self):
+        with self.assertRaises(AttributeError) as context:
+            attr = self.customers[0].base.likes[0].attr
+        self.assertTrue('attr' in str(context.exception))
+
+    def test_customer_like_created_time(self):
+        ct = self.customers[0].base.likes[0].createdTime
+        assert isinstance(ct, datetime), type(datetime)
+
+
+
+
+
+
+
 
     # def test(self):
     #     ret = self.node.query(Customer). \
