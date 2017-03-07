@@ -2,8 +2,10 @@ from contacthub.models.customer_properties.base.customer_base_properties import 
 from contacthub.models.customer_properties.tags import Tags
 from contacthub.models.query.entity_meta import EntityMeta
 
+from six import with_metaclass
 
-class Customer(object, metaclass=EntityMeta):
+
+class Customer(with_metaclass(EntityMeta,object)):
     """
     Customer model
     """
