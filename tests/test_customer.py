@@ -251,12 +251,6 @@ class TestCustomer(unittest.TestCase):
         assert isinstance(ct, datetime), type(datetime)
 
 
-
-
-
-
-
-
     # def test(self):
     #     ret = self.node.query(Customer). \
     #         filter(Customer.base.contacts.email._in(['marco.bosi@axant.it', 'marco.bosio@gmail.com'])).all()
