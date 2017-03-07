@@ -5,7 +5,8 @@ except ImportError:
 
 install_requires=[
     "configparser",
-    'requests'
+    'requests',
+    'six'
 ]
 
 testpkgs = [
