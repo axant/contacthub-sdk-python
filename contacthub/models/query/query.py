@@ -1,6 +1,7 @@
 import json
 
 from contacthub.DeclarativeAPIManager.declarative_api_customer import CustomerDeclarativeApiManager
+from contacthub.models.customer import Customer
 from contacthub.models.query.entity_meta import EntityMeta
 
 
@@ -26,7 +27,7 @@ class Query(object):
         Get all queried data of an entity from the API
         :return: a list of Entity object
         """
-        if self.entity.__name__ == 'Customer':
+        if self.entity is Customer:
             return CustomerDeclarativeApiManager(self.node).get_all(query=self.query)
 
 

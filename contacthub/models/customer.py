@@ -1,22 +1,25 @@
-from contacthub.models.customer_properties.base.customer_base_properties import CustomerBaseProperties
-from contacthub.models.customer_properties.tags import Tags
-from contacthub.models.query.entity_meta import EntityMeta
-
 from six import with_metaclass
 
+from contacthub.DeclarativeAPIManager.declarative_api_event import EventDeclarativeApiManager
+from contacthub.models.entity import Entity
+from contacthub.models.query.entity_meta import EntityMeta
 
-class Customer(with_metaclass(EntityMeta,object)):
+
+class Customer(with_metaclass(EntityMeta, object)):
     """
     Customer model
     """
-    __slots__ = ('customer_properties',)
-    SUBPROPERTIES = {'base': CustomerBaseProperties, 'tags': Tags}
+    __slots__ = ('json_properties', 'node')
+    SUBPROPERTIES = ['base', 'tags']
 
-    def __init__(self, customer_properties):
+    def __init__(self, json_properties=None, node=None, **kwargs):
         """
-        :param customer_properties: A dictionary containing the properties related to customers
+        :param json_properties: A dictionary containing the json_properties related to customers
         """
-        self.customer_properties = customer_properties
+        if json_properties is None:
+            json_properties = dict()
+        self.json_properties = json_properties
+        self.node = node
 
     def __getattr__(self, item):
         """
@@ -26,10 +29,14 @@ class Customer(with_metaclass(EntityMeta,object)):
         :return: an element of the dictionary, or an object if the element associated at the key containse an object or a list
         """
         if item in self.SUBPROPERTIES:
-            return self.SUBPROPERTIES[item](self.customer_properties[item])
+            try:
+                return Entity(json_properties=self.json_properties[item])
+            except KeyError as e:
+                self.json_properties[item] = {}
+                return Entity(json_properties=self.json_properties[item])
         else:
             try:
-                return self.customer_properties[item]
+                return self.json_properties[item]
             except KeyError as e:
                 raise AttributeError("%s object has no attribute %s" % (type(self).__name__, e))
 
@@ -37,6 +44,19 @@ class Customer(with_metaclass(EntityMeta,object)):
         if attr in self.__slots__:
             return super(Customer, self).__setattr__(attr, val)
         else:
-            self.customer_properties[attr] = val
+            if isinstance(val, Entity):
+                self.json_properties[attr] = val.json_properties
+            else:
+                self.json_properties[attr] = val
 
     __metaclass__ = EntityMeta
+
+    def all_events(self):
+        """
+        Get all the events in this node for a single customer specified
+        :param id: the id of the customer for fetching the events associated
+        :return: A list containing Events object of a node
+        """
+        if self.node and 'id' in self.json_properties:
+            return EventDeclarativeApiManager(self.node).get_all(customer_id=self.json_properties['id'])
+        raise Exception('Cannot retrieve events from a new customer.')

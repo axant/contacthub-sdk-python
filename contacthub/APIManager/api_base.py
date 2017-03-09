@@ -18,13 +18,19 @@ class BaseAPIManager(object):
         """
         self.node = node
         self.request_url = self.node.workspace.base_url + '/' + self.node.workspace.workspace_id + '/' + entity
-        self.headers = {'Authorization': 'Bearer ' + self.node.workspace.token}
+        self.headers = {'Authorization': 'Bearer ' + self.node.workspace.token, 'Content-Type': 'application/json'}
 
     @abstractmethod
-    def get_all(self):
+    def get_all(self, *args):
         """
         GET method for retrieving all resources of an entity
         """
+
+    # @abstractmethod
+    # def post(self, *args):
+    #     """
+    #     POST method for posting a new entity
+    #     """
 
     # @abstractmethod
     # def get(self, res_id):

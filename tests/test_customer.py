@@ -3,16 +3,13 @@ from datetime import datetime
 
 import mock
 
-from contacthub.models.customer_properties.base.address import Address, Geo
-from contacthub.models.customer_properties.base.contacts import Contacts, OtherContact, MobileDevice
-from contacthub.models.customer_properties.base.login_credentials import LoginCredentials
-
-from contacthub.models.customer_properties.base.customer_base_properties import CustomerBaseProperties
-from contacthub.models.customer_properties.base.subscription import Subscription, Preference
-from contacthub.models.customer_properties.property import Property
-from contacthub.models.customer_properties.tags import Tags
+from contacthub.models import BaseProperties
+from contacthub.models.customer import Customer
 from contacthub.models.education import Education
+from contacthub.models.entity import Entity
+from contacthub.models.event import Event
 from contacthub.models.job import Job
+from contacthub.models.like import Like
 from contacthub.workspace import Workspace
 from tests.utility import FakeHTTPResponse
 
@@ -22,8 +19,8 @@ class TestCustomer(unittest.TestCase):
     @classmethod
     @mock.patch('requests.get', return_value=FakeHTTPResponse())
     def setUp(cls, mock_get):
-        w = Workspace(workspace_id=123, token=456)
-        cls.node = w.get_node(123)
+        w = Workspace(workspace_id="123", token="456")
+        cls.node = w.get_node("123")
         cls.customers = cls.node.customers
 
     @classmethod
@@ -32,11 +29,11 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_base(self):
         for customer in self.customers:
-            assert type(customer.base) is CustomerBaseProperties, type(customer.base)
+            assert type(customer.base) is Entity, type(customer.base)
 
     def test_customer_tags(self):
         tags = self.customers[0].tags
-        assert type(tags) is Tags, type(tags)
+        assert type(tags) is Entity, type(tags)
         assert type(tags.auto) is list, type(tags.auto)
         assert type(tags.manual) is list, type(tags.manual)
         assert tags.auto[0] == 'auto', tags.auto[0]
@@ -44,7 +41,7 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_tags_empty(self):
         tags = self.customers[1].tags
-        assert type(tags) is Tags, type(tags)
+        assert type(tags) is Entity, type(tags)
         assert type(tags.auto) is list, type(tags.auto)
         assert type(tags.manual) is list, type(tags.manual)
         assert len(tags.auto) == 0, len(tags.auto)
@@ -52,21 +49,19 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_contacts_other_contacts(self):
         other_contact = self.customers[0].base.contacts.otherContacts[0]
-        assert type(other_contact) is OtherContact, type(other_contact)
+        assert type(other_contact) is Entity, type(other_contact)
         assert other_contact.name == 'name', other_contact.name
         assert other_contact.value == 'value', other_contact.value
-        assert other_contact.type == OtherContact.TYPES.MOBILE, other_contact.type
 
     def test_customer_contacts_mobile_devices(self):
         mobile_device = self.customers[0].base.contacts.mobileDevices[0]
-        assert type(mobile_device) is MobileDevice, type(mobile_device)
+        assert type(mobile_device) is Entity, type(mobile_device)
         assert mobile_device.identifier == 'identifier', mobile_device.name
         assert mobile_device.name == 'name', mobile_device.value
-        assert mobile_device.type == MobileDevice.TYPES.IOS, mobile_device.type
 
     def test_customer_contacts(self):
         contacts = self.customers[0].base.contacts
-        assert type(contacts) is Contacts, type(contacts)
+        assert type(contacts) is Entity, type(contacts)
         assert contacts.email == 'email@email.it', contacts.email
         assert contacts.fax == 'fax', contacts.fax
         assert contacts.mobilePhone == 'mobilePhone', contacts.mobilePhone
@@ -84,7 +79,7 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_contacts_empty(self):
         contacts = self.customers[1].base.contacts
-        assert type(contacts) is Contacts, type(contacts)
+        assert type(contacts) is Entity, type(contacts)
         assert contacts.fax is None, contacts.fax
         assert contacts.mobilePhone is None, contacts.mobilePhone
         assert contacts.phone is None, contacts.phone
@@ -93,7 +88,7 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_credentials(self):
         credentials = self.customers[0].base.credential
-        assert type(credentials) is LoginCredentials, type(credentials)
+        assert type(credentials) is Entity, type(credentials)
         assert credentials.username == 'username', credentials.username
         assert credentials.password == 'password', credentials.password
 
@@ -113,6 +108,15 @@ class TestCustomer(unittest.TestCase):
         assert education.endYear == 2000, education.endYear
         assert education.isCurrent, education.isCurrent
 
+    def test_customer_unexsistant_attribute(self):
+        educations = self.customers[0].base.educations
+        assert type(educations) is list, type(educations)
+        education = educations[0]
+        try:
+            attr = education.attr
+        except AttributeError as e:
+            assert 'attr' in str(e), str(e)
+
     def test_customer_education_empty(self):
         educations = self.customers[1].base.educations
         assert type(educations) is list, type(educations)
@@ -122,11 +126,10 @@ class TestCustomer(unittest.TestCase):
         subscriptions = self.customers[0].base.subscriptions
         assert type(subscriptions) is list, type(subscriptions)
         subscription = subscriptions[0]
-        assert type(subscription) is Subscription, type(subscription)
+        assert type(subscription) is Entity, type(subscription)
         assert subscription.id == "id",  subscription.id
         assert subscription.name == "name", subscription.name
         assert subscription.type == "type", subscription.type
-        assert subscription.kind == Subscription.KINDS.SERVICE, subscription.kind
         assert subscription.subscribed, subscription.subscribed
         assert type(subscription.startDate) is datetime, type(subscription.startDate)
         assert type(subscription.endDate) is datetime, type(subscription.endDate)
@@ -139,7 +142,7 @@ class TestCustomer(unittest.TestCase):
         preferences = self.customers[0].base.subscriptions[0].preferences
         assert type(preferences) is list, type(preferences)
         preference = preferences[0]
-        assert type(preference) is Preference, type(preference)
+        assert type(preference) is Entity, type(preference)
         assert preference.key == "key", preference.key
         assert preference.value == "value", preference.value
 
@@ -160,6 +163,12 @@ class TestCustomer(unittest.TestCase):
         assert type(job.endDate) is datetime, type(job.endDate)
         assert job.isCurrent, job.isCurrent
 
+    def test_customer_like(self):
+        likes = self.customers[0].base.likes
+        assert type(likes) is list, type(likes)
+        like = likes[0]
+        assert type(like) is Like, type(like)
+
     def test_customer_jobs_empty(self):
         jobs = self.customers[1].base.jobs
         assert type(jobs) is list, type(jobs)
@@ -167,13 +176,13 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_address(self):
         address = self.customers[0].base.address
-        assert type(address) is Address, type(address)
+        assert type(address) is Entity, type(address)
         assert address.street == 'street', address.street
         assert address.city == 'city', address.city
         assert address.country == 'country', address.country
         assert address.province == 'province', address.province
         assert address.zip == 'zip', address.zip
-        assert type(address.geo) is Geo,  type(address.geo)
+        assert type(address.geo) is Entity,  type(address.geo)
 
     def test_customer_address_geo(self):
         geo = self.customers[0].base.address.geo
@@ -232,7 +241,7 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_property_unexistent_attr(self):
         with self.assertRaises(AttributeError) as context:
-            p = Property({'attributo':1})
+            p = Entity({'attributo':1})
             attr = p.attr
         self.assertTrue('attr' in str(context.exception))
 
@@ -250,8 +259,25 @@ class TestCustomer(unittest.TestCase):
         ct = self.customers[0].base.likes[0].createdTime
         assert isinstance(ct, datetime), type(datetime)
 
+    @mock.patch('requests.get', return_value=FakeHTTPResponse(resp_path='tests/util/fake_event_response'))
+    def test_all_events(self, mock_get_event):
+        events = self.customers[0].all_events()
+        params_expected = {'customerId': self.customers[0].id}
+        headers_expected = {'Authorization': 'Bearer 456', 'Content-Type': 'application/json'}
+        base_url = 'https://api.contactlab.it/hub/v1/workspaces/123/events'
+        mock_get_event.assert_called_with(base_url, params=params_expected, headers=headers_expected)
+        assert isinstance(events, list), type(events)
+        assert events[0].type == Event.TYPES.ADDED_COMPARE, events[0].type
 
-    # def test(self):
-    #     ret = self.node.query(Customer). \
-    #         filter(Customer.base.contacts.email._in(['marco.bosi@axant.it', 'marco.bosio@gmail.com'])).all()
-    #     assert False, ret
+    def test_all_events_new_customer(self):
+        try:
+            Customer().all_events()
+        except Exception as e:
+            assert 'events' in str(e), str(e)
+
+    def test_customer_set_prop(self):
+        c = self.customers[0]
+        c.base = BaseProperties(attr='attr')
+
+        assert isinstance(c.base, Entity), type(c.base)
+        assert c.base.json_properties == {'attr':'attr'}
