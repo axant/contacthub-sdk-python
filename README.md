@@ -13,10 +13,10 @@
 
 <a name="introduction"/>
 ## Introduction
-This is the official Python SDK for [ContactHub REST API] (https://contactlab.github.io/contacthub-json-schemas/apidoc.html).
+This is the official Python SDK for [ContactHub REST API](https://contactlab.github.io/contacthub-json-schemas/apidoc.html).
 This SDK easily allows to access your data on ContactHub, making the authentication immediate and simplifying reading/writing operations.
 
-For all information about ContactHub, check [here] http://contactlab.com/en/offer/engagement-marketing-platform/contacthub/
+For all information about ContactHub, check [here](http://contactlab.com/en/offer/engagement-marketing-platform/contacthub/)
 
 <a name="getting_started"/>
 ## Getting started
