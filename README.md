@@ -169,6 +169,7 @@ base_url = base_url
 ```
 
 <a name="customers"/>
+
 ## Operations on customers
 After the [authentication](#authentication), you are ready to perform all operations on ContactHub's entities.
 
