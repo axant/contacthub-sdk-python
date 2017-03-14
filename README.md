@@ -10,12 +10,17 @@
 	-   [Performing simple operations on customers](#simpleoperations)
 -   [Authentication](#authentication)
 -   [Operations on customers](#customers)
+    -   [Post a new customer](#postc)
+    -   [Get all customers](#getallc)
+    -   [Query customers](#query)
+    -   [Get a single customer](#getc)
 -   [Operations on events](#events)
 -   [API Reference](#apireference)
 
 	
 
 <a name="introduction"/>
+
 ## Introduction
 
 This is the official Python SDK for [ContactHub REST API](https://contactlab.github.io/contacthub-json-schemas/apidoc.html).
@@ -24,9 +29,11 @@ This SDK easily allows to access your data on ContactHub, making the authenticat
 For all information about ContactHub, check [here](http://contactlab.com/en/offer/engagement-marketing-platform/contacthub/)
 
 <a name="getting_started"/>
+
 ## Getting started
 
 <a name="installing"/>
+
 ### Installing and importing the SDK
 
 The ContactHub SDK can be installed from PyPi:
@@ -41,6 +48,7 @@ import contacthub
 ```
 
 <a name="simpleoperations"/>
+
 ### Performing simple operations on customers
 
 #### Getting Customer's data
@@ -120,6 +128,7 @@ Note that relations are immutable objects. You can just consult events associate
 but you cannot add new ones or delete.
 
 <a name="authentication"/>
+
 ## Authentication
 
 You can create a `Workspace` object that allows the control of the workspace's nodes. It require the workspace id and the access token provided by
@@ -301,6 +310,10 @@ customers = node.get_all_customers(fields=[Customer.base.email,Customer.base.dob
 Every element of the fetched list will only have the given fields.
 
 **None of the previous parameter passed to the `get_all_customers` method is required and you can combine them for getting the list of customers that suits your needs.**
+
+
+### Query customer
+[TODO]
 
 ### Get a single customer
 

@@ -56,7 +56,6 @@ class Query(object):
         :return: a list of Entity object
         """
         complete_query = {'name': 'query', 'query': self.inner_query}
-        print complete_query
         if self.entity is Customer:
             return CustomerDeclarativeApiManager(self.node).get_all(query=complete_query)
 
