@@ -83,7 +83,7 @@ class TestQuery(unittest.TestCase):
 
     def test_entity_field_null(self):
         cEqual = Criterion(self.entity_field, Criterion.SIMPLE_OPERATORS.IS_NULL)
-        c = (Customer.attr._is_null())
+        c = (Customer.attr.is_null())
 
         assert c.first_element == cEqual.first_element, c.first_element
         assert c.second_element is None, c.second_element
@@ -91,7 +91,7 @@ class TestQuery(unittest.TestCase):
 
     def test_entity_field_not_null(self):
         cEqual = Criterion(self.entity_field, Criterion.SIMPLE_OPERATORS.IS_NOT_NULL)
-        c = (Customer.attr._is_not_null())
+        c = (Customer.attr.is_not_null())
 
         assert c.first_element == cEqual.first_element, c.first_element
         assert c.second_element is None, c.second_element
@@ -123,68 +123,4 @@ class TestQuery(unittest.TestCase):
         assert isinstance(c3.second_element, Criterion), type(c3.second_element)
         assert c3.second_element.operator == c2.operator, c3.first_element.operator
         assert c3.operator == Criterion.COMPLEX_OPERATORS.OR
-
-    def test_filter_atomic(self):
-        JSON_test_query = {'query':
-                            {'type': 'simple', 'name': 'query', 'are':
-                                {'condition':
-                                     {'type': 'atomic', 'attribute': 'attr', 'operator': 'EQUALS', 'value': 'attr'}
-                                 }
-                             }
-                        }
-        atomic_test_query = Query(node=self.node, query=JSON_test_query, entity=EntityMeta.Enitites.CUSTOMERS)
-
-        query = self.node.query(Customer).filter(Customer.attr == 'attr')
-
-        assert atomic_test_query.query == query.query, query.query
-
-    def test_filter_atomic_more_params(self):
-        JSON_test_query = {'query':
-                               {'type': 'simple', 'name': 'query', 'are':
-                                   {'condition':
-                                        {'type': 'atomic', 'attribute': 'attr.attr1', 'operator': 'EQUALS', 'value': 'attr'}
-                                    }
-                                }
-                           }
-        atomic_test_query = Query(node=self.node, query=JSON_test_query, entity=EntityMeta.Enitites.CUSTOMERS)
-
-        query = self.node.query(Customer).filter(Customer.attr.attr1 == 'attr')
-
-        assert atomic_test_query.query == query.query, query.query
-
-    def test_filter_composite_or(self):
-        JSON_test_query = {'query':
-                            {'type': 'simple', 'name': 'query', 'are':
-                                {'condition':
-                                     {'type': 'composite', 'conjunction': 'or', 'conditions': [
-                                         {'type': 'atomic', 'attribute': 'attr', 'operator': 'EQUALS', 'value': 'attr'},
-                                         {'type': 'atomic', 'attribute': 'attr1', 'operator': 'LTE', 'value': 'attr1'}
-                                     ]}
-                                 }
-                             }
-                        }
-        atomic_test_query = Query(node=self.node, query=JSON_test_query, entity=EntityMeta.Enitites.CUSTOMERS)
-
-        query = self.node.query(Customer).filter((Customer.attr == 'attr') | (Customer.attr1 <= 'attr1'))
-
-        assert atomic_test_query.query == query.query, (query.query, atomic_test_query.query)
-
-    def test_filter_composite_and(self):
-        JSON_test_query = {'query':
-                               {'type': 'simple', 'name': 'query', 'are':
-                                   {'condition':
-                                        {'type': 'composite', 'conjunction': 'and', 'conditions': [
-                                            {'type': 'atomic', 'attribute': 'attr', 'operator': 'NOT_EQUALS',
-                                             'value': 'attr'},
-                                            {'type': 'atomic', 'attribute': 'attr1', 'operator': 'LTE',
-                                             'value': 'attr1'}
-                                        ]}
-                                    }
-                                }
-                           }
-        atomic_test_query = Query(node=self.node, query=JSON_test_query, entity=EntityMeta.Enitites.CUSTOMERS)
-
-        query = self.node.query(Customer).filter((Customer.attr != 'attr') & (Customer.attr1 <= 'attr1'))
-
-        assert atomic_test_query.query == query.query, query.query
 

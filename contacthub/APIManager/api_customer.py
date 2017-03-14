@@ -19,24 +19,40 @@ class CustomerAPIManager(BaseAPIManager):
         """
         super(CustomerAPIManager, self).__init__(node, EntityMeta.Enitites.CUSTOMERS)
 
-    def get_all(self, external_id=None, fields=None, query=None, pagination=None, **kwargs):
+    def get_all(self, externalId=None, fields=None, query=None, size=None, page=None, **kwargs):
         """
         Get method on /customers for all the customers of the associated Node from the API.
 
+        :param size:
         :param external_id:
         :param fields:
         :param query: A JSON format query for filter the custumers data
-        :param pagination:
         :return: A dictionary representing the JSON response from the API called if there were no errors,
                 else raise an HTTPException
         """
+        params = {'nodeId': self.node.node_id}
+        if query:
+            params['query'] = json.dumps(query)
+        if externalId:
+            params['externalId'] = str(externalId)
+        if size:
+            params['size'] = size
+        if page:
+            params['page'] = page
 
-        params = {'nodeId': self.node.node_id, 'query': query if query else ''}
         resp = requests.get(self.request_url, params=params, headers=self.headers)
         response_text = json.loads(resp.text)
         if 200 <= resp.status_code < 300:
             return response_text
         raise HTTPError("Code: %s, message: %s" %(resp.status_code, response_text))
+
+    def get(self, _id):
+        url = self.request_url + '/' + _id
+        resp = requests.get(url, headers=self.headers)
+        response_text = json.loads(resp.text)
+        if 200 <= resp.status_code < 300:
+            return response_text
+        raise HTTPError("Code: %s, message: %s" % (resp.status_code, response_text))
 
     def post(self, body):
         """

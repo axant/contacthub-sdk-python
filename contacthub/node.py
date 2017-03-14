@@ -2,7 +2,7 @@
 from contacthub.DeclarativeAPIManager.declarative_api_customer import CustomerDeclarativeApiManager
 from contacthub.DeclarativeAPIManager.declarative_api_event import EventDeclarativeApiManager
 from contacthub.models.customer import Customer
-from contacthub.models.query.query_builder import QueryBuilder
+from contacthub.models.query.query import Query
 
 
 class Node(object):
@@ -17,14 +17,15 @@ class Node(object):
         self.workspace = workspace
         self.node_id = str(node_id)
 
-    @property
-    def customers(self):
+    def get_all_customers(self, externalId=None, page=None, size=None):
         """
         Get all the customers in this node
         :return: A list containing Customer object of a node
         """
-        return CustomerDeclarativeApiManager(self).get_all()
+        return CustomerDeclarativeApiManager(self).get_all(externalId=externalId, page=page, size=size)
 
+    def get_customer(self, id=None, externalId=None):
+        return CustomerDeclarativeApiManager(self).get(id=id, externalId=externalId)
 
     def query(self, entity):
         """
@@ -32,7 +33,7 @@ class Node(object):
         :param entity: A class of model on which to run the query
         :return: A QueryBuilder object for the specified entity
         """
-        return QueryBuilder(self, entity)
+        return Query(node=self, entity=entity)
 
     def post(self, entity):
         """

@@ -27,7 +27,7 @@ class TestCustomerAPIManager(TestSuite):
 
     @mock.patch('requests.get', return_value=FakeHTTPResponse(status_code=200))
     def test_get_all_custumers(self, mock_get):
-        params_expected = {'nodeId': '123', 'query': ''}
+        params_expected = {'nodeId': '123'}
         resp = self.customer_manager.get_all()
         mock_get.assert_called_with(self.base_url, params=params_expected, headers=self.headers_expected)
         assert type(resp) is dict, type(resp)
@@ -35,7 +35,7 @@ class TestCustomerAPIManager(TestSuite):
 
     @mock.patch('requests.get', return_value=FakeHTTPResponse(status_code=401))
     def test_get_customer_unathorized(self, mock_get):
-        params_expected = {'nodeId': '123', 'query': ''}
+        params_expected = {'nodeId': '123'}
         try:
             self.customer_manager.get_all()
         except HTTPError as e:
@@ -76,7 +76,7 @@ class TestCustomerDeclarativeApiManager(TestSuite):
 
     @mock.patch('requests.get', return_value=FakeHTTPResponse(status_code=200))
     def test_get_all_custumers(self, mock_get):
-        params_expected = {'nodeId': '123', 'query': ''}
+        params_expected = {'nodeId': '123'}
         customers = self.customer_manager.get_all()
         mock_get.assert_called_with(self.base_url, params=params_expected, headers=self.headers_expected)
         assert type(customers) is list, type(customers)

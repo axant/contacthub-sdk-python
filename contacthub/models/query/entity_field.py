@@ -85,14 +85,14 @@ class EntityField(object):
     #         raise Exception("The comparision value should be a list.")
     #     return Criterion(self, Criterion.SIMPLE_OPERATORS.NOT_IN, _list)
 
-    def _is_null(self):
+    def is_null(self):
         """
         Handle the IS_NULL query operation in ContactHub
         :return: a new Criterion object representing the criteria for querying data
         """
         return Criterion(self, Criterion.SIMPLE_OPERATORS.IS_NULL)
 
-    def _is_not_null(self):
+    def is_not_null(self):
         """
         Handle the IS_NOT_NULL query operation in ContactHub
         :return:  a new Criterion object representing the criteria for querying data

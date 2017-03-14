@@ -22,19 +22,19 @@ class TestNode(TestSuite):
         pass
 
     @mock.patch('requests.get', return_value=FakeHTTPResponse())
-    def test_customers(self, mock_get):
-        customers = self.node.customers
+    def test_get_all_customers(self, mock_get):
+        customers = self.node.get_all_customers()
         headers_expected = {'Authorization': 'Bearer 456', 'Content-Type': 'application/json'}
         base_url = 'https://api.contactlab.it/hub/v1/workspaces/123/customers'
-        params_expected = {'query': '', 'nodeId': '123'}
+        params_expected = {'nodeId': '123'}
         mock_get.assert_called_with(base_url, params=params_expected, headers=headers_expected)
         assert type(customers) is list, type(customers)
         assert customers[0].enabled, customers[0]
 
-    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all')
+    @mock.patch('requests.get')
     def test_query(self, mock_get):
-        mock_get.return_value = json.loads(FakeHTTPResponse(resp_path='tests/util/fake_query_response').text)
-        query_expected = {'query':
+        mock_get.return_value = FakeHTTPResponse(resp_path='tests/util/fake_query_response')
+        query_expected = {'name':'query', 'query':
                                {'type': 'simple', 'name': 'query', 'are':
                                    {'condition':
                                         {'type': 'composite', 'conjunction': 'and', 'conditions': [
@@ -46,8 +46,14 @@ class TestNode(TestSuite):
                                     }
                                 }
                            }
+
         customers_query = self.node.query(Customer).filter((Customer.base.contacts.email == 'marco.bosio@axant.it') & (Customer.extra == 'Ciao')).all()
-        mock_get.assert_called_with(query=query_expected)
+        params_expected = {'query': json.dumps(query_expected), 'nodeId': '123'}
+        base_url = 'https://api.contactlab.it/hub/v1/workspaces/123/customers'
+        headers_expected = {'Authorization': 'Bearer 456', 'Content-Type': 'application/json'}
+
+        mock_get.assert_called_with(base_url, params=params_expected, headers=headers_expected)
+
         assert customers_query[0].base.contacts.email == 'marco.bosio@axant.it', customers_query[0].base.contacts.email
         assert customers_query[0].extra == 'Ciao', customers_query[0].extra
 

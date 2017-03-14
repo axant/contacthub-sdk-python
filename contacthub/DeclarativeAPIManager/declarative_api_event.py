@@ -13,10 +13,11 @@ class EventDeclarativeApiManager(BaseDeclarativeApiManager):
     def __init__(self, node):
         super(EventDeclarativeApiManager, self).__init__(node=node, api_manager=EventAPIManager, entity=Event)
 
-    def get_all(self, customer_id):
+    def get_all(self, customer_id, read_only=False):
         """
         Get all events
+        :param read_only:
         :param customer_id: the id of the customer owner of the event
         :return: a list of Event object
         """
-        return super(EventDeclarativeApiManager, self).get_all(customer_id=customer_id)
+        return super(EventDeclarativeApiManager, self).get_all(customer_id=customer_id, read_only=read_only)

@@ -21,7 +21,7 @@ class TestCustomer(unittest.TestCase):
     def setUp(cls, mock_get):
         w = Workspace(workspace_id="123", token="456")
         cls.node = w.get_node("123")
-        cls.customers = cls.node.customers
+        cls.customers = cls.node.get_all_customers()
 
     @classmethod
     def tearDown(cls):
@@ -261,7 +261,7 @@ class TestCustomer(unittest.TestCase):
 
     @mock.patch('requests.get', return_value=FakeHTTPResponse(resp_path='tests/util/fake_event_response'))
     def test_all_events(self, mock_get_event):
-        events = self.customers[0].all_events()
+        events = self.customers[0].events
         params_expected = {'customerId': self.customers[0].id}
         headers_expected = {'Authorization': 'Bearer 456', 'Content-Type': 'application/json'}
         base_url = 'https://api.contactlab.it/hub/v1/workspaces/123/events'
@@ -271,7 +271,7 @@ class TestCustomer(unittest.TestCase):
 
     def test_all_events_new_customer(self):
         try:
-            Customer().all_events()
+            Customer().events
         except Exception as e:
             assert 'events' in str(e), str(e)
 

@@ -11,6 +11,7 @@ class Customer(with_metaclass(EntityMeta, object)):
     """
     __slots__ = ('json_properties', 'node')
     SUBPROPERTIES = ['base', 'tags']
+    #DATE_PROPERTIES = {'registeredAt': '2017-03-14T15:36:16.245+0000', 'updatedAt'}
 
     def __init__(self, json_properties=None, node=None, **kwargs):
         """
@@ -51,12 +52,13 @@ class Customer(with_metaclass(EntityMeta, object)):
 
     __metaclass__ = EntityMeta
 
-    def all_events(self):
+    @property
+    def events(self):
         """
         Get all the events in this node for a single customer specified
         :param id: the id of the customer for fetching the events associated
         :return: A list containing Events object of a node
         """
         if self.node and 'id' in self.json_properties:
-            return EventDeclarativeApiManager(self.node).get_all(customer_id=self.json_properties['id'])
+            return EventDeclarativeApiManager(self.node).get_all(customer_id=self.json_properties['id'], read_only=True)
         raise Exception('Cannot retrieve events from a new customer.')
