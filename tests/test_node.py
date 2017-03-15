@@ -4,6 +4,7 @@ from unittest import TestSuite
 import mock
 
 from contacthub.models import Contacts
+from contacthub.models import Entity
 from contacthub.models.customer import Customer
 from contacthub.workspace import Workspace
 from tests.utility import FakeHTTPResponse
@@ -61,8 +62,12 @@ class TestNode(TestSuite):
     def test_post_customer_first_method(self, mock_post):
         expected_body = {'base': {'contacts': {'email': 'email@email.email'}}, 'extra': 'extra'}
         mock_post.return_value = json.loads(FakeHTTPResponse(resp_path='tests/util/fake_post_response').text)
-        c = Customer()
-        c.base.contacts.email = 'email@email.email'
+        c = Customer(
+            base=Entity(
+                contacts=Entity(email='email@email.email')
+            )
+        )
+
         c.extra = 'extra'
         posted = self.node.post(c)
         mock_post.assert_called_with(body=expected_body)
@@ -74,7 +79,7 @@ class TestNode(TestSuite):
     def test_post_customer_second_method(self, mock_post):
         expected_body = {'base': {'contacts': {'email': 'email@email.email'}}, 'extra': 'extra'}
         mock_post.return_value = json.loads(FakeHTTPResponse(resp_path='tests/util/fake_post_response').text)
-        c = Customer()
+        c = Customer(base=Entity())
         c.base.contacts = Contacts(email='email@email.email')
         c.extra = 'extra'
         posted = self.node.post(c)
@@ -87,7 +92,7 @@ class TestNode(TestSuite):
     def test_post_customer_third_method(self, mock_post):
         expected_body = {'base': {'contacts': {'email': 'email@email.email'}}, 'extra': 'extra'}
         mock_post.return_value = json.loads(FakeHTTPResponse(resp_path='tests/util/fake_post_response').text)
-        c = Customer()
+        c = Customer(base=Entity())
         c.base.contacts = {'email': 'email@email.email'}
         c.extra = 'extra'
         posted = self.node.post(c)

@@ -31,8 +31,7 @@ class Criterion(object):
         NOT_IN = 'NOT_IN'
         IS_NULL = 'IS_NULL'
         IS_NOT_NULL = 'IS_NOT_NULL'
-
-        BETWEEN = 'BEETWEEN'
+        BETWEEN = 'BETWEEN'
 
         OPERATORS = [EQUALS, NOT_EQUALS, GT, GTE, LT, LTE, IN, NOT_IN, IS_NULL, IS_NOT_NULL, BETWEEN]
 

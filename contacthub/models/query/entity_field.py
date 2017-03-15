@@ -32,6 +32,8 @@ class EntityField(object):
         :param other: a value for fetching data
         :return: a new Criterion object representing the criteria for querying data
         """
+        if other is None:
+            return Criterion(self, Criterion.SIMPLE_OPERATORS.IS_NULL)
         return Criterion(self, Criterion.SIMPLE_OPERATORS.EQUALS, other)
 
     def __ne__(self, other):
@@ -40,6 +42,8 @@ class EntityField(object):
         :param other: a value for fetching data
         :return:  a new Criterion object representing the criteria for querying data
         """
+        if other is None:
+            return Criterion(self, Criterion.SIMPLE_OPERATORS.IS_NOT_NULL)
         return Criterion(self, Criterion.SIMPLE_OPERATORS.NOT_EQUALS, other)
 
     def __lt__(self, other):
@@ -73,28 +77,3 @@ class EntityField(object):
         :return:  a new Criterion object representing the criteria for querying data
         """
         return Criterion(self, Criterion.SIMPLE_OPERATORS.GTE, other)
-
-    # def _in(self, _list):
-    #     if type(_list) is not list:
-    #         raise Exception("The comparision value should be a list.")
-    #
-    #     return Criterion(self, Criterion.SIMPLE_OPERATORS.IN, _list)
-    #
-    # def _not_in(self, _list):
-    #     if type(_list) is not list:
-    #         raise Exception("The comparision value should be a list.")
-    #     return Criterion(self, Criterion.SIMPLE_OPERATORS.NOT_IN, _list)
-
-    def is_null(self):
-        """
-        Handle the IS_NULL query operation in ContactHub
-        :return: a new Criterion object representing the criteria for querying data
-        """
-        return Criterion(self, Criterion.SIMPLE_OPERATORS.IS_NULL)
-
-    def is_not_null(self):
-        """
-        Handle the IS_NOT_NULL query operation in ContactHub
-        :return:  a new Criterion object representing the criteria for querying data
-        """
-        return Criterion(self, Criterion.SIMPLE_OPERATORS.IS_NOT_NULL)

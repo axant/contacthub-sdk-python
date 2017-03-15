@@ -10,6 +10,7 @@ from contacthub.models.entity import Entity
 from contacthub.models.event import Event
 from contacthub.models.job import Job
 from contacthub.models.like import Like
+from contacthub.models.tags import Tags
 from contacthub.workspace import Workspace
 from tests.utility import FakeHTTPResponse
 
@@ -33,7 +34,7 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_tags(self):
         tags = self.customers[0].tags
-        assert type(tags) is Entity, type(tags)
+        assert type(tags) is Tags, type(tags)
         assert type(tags.auto) is list, type(tags.auto)
         assert type(tags.manual) is list, type(tags.manual)
         assert tags.auto[0] == 'auto', tags.auto[0]
@@ -41,7 +42,7 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_tags_empty(self):
         tags = self.customers[1].tags
-        assert type(tags) is Entity, type(tags)
+        assert type(tags) is Tags, type(tags)
         assert type(tags.auto) is list, type(tags.auto)
         assert type(tags.manual) is list, type(tags.manual)
         assert len(tags.auto) == 0, len(tags.auto)

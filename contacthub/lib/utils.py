@@ -1,3 +1,7 @@
+import json
+
+import datetime
+
 
 def list_item(_class, JSON_list):
     """
@@ -10,3 +14,10 @@ def list_item(_class, JSON_list):
     for elements in JSON_list:
         obj_list_ret.append(_class(elements))
     return obj_list_ret
+
+
+class DateEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return obj.isoformat()
+        return json.JSONEncoder.default(self, obj)

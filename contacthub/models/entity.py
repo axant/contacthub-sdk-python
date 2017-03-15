@@ -10,9 +10,8 @@ class Entity(object):
     """
     Generic property for all entities
     """
-    SUBPROPERTIES_OBJ = ['contacts', 'address',  'credential', 'socialProfile', 'geo']
+
     SUBPROPERTIES_LIST = {'educations': Education, 'likes': Like, 'jobs': Job}
-    SUBPROPERTIES_LIST_PROP = ['subscriptions', 'preferences', 'otherContacts', 'mobileDevices']
     DATE_PROPERTIES = {'dob': "%Y-%m-%d",'startDate': "%Y-%m-%d", 'endDate': "%Y-%m-%d", 'registeredAt': "%Y-%m-%d",
                        'updatedAt': "%Y-%m-%d", 'createdTime': "%Y-%m-%d %H:%M"}
 
@@ -25,8 +24,10 @@ class Entity(object):
         if json_properties is None:
             json_properties = dict()
             for k in kwargs:
-                json_properties[k]=kwargs[k]
-
+                if isinstance(kwargs[k], Entity):
+                    json_properties[k] = kwargs[k].json_properties
+                else:
+                    json_properties[k] = kwargs[k]
         self.json_properties = json_properties
 
     def __getattr__(self, item):
@@ -36,25 +37,15 @@ class Entity(object):
         :param item: the key of the base property dict
         :return: an element of the dictionary, or an object if the element associated at the key containse an object or a list
         """
-
-        if item in self.SUBPROPERTIES_OBJ:
-            try:
-                if self.json_properties[item] is None:
-                    return None
-                return Entity(self.json_properties[item])
-            except KeyError as e:
-                self.json_properties[item] = {}
-                return Entity(self.json_properties[item])
-
-        if item in self.SUBPROPERTIES_LIST:
-            return list_item(self.SUBPROPERTIES_LIST[item], self.json_properties[item])
-
-        if item in self.SUBPROPERTIES_LIST_PROP:
-            return list_item(self.__class__, self.json_properties[item])
-
-        if item in self.DATE_PROPERTIES:
-            return datetime.strptime(self.json_properties[item], self.DATE_PROPERTIES[item])
         try:
+            if item in self.DATE_PROPERTIES:
+                return datetime.strptime(self.json_properties[item],self.DATE_PROPERTIES[item])
+            if item in self.SUBPROPERTIES_LIST:
+                return list_item(self.SUBPROPERTIES_LIST[item],self.json_properties[item])
+            if isinstance(self.json_properties[item], dict):
+                return Entity(self.json_properties[item])
+            elif isinstance(self.json_properties[item], list):
+                return list_item(Entity, self.json_properties[item])
             return self.json_properties[item]
         except KeyError as e:
             raise AttributeError("%s object has no attribute %s" %(type(self).__name__, e))

@@ -5,7 +5,7 @@ from requests import HTTPError
 
 from contacthub.APIManager.api_base import BaseAPIManager
 from contacthub.models.query.entity_meta import EntityMeta
-
+from contacthub.lib.utils import DateEncoder
 
 class CustomerAPIManager(BaseAPIManager):
     """
@@ -32,7 +32,7 @@ class CustomerAPIManager(BaseAPIManager):
         """
         params = {'nodeId': self.node.node_id}
         if query:
-            params['query'] = json.dumps(query)
+            params['query'] = json.dumps(query, cls=DateEncoder)
         if externalId:
             params['externalId'] = str(externalId)
         if size:

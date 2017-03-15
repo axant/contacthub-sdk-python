@@ -3,6 +3,7 @@ from six import with_metaclass
 from contacthub.DeclarativeAPIManager.declarative_api_event import EventDeclarativeApiManager
 from contacthub.models.entity import Entity
 from contacthub.models.query.entity_meta import EntityMeta
+from contacthub.models.tags import Tags
 
 
 class Customer(with_metaclass(EntityMeta, object)):
@@ -10,7 +11,6 @@ class Customer(with_metaclass(EntityMeta, object)):
     Customer model
     """
     __slots__ = ('json_properties', 'node')
-    SUBPROPERTIES = ['base', 'tags']
     #DATE_PROPERTIES = {'registeredAt': '2017-03-14T15:36:16.245+0000', 'updatedAt'}
 
     def __init__(self, json_properties=None, node=None, **kwargs):
@@ -19,6 +19,12 @@ class Customer(with_metaclass(EntityMeta, object)):
         """
         if json_properties is None:
             json_properties = dict()
+            for k in kwargs:
+                if isinstance(kwargs[k], Entity):
+                    json_properties[k] = kwargs[k].json_properties
+                else:
+                    json_properties[k] = kwargs[k]
+
         self.json_properties = json_properties
         self.node = node
 
@@ -29,17 +35,16 @@ class Customer(with_metaclass(EntityMeta, object)):
         :param item: the key of the base property dict
         :return: an element of the dictionary, or an object if the element associated at the key containse an object or a list
         """
-        if item in self.SUBPROPERTIES:
-            try:
-                return Entity(json_properties=self.json_properties[item])
-            except KeyError as e:
-                self.json_properties[item] = {}
-                return Entity(json_properties=self.json_properties[item])
-        else:
-            try:
+        try:
+            if isinstance(self.json_properties[item], dict):
+                if item == 'tags':
+                    return Tags(json_properties=self.json_properties[item])
+                else:
+                    return Entity(json_properties=self.json_properties[item])
+            else:
                 return self.json_properties[item]
-            except KeyError as e:
-                raise AttributeError("%s object has no attribute %s" % (type(self).__name__, e))
+        except KeyError as e:
+            raise AttributeError("%s object has no attribute %s" % (type(self).__name__, e))
 
     def __setattr__(self, attr, val):
         if attr in self.__slots__:

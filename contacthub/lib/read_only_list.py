@@ -9,9 +9,6 @@ class ReadOnlyList(list):
     def __iter__(self):
         return iter(self._list)
 
-    def __slice__(self, *args, **kw):
-        return self._list.__slice__(*args, **kw)
-
     def __repr__(self):
         return repr(self._list)
 

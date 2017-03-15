@@ -2,13 +2,16 @@ import json
 import unittest
 
 import mock
+from datetime import datetime
 
 from contacthub.models.customer import Customer
+from contacthub.models.query import between_
 from contacthub.models.query.criterion import Criterion
 from contacthub.models.query.entity_field import EntityField
 from contacthub.models.query.entity_meta import EntityMeta
 from contacthub.models.query.query import Query
 from contacthub.workspace import Workspace
+from tests.utility import FakeHTTPResponse
 
 
 class TestQuery(unittest.TestCase):
@@ -18,6 +21,8 @@ class TestQuery(unittest.TestCase):
         cls.entity_field = (Customer.attr)
         w = Workspace(workspace_id=123, token=456)
         cls.node = w.get_node(123)
+        cls.headers_expected = {'Authorization': 'Bearer 456', 'Content-Type': 'application/json'}
+        cls.base_url = 'https://api.contactlab.it/hub/v1/workspaces/123/customers'
 
     @classmethod
     def tearDown(cls):
@@ -83,15 +88,14 @@ class TestQuery(unittest.TestCase):
 
     def test_entity_field_null(self):
         cEqual = Criterion(self.entity_field, Criterion.SIMPLE_OPERATORS.IS_NULL)
-        c = (Customer.attr.is_null())
-
+        c = (Customer.attr == None)
         assert c.first_element == cEqual.first_element, c.first_element
         assert c.second_element is None, c.second_element
         assert c.operator == cEqual.operator, c.operator
 
     def test_entity_field_not_null(self):
         cEqual = Criterion(self.entity_field, Criterion.SIMPLE_OPERATORS.IS_NOT_NULL)
-        c = (Customer.attr.is_not_null())
+        c = (Customer.attr != None)
 
         assert c.first_element == cEqual.first_element, c.first_element
         assert c.second_element is None, c.second_element
@@ -123,4 +127,32 @@ class TestQuery(unittest.TestCase):
         assert isinstance(c3.second_element, Criterion), type(c3.second_element)
         assert c3.second_element.operator == c2.operator, c3.first_element.operator
         assert c3.operator == Criterion.COMPLEX_OPERATORS.OR
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse())
+    def test_between(self, mock_get):
+        self.node.query(Customer).filter(between_(Customer.base.dob, datetime(2011,12,11), datetime(2015,12,11))).all()
+        params = {'nodeId':self.node.node_id}
+
+        params['query'] = json.dumps({'name': 'query', 'query':
+                              {'type': 'simple', 'name': 'query', 'are':
+                                  {'condition':
+                                       { 'type': 'atomic', 'attribute': 'base.dob', 'operator': 'BETWEEN', 'value': ['2011-12-11T00:00:00', '2015-12-11T00:00:00']}}},
+                                      })
+        mock_get.assert_called_with(self.base_url,headers=self.headers_expected, params=params)
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse())
+    def test_between_str(self, mock_get):
+        self.node.query(Customer).filter(
+            between_(Customer.base.dob, '2011-12-11', '2015-12-11')).all()
+        params = {'nodeId': self.node.node_id}
+
+        params['query'] = json.dumps({'name': 'query','query':
+                                          {'type': 'simple', 'name': 'query', 'are':
+                                              {'condition':
+                                                   {'type': 'atomic','attribute': 'base.dob','operator': 'BETWEEN',
+                                                    'value': ['2011-12-11', '2015-12-11']}}}
+                                      })
+
+        mock_get.assert_called_with(self.base_url, headers=self.headers_expected, params=params)
+
 
