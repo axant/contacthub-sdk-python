@@ -37,18 +37,18 @@ class TestNode(TestSuite):
         query_expected = {'name':'query', 'query':
                                {'type': 'simple', 'name': 'query', 'are':
                                    {'condition':
-                                        {'type': 'composite', 'conjunction': 'and', 'conditions': [
+                                        {'type': 'composite', 'conditions': [
                                             {'type': 'atomic', 'attribute': 'base.contacts.email', 'operator': 'EQUALS',
                                              'value': 'marco.bosio@axant.it'},
                                             {'type': 'atomic', 'attribute': 'extra', 'operator': 'EQUALS',
                                              'value': 'Ciao'}
-                                        ]}
+                                        ], 'conjunction': 'and'}
                                     }
                                 }
                            }
 
         customers_query = self.node.query(Customer).filter((Customer.base.contacts.email == 'marco.bosio@axant.it') & (Customer.extra == 'Ciao')).all()
-        params_expected = {'query': json.dumps(query_expected), 'nodeId': '123'}
+        params_expected = {'nodeId': '123','query': json.dumps(query_expected) }
         base_url = 'https://api.contactlab.it/hub/v1/workspaces/123/customers'
         headers_expected = {'Authorization': 'Bearer 456', 'Content-Type': 'application/json'}
 
