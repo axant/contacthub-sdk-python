@@ -45,6 +45,8 @@ class BaseDeclarativeApiManager(object):
             customers = self.get_all(externalId=externalId)
             if len(customers) == 1:
                 return customers[0]
+            else:
+                return customers
 
         else:
             return self.entity(self.api_manager(node=self.node).get(_id=id))

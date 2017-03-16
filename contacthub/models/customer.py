@@ -11,7 +11,6 @@ class Customer(with_metaclass(EntityMeta, object)):
     Customer model
     """
     __slots__ = ('json_properties', 'node')
-    #DATE_PROPERTIES = {'registeredAt': '2017-03-14T15:36:16.245+0000', 'updatedAt'}
 
     def __init__(self, json_properties=None, node=None, **kwargs):
         """

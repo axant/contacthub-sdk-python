@@ -12,8 +12,6 @@ class Entity(object):
     """
 
     SUBPROPERTIES_LIST = {'educations': Education, 'likes': Like, 'jobs': Job}
-    DATE_PROPERTIES = {'dob': "%Y-%m-%d",'startDate': "%Y-%m-%d", 'endDate': "%Y-%m-%d", 'registeredAt': "%Y-%m-%d",
-                       'updatedAt': "%Y-%m-%d", 'createdTime': "%Y-%m-%d %H:%M"}
 
     __slots__ = ('json_properties', )
 
@@ -38,8 +36,6 @@ class Entity(object):
         :return: an element of the dictionary, or an object if the element associated at the key containse an object or a list
         """
         try:
-            if item in self.DATE_PROPERTIES:
-                return datetime.strptime(self.json_properties[item],self.DATE_PROPERTIES[item])
             if item in self.SUBPROPERTIES_LIST:
                 return list_item(self.SUBPROPERTIES_LIST[item],self.json_properties[item])
             if isinstance(self.json_properties[item], dict):

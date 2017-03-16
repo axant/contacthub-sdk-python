@@ -40,6 +40,13 @@ class TestCustomer(unittest.TestCase):
         assert tags.auto[0] == 'auto', tags.auto[0]
         assert tags.manual[0] == 'manual', tags.manual[0]
 
+
+    def test_customer_tags_wrog_attr(self):
+        try:
+            self.customers[0].tags.attr
+        except AttributeError as e:
+            assert 'attr' in str(e), str(e)
+
     def test_customer_tags_empty(self):
         tags = self.customers[1].tags
         assert type(tags) is Tags, type(tags)
@@ -132,11 +139,11 @@ class TestCustomer(unittest.TestCase):
         assert subscription.name == "name", subscription.name
         assert subscription.type == "type", subscription.type
         assert subscription.subscribed, subscription.subscribed
-        assert type(subscription.startDate) is datetime, type(subscription.startDate)
-        assert type(subscription.endDate) is datetime, type(subscription.endDate)
+        #assert type(subscription.startDate) is datetime, type(subscription.startDate)
+        #assert type(subscription.endDate) is datetime, type(subscription.endDate)
         assert subscription.subscriberId == "subscriberId", subscription.id
-        assert type(subscription.registeredAt) is datetime, type(subscription.registeredAt)
-        assert type(subscription.updatedAt) is datetime, type(subscription.updatedAt)
+        #assert type(subscription.registeredAt) is datetime, type(subscription.registeredAt)
+        #assert type(subscription.updatedAt) is datetime, type(subscription.updatedAt)
         assert type(subscription.preferences) is list, type(subscription.preferences)
 
     def test_customer_subscriptions_preferences(self):
@@ -226,9 +233,6 @@ class TestCustomer(unittest.TestCase):
             attr = self.customers[0].base.contacts.attr
         self.assertTrue('attr' in str(context.exception))
 
-    def test_customer_dob(self):
-        dob = self.customers[0].base.dob
-        assert type(dob) is datetime, type(dob)
 
     def test_customer_base_unexistent_attr(self):
         with self.assertRaises(AttributeError) as context:
@@ -282,3 +286,8 @@ class TestCustomer(unittest.TestCase):
 
         assert isinstance(c.base, Entity), type(c.base)
         assert c.base.json_properties == {'attr':'attr'}
+
+    def test_customer_create_extra(self):
+        c = Customer(extra='extra')
+        assert c.json_properties['extra'] == 'extra', c.json_properties['extra']
+        assert c.extra == 'extra', c.extra

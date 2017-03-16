@@ -5,7 +5,7 @@ import mock
 from datetime import datetime
 
 from contacthub.models.customer import Customer
-from contacthub.models.query import between_
+from contacthub.models.query import between_, in_, not_in_
 from contacthub.models.query.criterion import Criterion
 from contacthub.models.query.entity_field import EntityField
 from contacthub.models.query.entity_meta import EntityMeta
@@ -15,7 +15,6 @@ from tests.utility import FakeHTTPResponse
 
 
 class TestQuery(unittest.TestCase):
-
     @classmethod
     def setUp(cls):
         cls.entity_field = (Customer.attr)
@@ -130,15 +129,17 @@ class TestQuery(unittest.TestCase):
 
     @mock.patch('requests.get', return_value=FakeHTTPResponse())
     def test_between(self, mock_get):
-        self.node.query(Customer).filter(between_(Customer.base.dob, datetime(2011,12,11), datetime(2015,12,11))).all()
-        params = {'nodeId':self.node.node_id}
+        self.node.query(Customer).filter(
+            between_(Customer.base.dob, datetime(2011, 12, 11), datetime(2015, 12, 11))).all()
+        params = {'nodeId': self.node.node_id}
 
         params['query'] = json.dumps({'name': 'query', 'query':
-                              {'type': 'simple', 'name': 'query', 'are':
-                                  {'condition':
-                                       { 'type': 'atomic', 'attribute': 'base.dob', 'operator': 'BETWEEN', 'value': ['2011-12-11T00:00:00', '2015-12-11T00:00:00']}}},
+            {'type': 'simple', 'name': 'query', 'are':
+                {'condition':
+                     {'type': 'atomic', 'attribute': 'base.dob', 'operator': 'BETWEEN',
+                      'value': ['2011-12-11T00:00:00', '2015-12-11T00:00:00']}}},
                                       })
-        mock_get.assert_called_with(self.base_url,headers=self.headers_expected, params=params)
+        mock_get.assert_called_with(self.base_url, headers=self.headers_expected, params=params)
 
     @mock.patch('requests.get', return_value=FakeHTTPResponse())
     def test_between_str(self, mock_get):
@@ -146,13 +147,540 @@ class TestQuery(unittest.TestCase):
             between_(Customer.base.dob, '2011-12-11', '2015-12-11')).all()
         params = {'nodeId': self.node.node_id}
 
-        params['query'] = json.dumps({'name': 'query','query':
-                                          {'type': 'simple', 'name': 'query', 'are':
-                                              {'condition':
-                                                   {'type': 'atomic','attribute': 'base.dob','operator': 'BETWEEN',
-                                                    'value': ['2011-12-11', '2015-12-11']}}}
+        params['query'] = json.dumps({'name': 'query', 'query':
+            {'type': 'simple', 'name': 'query', 'are':
+                {'condition':
+                     {'type': 'atomic', 'attribute': 'base.dob', 'operator': 'BETWEEN',
+                      'value': ['2011-12-11', '2015-12-11']}}}
                                       })
 
         mock_get.assert_called_with(self.base_url, headers=self.headers_expected, params=params)
 
+    @mock.patch('requests.get', return_value=FakeHTTPResponse())
+    def test_equals(self, mock_get):
+        self.node.query(Customer).filter(Customer.base.firstName == 'firstName').all()
+        params = {'nodeId': self.node.node_id}
+
+        params['query'] = json.dumps({'name': 'query', 'query':
+            {'type': 'simple', 'name': 'query', 'are':
+                {'condition':
+                     {'type': 'atomic', 'attribute': 'base.firstName', 'operator': 'EQUALS', 'value': 'firstName'}}}})
+        mock_get.assert_called_with(self.base_url, headers=self.headers_expected, params=params)
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse())
+    def test_not_equals(self, mock_get):
+        self.node.query(Customer).filter(Customer.base.firstName != 'firstName').all()
+        params = {'nodeId': self.node.node_id}
+
+        params['query'] = json.dumps({'name': 'query', 'query':
+            {'type': 'simple', 'name': 'query', 'are':
+                {'condition':
+                     {'type': 'atomic', 'attribute': 'base.firstName', 'operator': 'NOT_EQUALS',
+                      'value': 'firstName'}}}})
+        mock_get.assert_called_with(self.base_url, headers=self.headers_expected, params=params)
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse())
+    def test_gt(self, mock_get):
+        self.node.query(Customer).filter(Customer.base.firstName > 'firstName').all()
+        params = {'nodeId': self.node.node_id}
+
+        params['query'] = json.dumps({'name': 'query', 'query':
+            {'type': 'simple', 'name': 'query', 'are':
+                {'condition':
+                     {'type': 'atomic', 'attribute': 'base.firstName', 'operator': 'GT',
+                      'value': 'firstName'}}}})
+        mock_get.assert_called_with(self.base_url, headers=self.headers_expected, params=params)
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse())
+    def test_gte(self, mock_get):
+        self.node.query(Customer).filter(Customer.base.firstName >= 'firstName').all()
+        params = {'nodeId': self.node.node_id}
+
+        params['query'] = json.dumps({'name': 'query', 'query':
+            {'type': 'simple', 'name': 'query', 'are':
+                {'condition':
+                     {'type': 'atomic', 'attribute': 'base.firstName', 'operator': 'GTE',
+                      'value': 'firstName'}}}})
+        mock_get.assert_called_with(self.base_url, headers=self.headers_expected, params=params)
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse())
+    def test_lt(self, mock_get):
+        self.node.query(Customer).filter(Customer.base.firstName < 'firstName').all()
+        params = {'nodeId': self.node.node_id}
+
+        params['query'] = json.dumps({'name': 'query', 'query':
+            {'type': 'simple', 'name': 'query', 'are':
+                {'condition':
+                     {'type': 'atomic', 'attribute': 'base.firstName', 'operator': 'LT',
+                      'value': 'firstName'}}}})
+        mock_get.assert_called_with(self.base_url, headers=self.headers_expected, params=params)
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse())
+    def test_lte(self, mock_get):
+        self.node.query(Customer).filter(Customer.base.firstName <= 'firstName').all()
+        params = {'nodeId': self.node.node_id}
+
+        params['query'] = json.dumps({'name': 'query', 'query':
+            {'type': 'simple', 'name': 'query', 'are':
+                {'condition':
+                     {'type': 'atomic', 'attribute': 'base.firstName', 'operator': 'LTE',
+                      'value': 'firstName'}}}})
+        mock_get.assert_called_with(self.base_url, headers=self.headers_expected, params=params)
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse())
+    def test_in(self, mock_get):
+        self.node.query(Customer).filter(in_('prova', Customer.tags.auto)).all()
+        params = {'nodeId': self.node.node_id}
+
+        params['query'] = json.dumps({'name': 'query', 'query':
+            {'type': 'simple', 'name': 'query', 'are':
+                {'condition':
+                     {'type': 'atomic', 'attribute': 'tags.auto', 'operator': 'IN',
+                      'value': 'prova'}}}})
+        mock_get.assert_called_with(self.base_url, headers=self.headers_expected, params=params)
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse())
+    def test_not_in(self, mock_get):
+        self.node.query(Customer).filter(not_in_('prova', Customer.tags.auto)).all()
+        params = {'nodeId': self.node.node_id}
+
+        params['query'] = json.dumps({'name': 'query', 'query':
+            {'type': 'simple', 'name': 'query', 'are':
+                {'condition':
+                     {'type': 'atomic', 'attribute': 'tags.auto', 'operator': 'NOT_IN',
+                      'value': 'prova'}}}})
+        mock_get.assert_called_with(self.base_url, headers=self.headers_expected, params=params)
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse())
+    def test_is_null(self, mock_get):
+        self.node.query(Customer).filter(Customer.base.firstName == None).all()
+        params = {'nodeId': self.node.node_id, 'query': json.dumps({'name': 'query', 'query':
+            {'type': 'simple', 'name': 'query', 'are':
+                {'condition':
+                     {'type': 'atomic', 'attribute': 'base.firstName', 'operator': 'IS_NULL'}}}})}
+
+        mock_get.assert_called_with(self.base_url, headers=self.headers_expected, params=params)
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse())
+    def test_is_not_null(self, mock_get):
+        self.node.query(Customer).filter(Customer.base.firstName != None).all()
+        params = {'nodeId': self.node.node_id, 'query': json.dumps({'name': 'query', 'query':
+            {'type': 'simple', 'name': 'query', 'are':
+                {'condition':
+                     {'type': 'atomic', 'attribute': 'base.firstName', 'operator': 'IS_NOT_NULL'}}}})}
+
+        mock_get.assert_called_with(self.base_url, headers=self.headers_expected, params=params)
+
+    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all',
+                return_value=json.loads(FakeHTTPResponse().text))
+    def test_or(self, mock_get):
+        self.node.query(Customer).filter(
+            (Customer.base.firstName == 'firstName') | (Customer.base.firstName == 'firstName1')).all()
+        query= {'name': 'query', 'query':
+            {'type': 'simple', 'name': 'query', 'are':
+                {'condition':
+                     {'type': 'composite', 'conjunction': 'or', 'conditions': [
+                         {'type': 'atomic', 'attribute': 'base.firstName', 'operator': 'EQUALS', 'value': 'firstName'},
+                         {'type': 'atomic', 'attribute': 'base.firstName', 'operator': 'EQUALS', 'value': 'firstName1'}
+                     ]
+                      }
+                 }
+             }
+                                                                    }
+        mock_get.assert_called_with(externalId=None, page=None, query=query, size=None)
+
+    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all',
+                return_value=json.loads(FakeHTTPResponse().text))
+    def test_and(self, mock_get):
+        self.node.query(Customer).filter(
+            (Customer.base.firstName == 'firstName') & (Customer.base.lastName == 'lastName')).all()
+        query = {'name': 'query', 'query':
+            {'type': 'simple', 'name': 'query', 'are':
+                {'condition':
+                     {'type': 'composite', 'conjunction': 'and', 'conditions': [
+                         {'type': 'atomic', 'attribute': 'base.firstName', 'operator': 'EQUALS', 'value': 'firstName'},
+                         {'type': 'atomic', 'attribute': 'base.lastName', 'operator': 'EQUALS', 'value': 'lastName'}
+                     ]
+                      }
+                 }
+             }
+                                                                    }
+        mock_get.assert_called_with(externalId=None, page=None, query=query, size=None)
+
+    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all',
+                return_value=json.loads(FakeHTTPResponse().text))
+    def test_and_or(self, mock_get):
+        self.node.query(Customer).filter(
+            ((Customer.base.firstName == 'firstName') & (Customer.base.lastName == 'lastName') | (
+            Customer.extra == 'extra'))).all()
+        query= {'name': 'query', 'query':
+            {'type': 'simple', 'name': 'query', 'are':
+                {'condition':
+                     {'type': 'composite', 'conjunction': 'or', 'conditions': [
+                         {'type': 'composite', 'conjunction': 'and', 'conditions': [
+                             {'type': 'atomic', 'attribute': 'base.firstName', 'operator': 'EQUALS',
+                              'value': 'firstName'},
+                             {'type': 'atomic', 'attribute': 'base.lastName', 'operator': 'EQUALS',
+                              'value': 'lastName'}
+                         ]
+                          },
+                         {'type': 'atomic', 'attribute': 'extra', 'operator': 'EQUALS', 'value': 'extra'}
+                     ]
+                      }
+                 }
+             }
+                                                                    }
+
+
+        mock_get.assert_called_with(externalId=None, page=None, query=query, size=None)
+
+    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all',
+                return_value=json.loads(FakeHTTPResponse().text))
+    def test_or_and(self, mock_get):
+        self.node.query(Customer).filter(
+            (((Customer.base.firstName == 'firstName') | (Customer.base.lastName == 'lastName')) & (
+                Customer.extra == 'extra'))).all()
+        query={'name': 'query', 'query':
+            {'type': 'simple', 'name': 'query', 'are':
+                {'condition':
+                     {'type': 'composite', 'conjunction': 'and', 'conditions': [
+                         {'type': 'composite', 'conjunction': 'or', 'conditions': [
+                             {'type': 'atomic', 'attribute': 'base.firstName', 'operator': 'EQUALS',
+                              'value': 'firstName'},
+                             {'type': 'atomic', 'attribute': 'base.lastName', 'operator': 'EQUALS',
+                              'value': 'lastName'}
+                         ]
+                          },
+                         {'type': 'atomic', 'attribute': 'extra', 'operator': 'EQUALS', 'value': 'extra'}
+                     ]
+                      }
+                 }
+             }
+                                                                    }
+
+        mock_get.assert_called_with(externalId=None, page=None, query=query, size=None)
+
+    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all',
+                return_value=json.loads(FakeHTTPResponse().text))
+    def test_succesive_simple_filters(self, mock_get):
+        q1 = self.node.query(Customer).filter(Customer.base.firstName == 'firstName')
+        q2 = q1.filter(Customer.base.lastName == 'lastName')
+        q2.all()
+        query = {'name': 'query', 'query':
+            {'type': 'simple', 'name': 'query', 'are':
+                {'condition':
+                     {'type': 'composite', 'conjunction': 'and', 'conditions': [
+                         {'type': 'atomic', 'attribute': 'base.firstName', 'operator': 'EQUALS', 'value': 'firstName'},
+                         {'type': 'atomic', 'attribute': 'base.lastName', 'operator': 'EQUALS', 'value': 'lastName'}
+                     ]
+                      }
+                 }
+             }
+                                                                    }
+
+        mock_get.assert_called_with(externalId=None, page=None, query=query, size=None)
+
+    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all', return_value=json.loads(FakeHTTPResponse().text))
+    def test_succesive_complex_filters(self, mock_get):
+        q1 = self.node.query(Customer).filter((Customer.base.firstName == 'firstName') | (Customer.extra == 'extra'))
+        q2 = q1.filter(Customer.base.lastName == 'lastName')
+        q2.all()
+        query = {'name': 'query', 'query':
+            {'type': 'simple', 'name': 'query', 'are':
+                {'condition':
+                     {'conjunction': 'and',  'type': 'composite', 'conditions': [
+                         {'type': 'composite', 'conjunction': 'or', 'conditions': [
+
+                             {'operator': 'EQUALS', 'attribute': 'base.firstName', 'type': 'atomic',
+                              'value': 'firstName'},
+                             {'operator': 'EQUALS', 'attribute': 'extra', 'type': 'atomic',
+                              'value': 'extra'},
+                         ]
+                          },
+                         {'operator': 'EQUALS', 'attribute': 'base.lastName', 'type': 'atomic',
+                          'value': 'lastName'}
+                     ],
+
+                      }
+                 }
+             }
+                                                                    }
+        mock_get.assert_called_with(externalId=None, page=None, query=query, size=None)
+
+    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all',
+                return_value=json.loads(FakeHTTPResponse().text))
+    def test_succesive_complex_filters_or(self, mock_get):
+        q1 = self.node.query(Customer).filter((Customer.base.firstName == 'firstName') | (Customer.extra == 'extra'))
+        q2 = q1.filter((Customer.base.lastName == 'lastName') | (Customer.extra == 'extra'))
+        q2.all()
+        query = {'name': 'query', 'query':
+            {'type': 'simple', 'name': 'query', 'are':
+                {'condition':
+                     {'conjunction': 'and', 'type': 'composite', 'conditions': [
+                         {'type': 'composite', 'conjunction': 'or', 'conditions': [
+
+                             {'operator': 'EQUALS', 'attribute': 'base.firstName', 'type': 'atomic',
+                              'value': 'firstName'},
+                             {'operator': 'EQUALS', 'attribute': 'extra', 'type': 'atomic',
+                              'value': 'extra'},
+                         ]
+                          },
+                         {'type': 'composite', 'conjunction': 'or', 'conditions': [
+
+                             {'operator': 'EQUALS', 'attribute': 'base.lastName', 'type': 'atomic',
+                              'value': 'lastName'},
+                             {'operator': 'EQUALS', 'attribute': 'extra', 'type': 'atomic',
+                              'value': 'extra'},
+                         ]
+                          }
+                     ],
+
+                      }
+                 }
+             }
+                 }
+        mock_get.assert_called_with(externalId=None, page=None, query=query, size=None)
+
+    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all',
+                return_value=json.loads(FakeHTTPResponse().text))
+    def test_succesive_complex_filters_and(self, mock_get):
+        q1 = self.node.query(Customer).filter((Customer.base.firstName == 'firstName') & (Customer.extra == 'extra'))
+        q2 = q1.filter((Customer.base.lastName == 'lastName') | (Customer.extra == 'extra'))
+        q2.all()
+        query = {'name': 'query', 'query':
+            {'type': 'simple', 'name': 'query', 'are':
+                {'condition':
+                     {'conjunction': 'and', 'type': 'composite', 'conditions': [
+
+                             {'operator': 'EQUALS', 'attribute': 'base.firstName', 'type': 'atomic',
+                              'value': 'firstName'},
+                             {'operator': 'EQUALS', 'attribute': 'extra', 'type': 'atomic',
+                              'value': 'extra'}
+                          ,
+                         {'type': 'composite', 'conjunction': 'or', 'conditions': [
+
+                             {'operator': 'EQUALS', 'attribute': 'base.lastName', 'type': 'atomic',
+                              'value': 'lastName'},
+                             {'operator': 'EQUALS', 'attribute': 'extra', 'type': 'atomic',
+                              'value': 'extra'},
+                         ]
+                          }
+                     ],
+
+                      }
+                 }
+             }
+                 }
+        mock_get.assert_called_with(externalId=None, page=None, query=query, size=None)
+
+    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all',
+                return_value=json.loads(FakeHTTPResponse().text))
+    def test_and_query(self, mock_get):
+        q1 = self.node.query(Customer).filter((Customer.base.firstName == 'firstName') | (Customer.extra == 'extra'))
+        q2 = self.node.query(Customer).filter((Customer.base.lastName == 'lastName') | (Customer.extra == 'extra'))
+        q = q1 & q2
+        q.all()
+        query = {'name': 'query', 'query':
+            {'name': 'query', 'type': 'combined', 'conjunction': 'INTERSECT', 'queries':[
+                {'type': 'simple', 'name': 'query', 'are':
+                    {'condition':{'type': 'composite', 'conjunction': 'or', 'conditions': [
+
+                             {'operator': 'EQUALS', 'attribute': 'base.firstName', 'type': 'atomic',
+                              'value': 'firstName'},
+                             {'operator': 'EQUALS', 'attribute': 'extra', 'type': 'atomic',
+                              'value': 'extra'},
+                         ]
+                          }}
+                },
+                {'type': 'simple', 'name': 'query', 'are':
+                    {'condition': {'type': 'composite', 'conjunction': 'or', 'conditions': [
+
+                        {'operator': 'EQUALS', 'attribute': 'base.lastName', 'type': 'atomic',
+                         'value': 'lastName'},
+                        {'operator': 'EQUALS', 'attribute': 'extra', 'type': 'atomic',
+                         'value': 'extra'},
+                    ]
+                                   }}
+                 }
+
+
+            ]
+             }
+                 }
+
+        mock_get.assert_called_with(externalId=None, page=None, query=query, size=None)
+
+    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all',
+                return_value=json.loads(FakeHTTPResponse().text))
+    def test_or_query(self, mock_get):
+        q1 = self.node.query(Customer).filter((Customer.base.firstName == 'firstName') | (Customer.extra == 'extra'))
+        q2 = self.node.query(Customer).filter((Customer.base.lastName == 'lastName') | (Customer.extra == 'extra'))
+        q = q1 | q2
+        q.all()
+        query = {'name': 'query', 'query':
+            {'name': 'query', 'type': 'combined', 'conjunction': 'UNION', 'queries': [
+                {'type': 'simple', 'name': 'query', 'are':
+                    {'condition': {'type': 'composite', 'conjunction': 'or', 'conditions': [
+
+                        {'operator': 'EQUALS', 'attribute': 'base.firstName', 'type': 'atomic',
+                         'value': 'firstName'},
+                        {'operator': 'EQUALS', 'attribute': 'extra', 'type': 'atomic',
+                         'value': 'extra'},
+                    ]
+                                   }}
+                 },
+                {'type': 'simple', 'name': 'query', 'are':
+                    {'condition': {'type': 'composite', 'conjunction': 'or', 'conditions': [
+
+                        {'operator': 'EQUALS', 'attribute': 'base.lastName', 'type': 'atomic',
+                         'value': 'lastName'},
+                        {'operator': 'EQUALS', 'attribute': 'extra', 'type': 'atomic',
+                         'value': 'extra'},
+                    ]
+                                   }}
+                 }
+
+            ]
+             }
+                 }
+
+        mock_get.assert_called_with(externalId=None, page=None, query=query, size=None)
+
+    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all',
+                return_value=json.loads(FakeHTTPResponse().text))
+    def test_or_combined_query(self, mock_get):
+        q1 = self.node.query(Customer).filter(
+            (Customer.base.firstName == 'firstName') | (Customer.extra == 'extra'))
+        q2 = self.node.query(Customer).filter((Customer.base.lastName == 'lastName') | (Customer.extra == 'extra'))
+        qor = q1 | q2
+        qand = q1 & q2
+        q = qor | qand
+
+        q.all()
+        query = {'name': 'query', 'query': {'name': 'query', 'type': 'combined', 'conjunction': 'UNION', 'queries':
+            [
+
+                {'type': 'simple', 'name': 'query', 'are':
+                    {'condition': {'type': 'composite', 'conjunction': 'or', 'conditions': [
+
+                        {'operator': 'EQUALS', 'attribute': 'base.firstName', 'type': 'atomic',
+                         'value': 'firstName'},
+                        {'operator': 'EQUALS', 'attribute': 'extra', 'type': 'atomic',
+                         'value': 'extra'},
+                    ]
+                                   }}
+                 },
+                {'type': 'simple', 'name': 'query', 'are':
+                    {'condition': {'type': 'composite', 'conjunction': 'or', 'conditions': [
+
+                        {'operator': 'EQUALS', 'attribute': 'base.lastName', 'type': 'atomic',
+                         'value': 'lastName'},
+                        {'operator': 'EQUALS', 'attribute': 'extra', 'type': 'atomic',
+                         'value': 'extra'},
+                    ]
+                                   }}
+                 }
+            ,
+                 {'name': 'query', 'type': 'combined', 'conjunction': 'INTERSECT', 'queries': [
+                     {'type': 'simple', 'name': 'query', 'are':
+                         {'condition': {'type': 'composite', 'conjunction': 'or', 'conditions': [
+
+                             {'operator': 'EQUALS', 'attribute': 'base.firstName', 'type': 'atomic',
+                              'value': 'firstName'},
+                             {'operator': 'EQUALS', 'attribute': 'extra', 'type': 'atomic',
+                              'value': 'extra'},
+                         ]
+                                        }}
+                      },
+                     {'type': 'simple', 'name': 'query', 'are':
+                         {'condition': {'type': 'composite', 'conjunction': 'or', 'conditions': [
+
+                             {'operator': 'EQUALS', 'attribute': 'base.lastName', 'type': 'atomic',
+                              'value': 'lastName'},
+                             {'operator': 'EQUALS', 'attribute': 'extra', 'type': 'atomic',
+                              'value': 'extra'},
+                         ]
+                                        }}
+                      }
+
+                 ]
+                  }]
+                 }}
+
+        mock_get.assert_called_with(externalId=None, page=None, query=query, size=None)
+
+    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all',
+                return_value=json.loads(FakeHTTPResponse().text))
+    def test_and_combined_query(self, mock_get):
+        q1 = self.node.query(Customer).filter(
+            (Customer.base.firstName == 'firstName') | (Customer.extra == 'extra'))
+        q2 = self.node.query(Customer).filter((Customer.base.lastName == 'lastName') | (Customer.extra == 'extra'))
+        qor = q1 | q2
+        qand = q1 & q2
+        q = qor & qand
+
+        q.all()
+        query = {'name': 'query', 'query': {'name': 'query', 'type': 'combined', 'conjunction': 'INTERSECT', 'queries':
+            [
+
+                {'type': 'simple', 'name': 'query', 'are':
+                    {'condition': {'type': 'composite', 'conjunction': 'or', 'conditions': [
+
+                        {'operator': 'EQUALS', 'attribute': 'base.firstName', 'type': 'atomic',
+                         'value': 'firstName'},
+                        {'operator': 'EQUALS', 'attribute': 'extra', 'type': 'atomic',
+                         'value': 'extra'},
+                    ]
+                                   }}
+                 },
+                {'type': 'simple', 'name': 'query', 'are':
+                    {'condition': {'type': 'composite', 'conjunction': 'or', 'conditions': [
+
+                        {'operator': 'EQUALS', 'attribute': 'base.lastName', 'type': 'atomic',
+                         'value': 'lastName'},
+                        {'operator': 'EQUALS', 'attribute': 'extra', 'type': 'atomic',
+                         'value': 'extra'},
+                    ]
+                                   }}
+                 }
+                ,
+                {'name': 'query', 'type': 'combined', 'conjunction': 'UNION', 'queries': [
+                    {'type': 'simple', 'name': 'query', 'are':
+                        {'condition': {'type': 'composite', 'conjunction': 'or', 'conditions': [
+
+                            {'operator': 'EQUALS', 'attribute': 'base.firstName', 'type': 'atomic',
+                             'value': 'firstName'},
+                            {'operator': 'EQUALS', 'attribute': 'extra', 'type': 'atomic',
+                             'value': 'extra'},
+                        ]
+                                       }}
+                     },
+                    {'type': 'simple', 'name': 'query', 'are':
+                        {'condition': {'type': 'composite', 'conjunction': 'or', 'conditions': [
+
+                            {'operator': 'EQUALS', 'attribute': 'base.lastName', 'type': 'atomic',
+                             'value': 'lastName'},
+                            {'operator': 'EQUALS', 'attribute': 'extra', 'type': 'atomic',
+                             'value': 'extra'},
+                        ]
+                                       }}
+                     }
+
+                ]
+                 }]
+                                            }}
+
+        mock_get.assert_called_with(externalId=None, page=None, query=query, size=None)
+
+    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all',
+                return_value=json.loads(FakeHTTPResponse().text))
+    def test_filter_complex(self, mock_get):
+        try:
+            q1 = self.node.query(Customer).filter(
+                (Customer.base.firstName == 'firstName') | (Customer.extra == 'extra'))
+            q2 = self.node.query(Customer).filter((Customer.base.lastName == 'lastName') | (Customer.extra == 'extra'))
+            qor = q1 | q2
+            qor.filter(Customer.base.firstName == 'firstName')
+        except Exception as e:
+            assert 'Operation' in str(e), str(e)
 

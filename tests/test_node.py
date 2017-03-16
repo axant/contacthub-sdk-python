@@ -100,3 +100,10 @@ class TestNode(TestSuite):
         assert isinstance(posted, Customer), type(posted)
         assert posted.base.contacts.email == c.base.contacts.email, posted.base.contacts.email
         assert posted.extra == c.extra, posted.extra
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse())
+    def test_get_(self, mock_get):
+        customers = self.node.get_customer(id='01')
+        headers_expected = {'Authorization': 'Bearer 456', 'Content-Type': 'application/json'}
+        base_url = 'https://api.contactlab.it/hub/v1/workspaces/123/customers/01'
+        mock_get.assert_called_with(base_url, headers=headers_expected)

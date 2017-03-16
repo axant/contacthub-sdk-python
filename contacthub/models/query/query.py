@@ -65,7 +65,8 @@ class Query(object):
         :param criterion: the Criterion object for fields for query data
         :return: a Query object containing the JSON object representing a query for the APIs
         """
-
+        if self.inner_query and self.inner_query['type'] == 'combined':
+            raise Exception('Operation not permitted')
         query_ret = {'type': 'simple', 'name': 'query', 'are': {}}
         new_query = {}
         if self.condition is None:

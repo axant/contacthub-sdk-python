@@ -1,5 +1,9 @@
 import unittest
 from contacthub.lib.read_only_list import ReadOnlyList
+import json
+
+from contacthub.lib.utils import DateEncoder
+
 
 class TestEvent(unittest.TestCase):
 
@@ -24,6 +28,13 @@ class TestEvent(unittest.TestCase):
     def test_read_only_list_len(self):
         rol = ReadOnlyList(self.list)
         assert len(rol) == 3, len(rol)
+
+    def test_date_encoder(self):
+        try:
+            json.dumps(ReadOnlyList, cls=DateEncoder)
+        except TypeError as e:
+            assert 'JSON' in str(e)
+
 
 
 
