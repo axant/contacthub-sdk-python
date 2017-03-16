@@ -16,7 +16,7 @@ class TestCustomerAPIManager(TestSuite):
     @classmethod
     def setUp(cls):
         w = Workspace(workspace_id=123, token=456)
-        cls.customer_manager = CustomerAPIManager(w.get_node(123))
+        cls.customer_manager = CustomerAPIManager(node=w.get_node(123))
         cls.headers_expected = {'Authorization': 'Bearer 456', 'Content-Type': 'application/json'}
         cls.base_url = 'https://api.contactlab.it/hub/v1/workspaces/123/customers'
 
@@ -48,25 +48,32 @@ class TestCustomerAPIManager(TestSuite):
         data_expected = {'base': {'contacts': {'email': 'email@email.it'}}, 'nodeId': '123'}
 
         self.customer_manager.post(body=body)
-        mock_get.assert_called_with(self.base_url, headers=self.headers_expected, data=data_expected)
+        mock_get.assert_called_with(self.base_url, headers=self.headers_expected, json  =data_expected)
 
 
     @mock.patch('requests.post', return_value=FakeHTTPResponse(resp_path='tests/util/fake_query_response', status_code=401))
     def test_post_customer_unathorized(self, mock_get):
-        body = {'base': {'contacts': {'email': 'email@email.it'}}}
-        data_expected = {'base': {'contacts': {'email': 'email@email.it'}}, 'nodeId': '123'}
         try:
-            self.customer_manager.post(body=body)
+            self.customer_manager.post(body={})
         except HTTPError as e:
-            mock_get.assert_called_with(self.base_url, headers=self.headers_expected, data=data_expected)
+            assert 'message' in str(e), str(e)
+
+    @mock.patch('requests.post',
+                return_value=FakeHTTPResponse(resp_path='tests/util/fake_query_response', status_code=401))
+    def test_patch_customer_unathorized(self, mock_get):
+        try:
+            self.customer_manager.patch(_id='id', body={})
+        except HTTPError as e:
+            assert 'message' in str(e), str(e)
 
 
 
 class TestCustomerDeclarativeApiManager(TestSuite):
+
     @classmethod
     def setUp(cls):
         w = Workspace(workspace_id=123, token=456)
-        cls.customer_manager = CustomerDeclarativeApiManager(w.get_node(123))
+        cls.customer_manager = CustomerDeclarativeApiManager(node=w.get_node(123), entity=Customer)
         cls.headers_expected = {'Authorization': 'Bearer 456', 'Content-Type': 'application/json'}
         cls.base_url = 'https://api.contactlab.it/hub/v1/workspaces/123/customers'
 
@@ -88,7 +95,7 @@ class TestCustomerDeclarativeApiManager(TestSuite):
         data_expected = {'extra': 'extra', 'base': {'contacts': {'email': 'email@email.email'}}, 'nodeId': '123'}
         c = Customer(json_properties=body)
         posted = self.customer_manager.post(customer=c)
-        mock_get.assert_called_with(self.base_url, headers=self.headers_expected, data=data_expected)
+        mock_get.assert_called_with(self.base_url, headers=self.headers_expected, json=data_expected)
         assert isinstance(posted, Customer), type(posted)
         assert posted.base.contacts.email == 'email@email.email', posted.base.contacts.email
         assert posted.extra == 'extra', posted.extra
@@ -153,6 +160,17 @@ class TestCustomerDeclarativeApiManager(TestSuite):
             customers = self.customer_manager.get()
         except ValueError as e:
             assert 'id' in str(e)
+
+    @mock.patch('requests.post', return_value=FakeHTTPResponse(resp_path='tests/util/fake_conflict_response', status_code=409))
+    @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response', status_code=200))
+    def test_post_with_patch(self, mock_patch, mock_post):
+        body = {'extra': 'extra', 'base': {'contacts': {'email': 'email@email.email'}}}
+        c = Customer(json_properties=body)
+        posted = self.customer_manager.post(customer=c, force_update=True)
+        mock_patch.assert_called_with(self.base_url + '/01', headers=self.headers_expected, json=body)
+
+
+
 
 
 

@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from contacthub.APIManager.api_customer import CustomerAPIManager
 from contacthub.DeclarativeAPIManager.declarative_api_base import BaseDeclarativeApiManager
-from contacthub.models.customer import Customer
-
 
 class CustomerDeclarativeApiManager(BaseDeclarativeApiManager):
     """
@@ -10,8 +8,8 @@ class CustomerDeclarativeApiManager(BaseDeclarativeApiManager):
     This class interact with high level Customer model.
     """
 
-    def __init__(self, node):
-        super(CustomerDeclarativeApiManager, self).__init__(node=node, api_manager=CustomerAPIManager, entity=Customer)
+    def __init__(self, node, entity):
+        super(CustomerDeclarativeApiManager, self).__init__(node=node, api_manager=CustomerAPIManager, entity=entity)
 
     def get_all(self, query=None, externalId=None, page=None, size=None):
         """
@@ -30,11 +28,24 @@ class CustomerDeclarativeApiManager(BaseDeclarativeApiManager):
         """
         return super(CustomerDeclarativeApiManager, self).get(id=id, externalId=externalId)
 
-    def post(self, customer):
+    def post(self, customer, force_update=False):
         """
         Insert a new customer
+        :param force_update: Force an update if the customer is already present in CH.
+        If the POST method return status code 409 and the force update flag is true, this method execute a patch in
+        for the customer already in CH.
         :param customer: a customer object to insert in customers
         :return:
         """
-        return super(CustomerDeclarativeApiManager, self).post(body=customer.json_properties)
+        return super(CustomerDeclarativeApiManager, self).post(body=customer.json_properties, force_update=force_update)
+
+    def delete(self, customer):
+        """
+        Delete the customer associated at the specified id
+        :param _id: the id of the customer to delete
+        :return: the deleted Customer object
+        """
+        return super(CustomerDeclarativeApiManager, self).delete(_id=customer.id)
+
+
 

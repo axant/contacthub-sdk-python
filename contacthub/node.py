@@ -16,16 +16,17 @@ class Node(object):
         """
         self.workspace = workspace
         self.node_id = str(node_id)
+        self.customer_api_manager = CustomerDeclarativeApiManager(node=self, entity=Customer)
 
     def get_all_customers(self, externalId=None, page=None, size=None):
         """
         Get all the customers in this node
         :return: A list containing Customer object of a node
         """
-        return CustomerDeclarativeApiManager(self).get_all(externalId=externalId, page=page, size=size)
+        return self.customer_api_manager.get_all(externalId=externalId, page=page, size=size)
 
     def get_customer(self, id=None, externalId=None):
-        return CustomerDeclarativeApiManager(self).get(id=id, externalId=externalId)
+        return self.customer_api_manager.get(id=id, externalId=externalId)
 
     def query(self, entity):
         """
@@ -34,12 +35,3 @@ class Node(object):
         :return: A QueryBuilder object for the specified entity
         """
         return Query(node=self, entity=entity)
-
-    def post(self, entity):
-        """
-        Post a new specified entity in contactHub APIs
-        :param entity: a model's object to post
-        :return: a
-        """
-        if isinstance(entity, Customer):
-            return CustomerDeclarativeApiManager(self).post(entity)

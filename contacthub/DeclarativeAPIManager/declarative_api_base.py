@@ -51,7 +51,6 @@ class BaseDeclarativeApiManager(object):
         else:
             return self.entity(self.api_manager(node=self.node).get(_id=id))
 
-
     def post(self, *args, **kwargs):
         """
         Post a new element in an entity.
@@ -60,4 +59,12 @@ class BaseDeclarativeApiManager(object):
         :return: a
         """
         return self.entity(self.api_manager(node=self.node).post(**kwargs))
+
+    def delete(self, *args, **kwargs):
+        """
+        Delete an element in an entity
+        :param id: the id of the entity's element to delete
+        """
+        return self.entity(self.api_manager(node=self.node).delete(**kwargs))
+
 

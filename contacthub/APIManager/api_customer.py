@@ -47,25 +47,54 @@ class CustomerAPIManager(BaseAPIManager):
         raise HTTPError("Code: %s, message: %s" %(resp.status_code, response_text))
 
     def get(self, _id):
-        url = self.request_url + '/' + _id
-        resp = requests.get(url, headers=self.headers)
+        resp = requests.get(self.request_url + '/' + str(_id), headers=self.headers)
         response_text = json.loads(resp.text)
         if 200 <= resp.status_code < 300:
             return response_text
         raise HTTPError("Code: %s, message: %s" % (resp.status_code, response_text))
 
-    def post(self, body):
+    def post(self, body, force_update=False):
         """
         POST a new customer in /customers
         :param data: the JSON format body for posting the new customer
-        :return:
+        :return: a JSON format loaded representing the respnse from the API
         """
         body['nodeId'] = self.node.node_id
-        resp = requests.post(self.request_url, data=body, headers=self.headers)
+        resp = requests.post(self.request_url, json=body, headers=self.headers)
+        response_text = json.loads(resp.text)
+        if 200 <= resp.status_code < 300:
+            return response_text
+        if resp.status_code == 409 and force_update:
+            body.pop('nodeId')
+
+            return self.patch(_id=response_text['data']['customer']['id'], body=body)
+        raise HTTPError("Code: %s, message: %s" % (resp.status_code, response_text))
+
+    def delete(self, _id):
+        """
+        Delete a customer in /customers by its id
+        :param _id: the id of the customer to delete
+        :return: a JSON format loaded representing the respnse from the API
+        """
+        resp = requests.delete(self.request_url + '/' + str(_id), headers=self.headers)
         response_text = json.loads(resp.text)
         if 200 <= resp.status_code < 300:
             return response_text
         raise HTTPError("Code: %s, message: %s" % (resp.status_code, response_text))
+
+    def patch(self, _id, body):
+        """
+        PATCH a  customer in /customers
+        :param data: the JSON format body for patching the customer
+        :return: a JSON format loaded representing the respnse from the API
+                """
+        resp = requests.patch(self.request_url + '/' + str(_id), json=body, headers=self.headers)
+        response_text = json.loads(resp.text)
+        if 200 <= resp.status_code < 300:
+            return response_text
+        raise HTTPError("Code: %s, message: %s" % (resp.status_code, response_text))
+
+
 
 
 

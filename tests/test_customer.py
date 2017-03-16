@@ -1,3 +1,4 @@
+import json
 import unittest
 from datetime import datetime
 
@@ -12,6 +13,7 @@ from contacthub.models.job import Job
 from contacthub.models.like import Like
 from contacthub.models.tags import Tags
 from contacthub.workspace import Workspace
+from requests import HTTPError
 from tests.utility import FakeHTTPResponse
 
 
@@ -23,6 +25,9 @@ class TestCustomer(unittest.TestCase):
         w = Workspace(workspace_id="123", token="456")
         cls.node = w.get_node("123")
         cls.customers = cls.node.get_all_customers()
+        cls.headers_expected = {'Authorization': 'Bearer 456', 'Content-Type': 'application/json'}
+        cls.base_url_events = 'https://api.contactlab.it/hub/v1/workspaces/123/events'
+        cls.base_url_customer = 'https://api.contactlab.it/hub/v1/workspaces/123/customers'
 
     @classmethod
     def tearDown(cls):
@@ -268,9 +273,7 @@ class TestCustomer(unittest.TestCase):
     def test_all_events(self, mock_get_event):
         events = self.customers[0].events
         params_expected = {'customerId': self.customers[0].id}
-        headers_expected = {'Authorization': 'Bearer 456', 'Content-Type': 'application/json'}
-        base_url = 'https://api.contactlab.it/hub/v1/workspaces/123/events'
-        mock_get_event.assert_called_with(base_url, params=params_expected, headers=headers_expected)
+        mock_get_event.assert_called_with(self.base_url_events, params=params_expected, headers=self.headers_expected)
         assert isinstance(events, list), type(events)
         assert events[0].type == Event.TYPES.ADDED_COMPARE, events[0].type
 
@@ -291,3 +294,77 @@ class TestCustomer(unittest.TestCase):
         c = Customer(extra='extra')
         assert c.json_properties['extra'] == 'extra', c.json_properties['extra']
         assert c.extra == 'extra', c.extra
+
+    @mock.patch('requests.delete', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
+    def test_delete(self, mock_delete):
+        id = self.customers[0].id
+        self.customers[0].delete()
+        mock_delete.assert_called_with(self.base_url_customer + '/' + id, headers=self.headers_expected)
+
+    def test_delete_created_new_customer(self):
+        try:
+            Customer().delete()
+        except Exception as e:
+            assert 'delete' in str(e), str(e)
+
+    @mock.patch('requests.delete', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response', status_code=401))
+    def test_delete_not_permitted(self, mock_delete):
+        try:
+            self.customers[0].delete()
+        except HTTPError as e:
+            assert 'message' in str(e), str(e)
+
+    @mock.patch('requests.delete', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
+    def test_delete_created(self, mock_delete):
+        Customer(id='01', node=self.node).delete()
+        mock_delete.assert_called_with(self.base_url_customer + '/01', headers=self.headers_expected)
+
+    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.post')
+    def test_post_customer_creation_first_method(self, mock_post):
+        expected_body = {'base': {'contacts': {'email': 'email@email.email'}}, 'extra': 'extra'}
+        mock_post.return_value = json.loads(FakeHTTPResponse(resp_path='tests/util/fake_post_response').text)
+        c = Customer(node=self.node,
+            base=Entity(
+                contacts=Entity(email='email@email.email')
+            )
+        )
+
+        c.extra = 'extra'
+        posted = c.post()
+        mock_post.assert_called_with(body=expected_body, force_update=False)
+        assert isinstance(posted, Customer), type(posted)
+        assert posted.base.contacts.email == c.base.contacts.email, posted.base.contacts.email
+        assert posted.extra == c.extra, posted.extra
+
+    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.post')
+    def test_post_customer_creation_second_method(self, mock_post):
+        expected_body = {'base': {'contacts': {'email': 'email@email.email'}}, 'extra': 'extra'}
+        mock_post.return_value = json.loads(FakeHTTPResponse(resp_path='tests/util/fake_post_response').text)
+        c = Customer(base=Entity(), node=self.node)
+        c.base.contacts = Entity(email='email@email.email')
+        c.extra = 'extra'
+        posted = c.post()
+        mock_post.assert_called_with(body=expected_body, force_update=False)
+        assert isinstance(posted, Customer), type(posted)
+        assert posted.base.contacts.email == c.base.contacts.email, posted.base.contacts.email
+        assert posted.extra == c.extra, posted.extra
+
+    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.post')
+    def test_post_customer_creation_third_method(self, mock_post):
+        expected_body = {'base': {'contacts': {'email': 'email@email.email'}}, 'extra': 'extra'}
+        mock_post.return_value = json.loads(FakeHTTPResponse(resp_path='tests/util/fake_post_response').text)
+        c = Customer(node=self.node,base=Entity())
+        c.base.contacts = {'email': 'email@email.email'}
+        c.extra = 'extra'
+        posted = c.post()
+        mock_post.assert_called_with(body=expected_body, force_update=False)
+        assert isinstance(posted, Customer), type(posted)
+        assert posted.base.contacts.email == c.base.contacts.email, posted.base.contacts.email
+        assert posted.extra == c.extra, posted.extra
+
+    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.post')
+    def test_post_no_node(self, mock_post):
+        try:
+            Customer().post()
+        except ValueError as e:
+            assert 'node' in str(e), str(e)

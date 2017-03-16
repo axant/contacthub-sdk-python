@@ -13,6 +13,10 @@ class FakeHTTPResponse:
             return fake_response.read()
         else:
             http_error_msg = ''
+            if self.status_code == 409:
+                fake_response = open(self.resp_path, 'r')
+                return fake_response.read()
+
             if 400 <= self.status_code < 500:
                 http_error_msg = u'%s Client Error' % self.status_code
 

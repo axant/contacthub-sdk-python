@@ -58,48 +58,7 @@ class TestNode(TestSuite):
         assert customers_query[0].base.contacts.email == 'marco.bosio@axant.it', customers_query[0].base.contacts.email
         assert customers_query[0].extra == 'Ciao', customers_query[0].extra
 
-    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.post')
-    def test_post_customer_first_method(self, mock_post):
-        expected_body = {'base': {'contacts': {'email': 'email@email.email'}}, 'extra': 'extra'}
-        mock_post.return_value = json.loads(FakeHTTPResponse(resp_path='tests/util/fake_post_response').text)
-        c = Customer(
-            base=Entity(
-                contacts=Entity(email='email@email.email')
-            )
-        )
 
-        c.extra = 'extra'
-        posted = self.node.post(c)
-        mock_post.assert_called_with(body=expected_body)
-        assert isinstance(posted, Customer), type(posted)
-        assert posted.base.contacts.email == c.base.contacts.email, posted.base.contacts.email
-        assert posted.extra == c.extra, posted.extra
-
-    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.post')
-    def test_post_customer_second_method(self, mock_post):
-        expected_body = {'base': {'contacts': {'email': 'email@email.email'}}, 'extra': 'extra'}
-        mock_post.return_value = json.loads(FakeHTTPResponse(resp_path='tests/util/fake_post_response').text)
-        c = Customer(base=Entity())
-        c.base.contacts = Contacts(email='email@email.email')
-        c.extra = 'extra'
-        posted = self.node.post(c)
-        mock_post.assert_called_with(body=expected_body)
-        assert isinstance(posted, Customer), type(posted)
-        assert posted.base.contacts.email == c.base.contacts.email, posted.base.contacts.email
-        assert posted.extra == c.extra, posted.extra
-
-    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.post')
-    def test_post_customer_third_method(self, mock_post):
-        expected_body = {'base': {'contacts': {'email': 'email@email.email'}}, 'extra': 'extra'}
-        mock_post.return_value = json.loads(FakeHTTPResponse(resp_path='tests/util/fake_post_response').text)
-        c = Customer(base=Entity())
-        c.base.contacts = {'email': 'email@email.email'}
-        c.extra = 'extra'
-        posted = self.node.post(c)
-        mock_post.assert_called_with(body=expected_body)
-        assert isinstance(posted, Customer), type(posted)
-        assert posted.base.contacts.email == c.base.contacts.email, posted.base.contacts.email
-        assert posted.extra == c.extra, posted.extra
 
     @mock.patch('requests.get', return_value=FakeHTTPResponse())
     def test_get_(self, mock_get):

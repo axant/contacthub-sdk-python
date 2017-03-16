@@ -57,7 +57,7 @@ class Query(object):
         """
         complete_query = {'name': 'query', 'query': self.inner_query}
         if self.entity is Customer:
-            return CustomerDeclarativeApiManager(self.node).get_all(query=complete_query)
+            return CustomerDeclarativeApiManager(node=self.node, entity=Customer).get_all(query=complete_query)
 
     def filter(self, criterion):
         """

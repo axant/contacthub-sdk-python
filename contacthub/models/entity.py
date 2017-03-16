@@ -13,9 +13,9 @@ class Entity(object):
 
     SUBPROPERTIES_LIST = {'educations': Education, 'likes': Like, 'jobs': Job}
 
-    __slots__ = ('json_properties', )
+    __slots__ = ('json_properties', 'father', 'mute')
 
-    def __init__(self, json_properties=None, *args, **kwargs):
+    def __init__(self, json_properties=None, mute=None, father=None, *args, **kwargs):
         """
         :param json_properties: A dictionary with json_properties to return or set
         """
@@ -27,6 +27,9 @@ class Entity(object):
                 else:
                     json_properties[k] = kwargs[k]
         self.json_properties = json_properties
+        self.father = father
+        self.mute = mute
+
 
     def __getattr__(self, item):
         """
@@ -37,9 +40,9 @@ class Entity(object):
         """
         try:
             if item in self.SUBPROPERTIES_LIST:
-                return list_item(self.SUBPROPERTIES_LIST[item],self.json_properties[item])
+                return list_item(self.SUBPROPERTIES_LIST[item], self.json_properties[item])
             if isinstance(self.json_properties[item], dict):
-                return Entity(self.json_properties[item])
+                return Entity(self.json_properties[item], mute=self.mute, father=self.father + '.' + item)
             elif isinstance(self.json_properties[item], list):
                 return list_item(Entity, self.json_properties[item])
             return self.json_properties[item]
@@ -54,3 +57,6 @@ class Entity(object):
                 self.json_properties[attr] = val.json_properties
             else:
                 self.json_properties[attr] = val
+                self.mute[self.father + '.' + attr] = val
+
+
