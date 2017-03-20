@@ -66,7 +66,6 @@ class CustomerAPIManager(BaseAPIManager):
             return response_text
         if resp.status_code == 409 and force_update:
             body.pop('nodeId')
-
             return self.patch(_id=response_text['data']['customer']['id'], body=body)
         raise HTTPError("Code: %s, message: %s" % (resp.status_code, response_text))
 
@@ -85,10 +84,24 @@ class CustomerAPIManager(BaseAPIManager):
     def patch(self, _id, body):
         """
         PATCH a  customer in /customers
-        :param data: the JSON format body for patching the customer
+        :param _id:
+        :param body: the JSON format body for patching the customer
         :return: a JSON format loaded representing the respnse from the API
                 """
         resp = requests.patch(self.request_url + '/' + str(_id), json=body, headers=self.headers)
+        response_text = json.loads(resp.text)
+        if 200 <= resp.status_code < 300:
+            return response_text
+        raise HTTPError("Code: %s, message: %s" % (resp.status_code, response_text))
+
+    def put(self, _id, body):
+        """
+        PATCH a  customer in /customers
+        :param _id:
+        :param body: the JSON format body for patching the customer
+        :return: a JSON format loaded representing the respnse from the API
+                """
+        resp = requests.put(self.request_url + '/' + str(_id), json=body, headers=self.headers)
         response_text = json.loads(resp.text)
         if 200 <= resp.status_code < 300:
             return response_text

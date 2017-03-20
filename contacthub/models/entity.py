@@ -13,9 +13,9 @@ class Entity(object):
 
     SUBPROPERTIES_LIST = {'educations': Education, 'likes': Like, 'jobs': Job}
 
-    __slots__ = ('json_properties', 'father', 'mute')
+    __slots__ = ('json_properties', 'father', 'mute', 'father_class')
 
-    def __init__(self, json_properties=None, mute=None, father=None, *args, **kwargs):
+    def __init__(self, json_properties=None, mute=None, father=None, father_class=None, *args, **kwargs):
         """
         :param json_properties: A dictionary with json_properties to return or set
         """
@@ -29,7 +29,7 @@ class Entity(object):
         self.json_properties = json_properties
         self.father = father
         self.mute = mute
-
+        self.father_class = father_class
 
     def __getattr__(self, item):
         """
@@ -42,9 +42,12 @@ class Entity(object):
             if item in self.SUBPROPERTIES_LIST:
                 return list_item(self.SUBPROPERTIES_LIST[item], self.json_properties[item])
             if isinstance(self.json_properties[item], dict):
-                return Entity(self.json_properties[item], mute=self.mute, father=self.father + '.' + item)
+                return Entity(self.json_properties[item], mute=self.mute, father=self.father + '.' + item, father_class=self)
             elif isinstance(self.json_properties[item], list):
-                return list_item(Entity, self.json_properties[item])
+                list_sub_prob = []
+                for elem in self.json_properties[item]:
+                    list_sub_prob.append(Entity(elem, mute=self.mute, father=self.father + '.' + item, father_class=self))
+                return list_sub_prob
             return self.json_properties[item]
         except KeyError as e:
             raise AttributeError("%s object has no attribute %s" %(type(self).__name__, e))
@@ -54,9 +57,13 @@ class Entity(object):
             return super(Entity, self).__setattr__(attr, val)
         else:
             if isinstance(val, Entity):
-                self.json_properties[attr] = val.json_properties
+                raise Exception("Operation not permitted: cannot assign an Entity object to an attribute")
             else:
                 self.json_properties[attr] = val
-                self.mute[self.father + '.' + attr] = val
+                field = self.father.split('.')[-1:][0]
+                if isinstance(self.father_class.json_properties[field], list):
+                    self.mute[self.father] = self.father_class.json_properties[field]
+                else:
+                    self.mute[self.father + '.' + attr] = val
 
 

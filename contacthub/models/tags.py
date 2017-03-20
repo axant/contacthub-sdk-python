@@ -4,6 +4,8 @@ class Tags(object):
     """
     Tags property of the Customer model
     """
+    __slots__ = ('json_properties',)
+
     def __init__(self, json_properties):
         self.json_properties=json_properties
 
@@ -18,3 +20,9 @@ class Tags(object):
             return self.json_properties[item]
         except KeyError as e:
             raise AttributeError("%s object has no attribute %s" % (type(self).__name__, e))
+
+    def __setattr__(self, attr, val):
+        if attr in self.__slots__:
+            return super(Tags, self).__setattr__(attr, val)
+        else:
+            self.json_properties[attr] = val

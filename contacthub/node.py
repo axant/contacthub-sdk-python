@@ -18,7 +18,7 @@ class Node(object):
         self.node_id = str(node_id)
         self.customer_api_manager = CustomerDeclarativeApiManager(node=self, entity=Customer)
 
-    def get_all_customers(self, externalId=None, page=None, size=None):
+    def get_customers(self, externalId=None, page=None, size=None):
         """
         Get all the customers in this node
         :return: A list containing Customer object of a node
@@ -35,3 +35,17 @@ class Node(object):
         :return: A QueryBuilder object for the specified entity
         """
         return Query(node=self, entity=entity)
+
+    def delete_customer(self, customer):
+        return self.customer_api_manager.delete(customer=customer)
+
+    def add_customer(self, customer, force_update=False):
+        return self.customer_api_manager.post(customer=customer, force_update=force_update)
+
+    def update_customer(self, customer, full_update=False):
+        if full_update:
+            return self.customer_api_manager.put(customer=customer)
+        else:
+            return self.customer_api_manager.patch(customer=customer)
+
+

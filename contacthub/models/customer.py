@@ -14,7 +14,7 @@ class Customer(with_metaclass(EntityMeta, object)):
     """
     __slots__ = ('json_properties', 'node', 'customer_api_manager', 'event_api_manager', 'mute')
 
-    def __init__(self, json_properties=None, node=None, **kwargs):
+    def __init__(self, node, json_properties=None, **kwargs):
         """
         :param json_properties: A dictionary containing the json_properties related to customers
         """
@@ -27,10 +27,15 @@ class Customer(with_metaclass(EntityMeta, object)):
                     json_properties[k] = kwargs[k]
 
         self.json_properties = json_properties
+        if 'extended' not in self.json_properties or self.json_properties['extended'] is None:
+            self.json_properties['extended'] = {}
+        if 'tags' not in self.json_properties or self.json_properties['tags'] is None:
+            self.json_properties['tags'] = {'auto': [], 'manual': []}
+
         self.node = node
-        if node:
-            self.customer_api_manager = CustomerDeclarativeApiManager(node=self.node, entity=Customer)
-            self.event_api_manager = EventDeclarativeApiManager(node=self.node)
+        self.customer_api_manager = CustomerDeclarativeApiManager(node=self.node, entity=Customer)
+        self.event_api_manager = EventDeclarativeApiManager(node=self.node)
+
         self.mute = {}
 
     def __getattr__(self, item):
@@ -43,8 +48,10 @@ class Customer(with_metaclass(EntityMeta, object)):
         try:
             if item == 'tags':
                 return Tags(json_properties=self.json_properties[item])
+            if item == 'extended':
+                return self.json_properties['extended']
             if isinstance(self.json_properties[item], dict):
-                return Entity(self.json_properties[item], mute=self.mute, father=item)
+                return Entity(self.json_properties[item], mute=self.mute, father=item, father_class=self)
             else:
                 return self.json_properties[item]
         except KeyError as e:
@@ -55,20 +62,12 @@ class Customer(with_metaclass(EntityMeta, object)):
             return super(Customer, self).__setattr__(attr, val)
         else:
             if isinstance(val, Entity):
-                self.json_properties[attr] = val.json_properties
+                raise Exception("Operation not permitted: cannot assign an Entity object to an attribute")
             else:
                 self.json_properties[attr] = val
                 self.mute[attr] = val
 
     __metaclass__ = EntityMeta
-
-    def _try(self,_dict):
-        for a in _dict:
-            if type(_dict[a]) is dict:
-                a = self._try(_dict[a])
-            else:
-                return _dict[a]
-
 
     @property
     def events(self):
@@ -82,11 +81,15 @@ class Customer(with_metaclass(EntityMeta, object)):
         raise Exception('Cannot retrieve events from a new customer created.')
 
     def post(self, force_update=False):
-        if not self.node:
-            raise ValueError('No node given for posting the customer.')
         return self.customer_api_manager.post(self, force_update=force_update)
 
     def delete(self):
         if self.node and 'id' in self.json_properties:
             return self.customer_api_manager.delete(self)
         raise Exception('Cannot delete a new customer created.')
+
+    def patch(self):
+        return self.customer_api_manager.patch(self)
+
+    def put(self):
+        return self.customer_api_manager.put(self)
