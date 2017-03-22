@@ -1,9 +1,10 @@
 from datetime import datetime
 
-from contacthub.lib.utils import list_item
+from contacthub.lib.utils import list_item, get_dictionary_paths, generate_mutation_tracker
 from contacthub.models.education import Education
 from contacthub.models.job import Job
 from contacthub.models.like import Like
+from copy import deepcopy
 
 
 class Entity(object):
@@ -43,7 +44,7 @@ class Entity(object):
                 return list_item(self.SUBPROPERTIES_LIST[item], self.json_properties[item])
             if isinstance(self.json_properties[item], dict):
                 return Entity(self.json_properties[item], mute=self.mute, father=self.father + '.' + item, father_class=self)
-            elif isinstance(self.json_properties[item], list):
+            elif isinstance(self.json_properties[item], list) and self.json_properties[item] and isinstance(self.json_properties[item][0], dict):
                 list_sub_prob = []
                 for elem in self.json_properties[item]:
                     list_sub_prob.append(Entity(elem, mute=self.mute, father=self.father + '.' + item, father_class=self))
@@ -57,7 +58,10 @@ class Entity(object):
             return super(Entity, self).__setattr__(attr, val)
         else:
             if isinstance(val, Entity):
-                raise Exception("Operation not permitted: cannot assign an Entity object to an attribute")
+                mutations = generate_mutation_tracker(self.json_properties[attr], val.json_properties)
+                update_tracking_with_new_prop(mutations, val.json_properties)
+                self.mute[self.father + '.' + attr] = mutations
+                self.json_properties[attr] = val.json_properties
             else:
                 self.json_properties[attr] = val
                 field = self.father.split('.')[-1:][0]
@@ -65,5 +69,21 @@ class Entity(object):
                     self.mute[self.father] = self.father_class.json_properties[field]
                 else:
                     self.mute[self.father + '.' + attr] = val
+
+
+def update_tracking_with_new_prop(mutations, new_properties):
+    """
+
+    :param old_props:
+    :param new_props:
+    """
+    for key in new_properties:
+        if (key not in mutations or mutations[key] is None or not mutations[key]) and not isinstance(new_properties[key],
+                                                                                                     dict):
+            mutations[key] = new_properties[key]
+        elif isinstance(new_properties[key], dict):
+            mutations[key] = {}
+            update_tracking_with_new_prop(mutations[key], new_properties[key])
+
 
 

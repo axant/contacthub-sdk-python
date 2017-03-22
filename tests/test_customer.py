@@ -11,7 +11,6 @@ from contacthub.models.entity import Entity
 from contacthub.models.event import Event
 from contacthub.models.job import Job
 from contacthub.models.like import Like
-from contacthub.models.tags import Tags
 from contacthub.workspace import Workspace
 from copy import deepcopy
 from requests import HTTPError
@@ -40,7 +39,7 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_tags(self):
         tags = self.customers[0].tags
-        assert type(tags) is Tags, type(tags)
+        assert type(tags) is Entity, type(tags)
         assert type(tags.auto) is list, type(tags.auto)
         assert type(tags.manual) is list, type(tags.manual)
         assert tags.auto[0] == 'auto', tags.auto[0]
@@ -55,7 +54,7 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_tags_empty(self):
         tags = self.customers[1].tags
-        assert type(tags) is Tags, type(tags)
+        assert type(tags) is Entity, type(tags)
         assert type(tags.auto) is list, type(tags.auto)
         assert type(tags.manual) is list, type(tags.manual)
         assert len(tags.auto) == 0, len(tags.auto)
@@ -325,7 +324,7 @@ class TestCustomer(unittest.TestCase):
         )
 
         c.extra = 'extra'
-        c.extended['prova'] = 'prova'
+        c.extended.prova = 'prova'
         c.tags.auto = ['auto']
         c.tags.manual = ['manual']
 
@@ -362,27 +361,11 @@ class TestCustomer(unittest.TestCase):
         assert posted.extra == c.extra, posted.extra
 
 
-    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.post')
-    def test_create_customer_entity_assign(self, mock_post):
-        try:
-            c = Customer(node=self.node)
-            c.base = Entity()
-        except Exception as e:
-            assert 'Operation not permitted' in str(e), str(e)
-
-    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.post')
-    def test_create_customer_entity_assign_at_entity(self, mock_post):
-        try:
-            c = Customer(node=self.node, base=Entity())
-            c.base.contacts = Entity()
-        except Exception as e:
-            assert 'Operation not permitted' in str(e), str(e)
-
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch(self, mock_patch):
         self.customers[0].base.firstName = 'fn'
         self.customers[0].patch()
-        body = {'base':{'firstName':'fn'}, 'extended': {'prova': {'oggetto': '123', 'list': ['oggetto', 'prova']}}}
+        body = {'base':{'firstName':'fn'}}
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id, headers=self.headers_expected, json=body)
 
     @mock.patch('requests.put', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
@@ -395,3 +378,86 @@ class TestCustomer(unittest.TestCase):
         body.pop('id')
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
                                       headers=self.headers_expected, json=body)
+
+    @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
+    def test_patch_entity(self, mock_patch):
+        self.customers[0].extended = Entity(a=1, prova=Entity(b=1))
+        self.customers[0].patch()
+        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': None}, 'a': 1}}
+        mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
+                                      headers=self.headers_expected, json=body)
+
+    @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
+    def test_patch_full_extended(self, mock_patch):
+        self.customers[0].extended = Entity()
+        self.customers[0].patch()
+        body = {'extended': {}}
+        mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
+                                      headers=self.headers_expected, json=body)
+
+    @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
+    def test_patch_entity_extended_and_base(self, mock_patch):
+        self.customers[0].extended = Entity(a=1, prova=Entity(b=1))
+        self.customers[0].base.firstName = 'fn'
+        self.customers[0].patch()
+        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': None}, 'a': 1}, 'base': {'firstName': 'fn'}}
+        mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
+                                      headers=self.headers_expected, json=body)
+
+    @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
+    def test_patch_extended_entity_and_base_entity(self, mock_patch):
+        self.customers[0].extended = Entity(a=1, prova=Entity(b=1))
+        self.customers[0].base = Entity(contacts=Entity(email='email'))
+        self.customers[0].patch()
+        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': None}, 'a': 1},
+                'base': {
+                    'pictureUrl': None, 'title': None, 'prefix': None, 'firstName': None, 'lastName': None,
+                    'middleName': None, 'gender': None, 'dob': None, 'locale': None, 'timezone': None,
+                    'contacts':
+                        {'email': 'email', 'fax': None, 'mobilePhone': None, 'phone': None, 'otherContacts': None, 'mobileDevices': None},
+                    'address': None, 'credential': None, 'educations': None, 'likes': None, 'socialProfile': None, 'jobs': None, 'subscriptions': None}}
+        mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
+                                      headers=self.headers_expected, json=body)
+
+    @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
+    def test_patch_entity_with_entity(self, mock_patch):
+        self.customers[0].extended = Entity(a=1, prova=Entity(b=1))
+        self.customers[0].base.contacts = Entity(email='email')
+        self.customers[0].patch()
+        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': None}, 'a': 1},'base':
+            {'contacts':{'email': 'email', 'fax': None, 'mobilePhone': None, 'phone': None, 'otherContacts': None, 'mobileDevices': None}}}
+        mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
+                                      headers=self.headers_expected, json=body)
+
+    @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
+    def test_patch_entity_with_rename(self, mock_patch):
+        self.customers[0].extended = Entity(a=1, prova=Entity(b=1))
+        self.customers[0].base.contacts = Entity(email1='email')
+        self.customers[0].patch()
+        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': None}, 'a': 1}, 'base':
+            {'contacts': {'email': None,'email1':'email', 'fax': None, 'mobilePhone': None, 'phone': None, 'otherContacts': None,
+                          'mobileDevices': None}}}
+        mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
+                                      headers=self.headers_expected, json=body)
+
+    @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
+    def test_patch_entity_with_rename_dict(self, mock_patch):
+        self.customers[0].extended = Entity(a=1, prova=Entity(b=1))
+        self.customers[0].base.contacts = Entity(email1=Entity(a=1))
+        self.customers[0].patch()
+        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': None}, 'a': 1}, 'base':
+            {'contacts': {'email': None, 'email1': {'a': 1}, 'fax': None, 'mobilePhone': None, 'phone': None,
+                          'otherContacts': None,
+                          'mobileDevices': None}}}
+        mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
+                                      headers=self.headers_expected, json=body)
+
+    @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
+    def test_patch_entity_list(self, mock_patch):
+        self.customers[0].extended = Entity(a=1, prova=Entity(b=1))
+        self.customers[0].base.contacts.otherContacts = [Entity(email1=Entity(a=1))]
+        self.customers[0].patch()
+        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': None}, 'a': 1}, 'base': {'contacts': {'otherContacts': [{'email1': {'a': 1}}]}}}
+        mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
+                                      headers=self.headers_expected, json=body)
+

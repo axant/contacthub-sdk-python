@@ -53,14 +53,18 @@ class CustomerAPIManager(BaseAPIManager):
             return response_text
         raise HTTPError("Code: %s, message: %s" % (resp.status_code, response_text))
 
-    def post(self, body, force_update=False):
+    def post(self, body, urls_extra=None, force_update=False):
         """
         POST a new customer in /customers
         :param data: the JSON format body for posting the new customer
         :return: a JSON format loaded representing the respnse from the API
         """
-        body['nodeId'] = self.node.node_id
-        resp = requests.post(self.request_url, json=body, headers=self.headers)
+        if not urls_extra:
+            body['nodeId'] = self.node.node_id
+            request_url = self.request_url
+        else:
+            request_url = self.request_url + urls_extra
+        resp = requests.post(request_url, json=body, headers=self.headers)
         response_text = json.loads(resp.text)
         if 200 <= resp.status_code < 300:
             return response_text
@@ -88,7 +92,9 @@ class CustomerAPIManager(BaseAPIManager):
         :param body: the JSON format body for patching the customer
         :return: a JSON format loaded representing the respnse from the API
                 """
-        resp = requests.patch(self.request_url + '/' + str(_id), json=body, headers=self.headers)
+
+        body = json.dumps(body, cls=DateEncoder)
+        resp = requests.patch(self.request_url + '/' + str(_id), json=json.loads(body), headers=self.headers)
         response_text = json.loads(resp.text)
         if 200 <= resp.status_code < 300:
             return response_text

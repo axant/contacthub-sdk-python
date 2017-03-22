@@ -34,5 +34,5 @@
     "subscriptions": []
   },
   "extended": null,
-  "tags": null
+  "tags": {"manual":["manual"], "auto":["auto"]}
 }

@@ -1,10 +1,11 @@
+from copy import deepcopy
 
+from contacthub.lib.utils import get_dictionary_paths, generate_mutation_tracker
 from six import with_metaclass
 
 from contacthub.DeclarativeAPIManager.declarative_api_event import EventDeclarativeApiManager
 from contacthub.models.entity import Entity
 from contacthub.models.query.entity_meta import EntityMeta
-from contacthub.models.tags import Tags
 from contacthub.DeclarativeAPIManager.declarative_api_customer import CustomerDeclarativeApiManager
 
 
@@ -46,10 +47,6 @@ class Customer(with_metaclass(EntityMeta, object)):
         :return: an element of the dictionary, or an object if the element associated at the key containse an object or a list
         """
         try:
-            if item == 'tags':
-                return Tags(json_properties=self.json_properties[item])
-            if item == 'extended':
-                return self.json_properties['extended']
             if isinstance(self.json_properties[item], dict):
                 return Entity(self.json_properties[item], mute=self.mute, father=item, father_class=self)
             else:
@@ -62,12 +59,41 @@ class Customer(with_metaclass(EntityMeta, object)):
             return super(Customer, self).__setattr__(attr, val)
         else:
             if isinstance(val, Entity):
-                raise Exception("Operation not permitted: cannot assign an Entity object to an attribute")
+                if not val.json_properties:
+                    self.mute[attr] = {}
+                else:
+                    # main_list_of_paths = []
+                    # tmp_list_for_path = []
+                    #
+                    # get_dictionary_paths(self.json_properties[attr], main_list=main_list_of_paths,
+                    #                      tmp_list=tmp_list_for_path)
+                    # #  we start wih the whole old dictionary, next we will set the missing keys to None
+                    # mutation_tracker = deepcopy(self.json_properties[attr])
+                    # #  follow the paths for searching keys not in new properties but in the old ones (mutation_tracker)
+                    #
+                    # for key_paths in main_list_of_paths:
+                    #     new_properties = val.json_properties
+                    #     actual_mutation_tracker = mutation_tracker
+                    #     for single_key in key_paths:
+                    #         if single_key not in new_properties or not new_properties[single_key]:
+                    #             actual_mutation_tracker[single_key] = None
+                    #             break
+                    #         else:
+                    #             actual_mutation_tracker[single_key] = new_properties[single_key]
+                    #             new_properties = new_properties[single_key]
+                    #             actual_mutation_tracker = actual_mutation_tracker[single_key]
+                    tracker = generate_mutation_tracker(self.json_properties[attr], val.json_properties)
+                    for key in val.json_properties:
+                        if key not in tracker or (key in tracker and val.json_properties[key]):
+                            tracker[key] = val.json_properties[key]
+                    self.mute[attr] = tracker
+                self.json_properties[attr] = val.json_properties
             else:
                 self.json_properties[attr] = val
                 self.mute[attr] = val
 
     __metaclass__ = EntityMeta
+
 
     @property
     def events(self):

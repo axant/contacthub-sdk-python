@@ -70,6 +70,7 @@ class CustomerDeclarativeApiManager(BaseDeclarativeApiManager):
         """
 
         body = {}
+        print(customer.mute)
         for key in customer.mute:
             update_dictionary = body
             splitted = key.split('.')
@@ -81,8 +82,6 @@ class CustomerDeclarativeApiManager(BaseDeclarativeApiManager):
                     if attr not in update_dictionary:
                         update_dictionary[attr] = {}
                     update_dictionary = update_dictionary[attr]
-        body['extended'] = customer.json_properties['extended']
-
         return super(CustomerDeclarativeApiManager, self).patch(_id=customer.id, body=body)
 
     def put(self, customer):

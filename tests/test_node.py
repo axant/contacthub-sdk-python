@@ -81,7 +81,7 @@ class TestNode(TestSuite):
     @mock.patch('requests.post', return_value=FakeHTTPResponse())
     def test_add_customer_extended(self, mock_get):
         c = Customer(node=self.node, base=Entity(contacts=Entity(email='email')))
-        c.extended['prova'] = 'prova'
+        c.extended.prova = 'prova'
         self.node.add_customer(customer=c)
         body = {'nodeId': self.node.node_id, 'base': {'contacts': {'email': 'email'}}, 'extended': {'prova':'prova'},
                 'tags': {'auto': [], 'manual': []}}
@@ -90,7 +90,7 @@ class TestNode(TestSuite):
     @mock.patch('requests.post', return_value=FakeHTTPResponse())
     def test_add_customer_tags(self, mock_get):
         c = Customer(node=self.node, base=Entity(contacts=Entity(email='email')))
-        c.extended['prova'] = 'prova'
+        c.extended.prova= 'prova'
         c.tags.auto = ['auto']
         c.tags.manual = ['manual']
         self.node.add_customer(customer=c)
@@ -103,7 +103,7 @@ class TestNode(TestSuite):
         c = Customer(node=self.node, id='01', base=Entity(contacts=Entity(email='email')))
         c.extra = 'extra'
         self.node.update_customer(customer=c)
-        body = {'extra': 'extra', 'extended': {}}
+        body = {'extra': 'extra'}
         mock_patch.assert_called_with(self.base_url + '/01', headers=self.headers_expected, json=body)
 
     @mock.patch('requests.put', return_value=FakeHTTPResponse())
@@ -114,3 +114,45 @@ class TestNode(TestSuite):
         body = {'base': {'contacts': {'email': 'email1', 'fax': 'fax'}}, 'extended': {},
                 'tags': {'auto': [], 'manual': []}}
         mock_get.assert_called_with(self.base_url + '/01', headers=self.headers_expected, json=body)
+
+    @mock.patch('requests.post',
+                return_value=FakeHTTPResponse(resp_path='tests/util/fake_session_response'))
+    def test_add_customer_session(self, mock_get):
+        s_id = self.node.create_session_id()
+        body = {'value': str(s_id)}
+
+        self.node.add_customer_session(customer=Customer(id='01', node=self.node), session_id=s_id)
+        mock_get.assert_called_with(self.base_url + '/01/sessions', headers=self.headers_expected, json=body)
+
+    @mock.patch('requests.get',
+                return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
+    @mock.patch('requests.patch',
+                return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
+    def test_add_tag(self, mock_patch, mock_get):
+        self.node.add_tag(customer=Customer(id='b6023673-b47a-4654-a53c-74bbc0204a20', node=self.node), tag='tag1')
+        mock_get.assert_called_with(self.base_url + '/b6023673-b47a-4654-a53c-74bbc0204a20', headers=self.headers_expected)
+        mock_patch.assert_called_with(self.base_url + '/b6023673-b47a-4654-a53c-74bbc0204a20', headers=self.headers_expected, json={'tags':{'manual':['manual','tag1']}})
+
+    @mock.patch('requests.get',
+                return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
+    @mock.patch('requests.patch',
+                return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
+    def test_remove_tag(self, mock_patch, mock_get):
+        self.node.remove_tag(customer=Customer(id='b6023673-b47a-4654-a53c-74bbc0204a20', node=self.node), tag='manual')
+        mock_get.assert_called_with(self.base_url + '/b6023673-b47a-4654-a53c-74bbc0204a20',
+                                    headers=self.headers_expected)
+        mock_patch.assert_called_with(self.base_url + '/b6023673-b47a-4654-a53c-74bbc0204a20',
+                                      headers=self.headers_expected, json={'tags': {'manual': []}})
+
+    @mock.patch('requests.get',
+                return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
+    @mock.patch('requests.patch',
+                return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
+    def test_remove_tag_unexistent(self, mock_patch, mock_get):
+
+        try:
+            self.node.remove_tag(customer=Customer(id='b6023673-b47a-4654-a53c-74bbc0204a20', node=self.node), tag='asd')
+            mock_get.assert_called_with(self.base_url + '/b6023673-b47a-4654-a53c-74bbc0204a20',
+                                        headers=self.headers_expected)
+        except ValueError as e:
+            assert 'Tag' in str(e), str(e)
