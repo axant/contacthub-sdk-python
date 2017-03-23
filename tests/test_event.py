@@ -37,7 +37,7 @@ class TestEvent(unittest.TestCase):
 
     def test_get_properties(self):
         prop = self.events[0].properties
-        assert isinstance(prop, Entity), type(prop)
+        assert isinstance(prop, dict), type(prop)
 
     def test_get_unexsistent(self):
         try:
@@ -47,13 +47,13 @@ class TestEvent(unittest.TestCase):
 
     def test_create_new_event_properties(self):
         e = Event()
-        assert isinstance(e.properties, Entity)
+        assert isinstance(e.properties, dict), type(e.properties)
         e.properties = Properties(attr='attr')
         assert e.properties.attr == 'attr'
 
     def test_set_event_properties(self):
         e = self.events[0]
-        assert isinstance(e.properties, Entity)
+        assert isinstance(e.properties, dict)
         e.context = Event.CONTEXTS.DIGITAL_CAMPAIGN
         assert e.context == Event.CONTEXTS.DIGITAL_CAMPAIGN, e.context
 

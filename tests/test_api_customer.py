@@ -110,7 +110,7 @@ class TestCustomerDeclarativeApiManager(TestSuite):
         body = {'extra': 'extra', 'base': {'contacts': {'email': 'email@email.email'}}}
         data_expected = {'base': {'contacts': {'email': 'email@email.email'}}, 'extra': 'extra', 'extended': {},
                          'tags': {'auto': [], 'manual': []}, 'nodeId': '123'}
-        c = Customer(node=self.node, json_properties=body)
+        c = Customer(node=self.node, **body)
         posted = self.customer_manager.post(customer=c)
         mock_get.assert_called_with(self.base_url, headers=self.headers_expected, json=data_expected)
         assert isinstance(posted, Customer), type(posted)
@@ -182,14 +182,14 @@ class TestCustomerDeclarativeApiManager(TestSuite):
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response', status_code=200))
     def test_post_with_patch(self, mock_patch, mock_post):
         body = {'extra': 'extra', 'base': {'contacts': {'email': 'email@email.email'}}}
-        c = Customer(node=self.node, json_properties=body)
+        c = Customer.from_dict(node=self.node, properties=body)
         posted = self.customer_manager.post(customer=c, force_update=True)
         mock_patch.assert_called_with(self.base_url + '/01', headers=self.headers_expected, json=body)
 
     @mock.patch('requests.put',
                 return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_put(self, mock_put):
-        body = {'extra': 'extra', 'base': {'contacts': {'email': 'email@email.email'}}, 'extended': {},
+        body = {'id':'01','extra': 'extra', 'base': {'contacts': {'email': 'email@email.email'}}, 'extended': {},
                 'tags': {'auto': [], 'manual': []}}
         c = Customer(id='01', node=self.node, extra='extra', base=Entity(contacts=Entity(email='email@email.email')))
 
@@ -200,10 +200,10 @@ class TestCustomerDeclarativeApiManager(TestSuite):
                 return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_put_timezone(self, mock_put):
         body = {'extra': 'extra', 'base': {'timezone': None, 'contacts': {'email': 'email@email.email'}}}
-        c = Customer(node=self.node,json_properties=body)
+        c = Customer(node=self.node,**body)
         c.id = '01'
 
-        body = {'extra': 'extra', 'base': {'timezone': 'Europe/Rome', 'contacts': {'email': 'email@email.email'}}, 'extended': {},
+        body = {'id':'01','extra': 'extra', 'base': {'timezone': 'Europe/Rome', 'contacts': {'email': 'email@email.email'}}, 'extended': {},
                 'tags': {'auto': [], 'manual': []}}
 
         self.customer_manager.put(customer=c)

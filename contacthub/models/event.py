@@ -5,16 +5,22 @@ class Event(object):
     """
     Event model
     """
-    __slots__ = ('json_properties',)
+    __slots__ = ('properties',)
     SUBPROPERTIES = ['properties']
 
-    def __init__(self, json_properties=None, **kwargs):
+    def __init__(self, **properties):
         """
         :param customer_json_properties: A dictionary containing the json_properties related to customers
         """
-        if json_properties is None:
-            json_properties = dict()
-        self.json_properties = json_properties
+        if properties is None:
+            properties = Entity()
+        self.properties = properties
+
+    @classmethod
+    def from_dict(cls, properties=None, **kwargs):
+        o = cls(**properties)
+        o.properties = properties or {}
+        return o
 
     def __getattr__(self, item):
         """
@@ -25,13 +31,13 @@ class Event(object):
         """
         if item in self.SUBPROPERTIES:
             try:
-                return Entity(json_properties=self.json_properties[item])
+                return Entity.from_dict(properties=self.properties[item])
             except KeyError:
-                self.json_properties[item] = {}
-                return Entity(json_properties=self.json_properties[item])
+                self.properties[item] = {}
+                return Entity.from_dict(properties=self.properties[item])
         else:
             try:
-                return self.json_properties[item]
+                return self.properties[item]
             except KeyError as e:
                 raise AttributeError("%s object has no attribute %s" % (type(self).__name__, e))
 
@@ -40,9 +46,9 @@ class Event(object):
             return super(Event, self).__setattr__(attr, val)
         else:
             if isinstance(val, Entity):
-                self.json_properties[attr] = val.json_properties
+                self.properties[attr] = val.properties
             else:
-                self.json_properties[attr] = val
+                self.properties[attr] = val
 
     class TYPES:
         """

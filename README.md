@@ -173,79 +173,80 @@ base_url = base_url
 ## Operations on customers
 After the [authentication](#authentication), you are ready to perform all operations on ContactHub's entities.
 
-### Post a new customer
 
-#### Create
-For adding a new customer in a node, first you have to create a new `Customer` object and associate it with his destination node, specifying to his constructor the `Node` object representing the ContactHub node:
+ 
+### Create and add a new customer
+
+#### Creation
+For adding a new customer in a node, first you have to create a new `Customer` object and associate it with his destination node, specifying to his constructor the `Node` object representing the ContactHub node.
+In the Customer's constructor you have to specify the structure of the new `Customer` object.
 
 ```
-from contacthub.entities import Customer
+from contacthub.entities import Customer, Entity
 
-my_customer = Customer(node=my_node)
+my_customer = Customer(node=my_node,
+                        base=Entity(
+                            firstName = 'Bruce',
+                            secondName = 'Wayne',
+                            contacts=Entity(
+                                        email = 'bruce.wayne@darkknight.it', 
+                                        fax = 'fax',
+                                        otherContacts = [Entity(value='123',name='phone', type='MOBILE')]
+                                        )
+                                    )
+                        )
 ```
-Now you can update your `Customer` object with his attributes, keeping attention on specify all required attribute, according to your ContactHub configuration. You can find the required attributes in your [ContactHub dashboard](https://hub.contactlab.it/#/settings/properties).
-
-##### Base properties
-The simplest way for updating a base property, is directly access it and set his value:
-```
-my_customer.base.firstName = "Bruce"
-my_customer.base.secondName = "Wayne"
-my_customer.base.contacts.email = "bruce.wayne@darkknight.it"
-my_customer.base.contacts.fax = 123456
-```
-
-You can also create a new base property object and passing to it the desired attributes:
-```
-my_customer.base.contacts = Contacts(email="bruce.wayne@darkknight.it", fax = 123456)
-```
-Supporting objects for creation are available for several base properties and subproperties,
--	`Contacts`
-	-	`MobileDevice`
-	-	`OtherContact`
--	`Address`
-	- `Geo`
--	`SocialProfile`
--	`Subscription`
-	-	`Preference`
-
-Some attributes are standard Python `list`. For example, for adding a new mobile device:
-```
-my_customer.base.contacts.otherContacts.append(OtherContact(name='BatCavern', type=Entity.OTHER_CONTACT_TYPES.MOBILE, value'0123' ))
-```
-
+You must specify all required attribute, according to your ContactHub configuration. You can find the required attributes in your [ContactHub dashboard](https://hub.contactlab.it/#/settings/properties).
 
 **N.B.: You must follow the ContatHub schema selected for your base properties. Check the [ContactHub dashboard](https://hub.contactlab.it/#/settings/properties) for further information.**
 
+##### Entity
+An important tool for this SDK it's the `Entity` object. It represent a default generic object, used for simplify the declarations.
+In `Entity` object constructor you can declare every field you need for creating new entities. These fields can be strings, integer, datetime object, other entities
+and lists of above types.
+
+For example:
+```
+from contacthub.entities import Entity
+
+contacts = Entity(email = 'bruce.wayne@darkknight.it', fax = 'fax', otherContacts = [Entity(value='123',name='phone', type='MOBILE')])
+
+my_customer.base.contacts = contacts
+```
+
 ##### Extended properties
 
-New Customer's extended properties will stay in the `.extended` dictionary. You can update this dictionary with new integers, strings or dictionaries for storing what you need. Extended properties follow a standardized schema defined in the [ContactHub settings](https://hub.contactlab.it/#/settings/properties) for further information.**
+By default the extended property are already defined in the `Customer` object as an Entity.
+You can update this Entity with new integers, strings or other Entities for storing what you need. Extended properties follow a standardized schema defined in the [ContactHub settings](https://hub.contactlab.it/#/settings/properties) for further information.**
 
 ```
-my_customer.extended['my_extended_int'] = 1
-my_customer.extended['my_extended_string'] = 'string'
-my_customer.extended['my_extended_object'] = {'key': 'value'}
+my_customer.extended.my_extended_int = 1
+my_customer.extended.my_extended_string = 'string'
+my_customer.extended.my_extended_object = Entity(key='value')
 ```
 
-#### Posting 
-After the creation, for posting the customer:
+#### Adding
+
+Like every other entities in ContactHub, you can perform an operation via two methods:
+    Via the Node's standard methods
+    Performing the operation directly by your entity's object
+ 
+##### Adding a new customer via the Node's standard method
+In the first case, a new `Customer` can be added in ContactHub by the `Node` object:
+```
+my_node.add_customer(my_customer)
+```
+
+If the customer already exist in the node, you can force its update. The match criteria between customers is a configurable options in the [ContactHub settings](https://hub.contactlab.it/#/settings/properties). If the system notice a match between two customers and the flag `force_update` it's setted, the customer will be updated with new data.
+```
+my_node.add_customer(my_customer, forceUpdate=True)
+```
+
+##### Posting a customer directly
+In the second case, you can post the new customer directly:
 
 ```
 my_customer.post()
-```
-If the customer already exist in the node, you can force its update. The match criteria between customers is a configurable options in the [ContactHub settings](https://hub.contactlab.it/#/settings/properties). If the system notice a match between two customers and the flag `force_update` it's setted, the customer will be updated with new data.
-
-```
-my_customer.post(force_update=True)
-```
-
-Changing the perspective, a new `Customer` (in general, every new entity) can be posted by the `Node` object:
-```
-my_node.post(my_customer)
-```
-
-With the `force_update` flag:
-```
-my_node.post(my_customer, force_update=True)
 ```
 
 ### Get all customers
@@ -253,7 +254,7 @@ my_node.post(my_customer, force_update=True)
 For getting a list of customers, just:
 
 ```
-customers = node.get_all_customers()
+customers = node.get_customers()
 ```
 This method return a list of `Customer` objects. These objects contains all the properties related to the `customers` 
 in attribute form, following the JSON schema of ContactHub's Customers.
@@ -271,7 +272,7 @@ for tag in my_customer.tags.manual:
 
 In this way you can access every attribute of a single `customer`. 
 
-Note that if you'll try to access for example the `base` attribute of a `Customer`, it will return an `Entity` object, which is the 
+Note that if you'll try to access for example the `base` attribute of a `Customer`, it will return an `Entity` object, the 
 base object for this SDK, that will contain all the base properties of the `Customer` object.
 
 
@@ -314,7 +315,7 @@ Every element of the fetched list will only have the given fields.
 
 
 ### Query customer
-[TODO]
+
 
 ### Get a single customer
 
@@ -332,4 +333,10 @@ my_customer = node.get_customer(externalId='02')
 
 In this last case, if there are multiple customers assiociated, this method will return a list of `Customers` object, performing the same call of the `get_all_customers(externalId="02")`
 
+
+### Update a customer
+
+#### Session
+
+#### Tag
 

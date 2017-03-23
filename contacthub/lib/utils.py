@@ -14,7 +14,7 @@ def list_item(_class, JSON_list):
     """
     obj_list_ret = []
     for elements in JSON_list:
-        obj_list_ret.append(_class(elements))
+        obj_list_ret.append(_class(**elements))
     return obj_list_ret
 
 
@@ -24,7 +24,7 @@ class DateEncoder(json.JSONEncoder):
             return obj.isoformat()
         from contacthub.models import Entity
         if isinstance(obj, Entity):
-            return obj.json_properties
+            return obj.properties
         return json.JSONEncoder.default(self, obj)
 
 

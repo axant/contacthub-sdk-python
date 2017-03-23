@@ -51,7 +51,7 @@ class CustomerDeclarativeApiManager(BaseDeclarativeApiManager):
         :param customer: a customer object to insert in customers
         :return:
         """
-        return super(CustomerDeclarativeApiManager, self).post(body=customer.json_properties, force_update=force_update)
+        return super(CustomerDeclarativeApiManager, self).post(body=customer.properties, force_update=force_update)
 
     def delete(self, customer):
         """
@@ -70,7 +70,6 @@ class CustomerDeclarativeApiManager(BaseDeclarativeApiManager):
         """
 
         body = {}
-        print(customer.mute)
         for key in customer.mute:
             update_dictionary = body
             splitted = key.split('.')
@@ -85,10 +84,9 @@ class CustomerDeclarativeApiManager(BaseDeclarativeApiManager):
         return super(CustomerDeclarativeApiManager, self).patch(_id=customer.id, body=body)
 
     def put(self, customer):
-        body = deepcopy(customer.json_properties)
+        body = deepcopy(customer.properties)
         body.pop('registeredAt', None)
         body.pop('updatedAt', None)
-        body.pop('id', None)
         if 'base' in body and 'timezone' in body['base'] and body['base']['timezone'] is None:
             body['base']['timezone'] = 'Europe/Rome'
         return super(CustomerDeclarativeApiManager, self).put(_id=customer.id, body=body)

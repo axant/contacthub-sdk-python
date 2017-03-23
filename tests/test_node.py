@@ -90,7 +90,7 @@ class TestNode(TestSuite):
     @mock.patch('requests.post', return_value=FakeHTTPResponse())
     def test_add_customer_tags(self, mock_get):
         c = Customer(node=self.node, base=Entity(contacts=Entity(email='email')))
-        c.extended.prova= 'prova'
+        c.extended.prova = 'prova'
         c.tags.auto = ['auto']
         c.tags.manual = ['manual']
         self.node.add_customer(customer=c)
@@ -109,9 +109,9 @@ class TestNode(TestSuite):
     @mock.patch('requests.put', return_value=FakeHTTPResponse())
     def test_update_customer_full(self, mock_get):
         c = Customer(node=self.node, id='01', base=Entity(contacts=Entity(email='email', fax='fax')))
-        c.base.contacts.email = 'email1'
+        c.base.contacts.email = 'email1234'
         self.node.update_customer(customer=c, full_update=True)
-        body = {'base': {'contacts': {'email': 'email1', 'fax': 'fax'}}, 'extended': {},
+        body = {'id':'01', 'base': {'contacts': {'email': 'email1234', 'fax': 'fax'}}, 'extended': {},
                 'tags': {'auto': [], 'manual': []}}
         mock_get.assert_called_with(self.base_url + '/01', headers=self.headers_expected, json=body)
 

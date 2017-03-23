@@ -14,23 +14,31 @@ class Entity(object):
 
     SUBPROPERTIES_LIST = {'educations': Education, 'likes': Like, 'jobs': Job}
 
-    __slots__ = ('json_properties', 'father', 'mute', 'father_class')
+    __slots__ = ('properties', 'parent_attr', 'mute', 'parent')
 
-    def __init__(self, json_properties=None, mute=None, father=None, father_class=None, *args, **kwargs):
+    def __init__(self, parent=None, parent_attr=None, **properties):
         """
         :param json_properties: A dictionary with json_properties to return or set
         """
-        if json_properties is None:
-            json_properties = dict()
-            for k in kwargs:
-                if isinstance(kwargs[k], Entity):
-                    json_properties[k] = kwargs[k].json_properties
-                else:
-                    json_properties[k] = kwargs[k]
-        self.json_properties = json_properties
-        self.father = father
-        self.mute = mute
-        self.father_class = father_class
+        self.parent_attr = parent_attr
+        self.parent = parent
+        self.mute = parent.mute if parent else None
+        for k in properties:
+            if isinstance(properties[k], Entity):
+                properties[k] = properties[k].properties
+        self.properties = properties
+
+    @classmethod
+    def from_dict(cls, parent=None, parent_attr=None, properties=None):
+        o = cls(parent=parent, parent_attr=parent_attr)
+        for k in properties:
+            if isinstance(properties[k], Entity):
+                properties[k] = properties[k].properties
+        if properties is None:
+            o.properties = {}
+        else:
+            o.properties = properties
+        return o
 
     def __getattr__(self, item):
         """
@@ -41,15 +49,18 @@ class Entity(object):
         """
         try:
             if item in self.SUBPROPERTIES_LIST:
-                return list_item(self.SUBPROPERTIES_LIST[item], self.json_properties[item])
-            if isinstance(self.json_properties[item], dict):
-                return Entity(self.json_properties[item], mute=self.mute, father=self.father + '.' + item, father_class=self)
-            elif isinstance(self.json_properties[item], list) and self.json_properties[item] and isinstance(self.json_properties[item][0], dict):
+                return list_item(self.SUBPROPERTIES_LIST[item], self.properties[item])
+            if isinstance(self.properties[item], dict):
+                return Entity.from_dict(parent_attr=self.parent_attr + '.' + item, parent=self,
+                                        properties=self.properties[item])
+            elif isinstance(self.properties[item], list) and self.properties[item] \
+                    and isinstance(self.properties[item][0], dict):
                 list_sub_prob = []
-                for elem in self.json_properties[item]:
-                    list_sub_prob.append(Entity(elem, mute=self.mute, father=self.father + '.' + item, father_class=self))
+                for elem in self.properties[item]:
+                    list_sub_prob.append(Entity.from_dict(parent_attr=self.parent_attr + '.' + item,
+                                                          parent=self, properties=elem))
                 return list_sub_prob
-            return self.json_properties[item]
+            return self.properties[item]
         except KeyError as e:
             raise AttributeError("%s object has no attribute %s" %(type(self).__name__, e))
 
@@ -58,17 +69,18 @@ class Entity(object):
             return super(Entity, self).__setattr__(attr, val)
         else:
             if isinstance(val, Entity):
-                mutations = generate_mutation_tracker(self.json_properties[attr], val.json_properties)
-                update_tracking_with_new_prop(mutations, val.json_properties)
-                self.mute[self.father + '.' + attr] = mutations
-                self.json_properties[attr] = val.json_properties
+                mutations = generate_mutation_tracker(self.properties[attr], val.properties)
+                update_tracking_with_new_prop(mutations, val.properties)
+                self.mute[self.parent_attr + '.' + attr] = mutations
+                self.properties[attr] = val.properties
             else:
-                self.json_properties[attr] = val
-                field = self.father.split('.')[-1:][0]
-                if isinstance(self.father_class.json_properties[field], list):
-                    self.mute[self.father] = self.father_class.json_properties[field]
+                print (self.properties)
+                self.properties[attr] = val
+                field = self.parent_attr.split('.')[-1:][0]
+                if isinstance(self.parent.properties[field], list):
+                    self.mute[self.parent_attr] = self.parent.properties[field]
                 else:
-                    self.mute[self.father + '.' + attr] = val
+                    self.mute[self.parent_attr + '.' + attr] = val
 
 
 def update_tracking_with_new_prop(mutations, new_properties):

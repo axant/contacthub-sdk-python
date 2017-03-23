@@ -4,9 +4,8 @@ class Education(object):
     Education model
     """
 
-    def __init__(self, json_properties):
-        self.json_properties=json_properties
-
+    def __init__(self, **properties):
+        self.properties=properties
 
     class SCHOOL_TYPES:
         """
@@ -26,6 +25,6 @@ class Education(object):
        :return: an element of the dictionary, or datetime object if element associated at the key contains a datetime format object
        """
         try:
-            return self.json_properties[item]
+            return self.properties[item]
         except KeyError as e:
             raise AttributeError("%s object has no attribute %s" % (type(self).__name__, e))

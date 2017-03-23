@@ -285,7 +285,7 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_create_extra(self):
         c = Customer(node=self.node, extra='extra')
-        assert c.json_properties['extra'] == 'extra', c.json_properties['extra']
+        assert c.properties['extra'] == 'extra', c.properties['extra']
         assert c.extra == 'extra', c.extra
 
     @mock.patch('requests.delete', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
@@ -372,10 +372,9 @@ class TestCustomer(unittest.TestCase):
     def test_put(self, mock_patch):
         self.customers[0].base.firstName = 'fn'
         self.customers[0].put()
-        body = deepcopy(self.customers[0].json_properties)
+        body = deepcopy(self.customers[0].properties)
         body.pop('updatedAt')
         body.pop('registeredAt')
-        body.pop('id')
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
                                       headers=self.headers_expected, json=body)
 
@@ -387,13 +386,6 @@ class TestCustomer(unittest.TestCase):
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
                                       headers=self.headers_expected, json=body)
 
-    @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
-    def test_patch_full_extended(self, mock_patch):
-        self.customers[0].extended = Entity()
-        self.customers[0].patch()
-        body = {'extended': {}}
-        mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
-                                      headers=self.headers_expected, json=body)
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_entity_extended_and_base(self, mock_patch):
@@ -460,4 +452,53 @@ class TestCustomer(unittest.TestCase):
         body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': None}, 'a': 1}, 'base': {'contacts': {'otherContacts': [{'email1': {'a': 1}}]}}}
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
                                       headers=self.headers_expected, json=body)
+
+    @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
+    def test_patch_entity_new_list(self, mock_patch):
+        self.customers[0].base.contacts = Entity(email='email')
+        self.customers[0].base.contacts.otherContacts = [Entity(email1=Entity(a=1))]
+        self.customers[0].patch()
+        body = {'base': {'contacts': {'email':'email', 'fax':None, 'mobilePhone':None,'phone':None, 'mobileDevices':None,
+                                      'otherContacts': [{'email1': {'a': 1}}]}}}
+        mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
+                                      headers=self.headers_expected, json=body)
+
+    @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
+    def test_patch_entity_new_list_with_entities(self, mock_patch):
+        self.customers[0].base.contacts = Entity(email='email')
+        self.customers[0].base.contacts.otherContacts = [Entity(email1=Entity(a=Entity(b=1)))]
+        self.customers[0].patch()
+        body = {'base': {
+            'contacts': {'email': 'email', 'fax': None, 'mobilePhone': None, 'phone': None, 'mobileDevices': None,
+                         'otherContacts': [{'email1': {'a': {'b':1}}}]}}}
+        mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
+                                      headers=self.headers_expected, json=body)
+
+    @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
+    def test_patch_all_extended(self, mock_patch):
+        self.customers[0].extended = Entity()
+        self.customers[0].patch()
+        body = {'extended': {'prova': None}}
+        mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
+                                      headers=self.headers_expected, json=body)
+
+    @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
+    def test_patch_all_base(self, mock_patch):
+        self.customers[0].base = Entity()
+        self.customers[0].patch()
+        body = {'base': {'pictureUrl': None, 'title': None, 'prefix': None, 'firstName': None, 'lastName': None,
+                         'middleName': None, 'gender': None, 'dob': None, 'locale': None,
+                         'timezone': None, 'contacts': None, 'address': None, 'credential': None, 'educations': None,
+                         'likes': None, 'socialProfile': None, 'jobs': None, 'subscriptions': None}}
+        mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
+                                      headers=self.headers_expected, json=body)
+
+    @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
+    def test_patch_elem_in_list(self, mock_patch):
+        self.customers[0].base.contacts.otherContacts[0].type='TYPE'
+        self.customers[0].patch()
+        body = {'base':{'contacts': {'otherContacts':[{'name': 'name', 'type': 'TYPE', 'value': 'value'}, {'name': 'Casa di piero', 'type': 'PHONE', 'value': '12343241'}]}}}
+        mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
+                                      headers=self.headers_expected, json=body)
+
 

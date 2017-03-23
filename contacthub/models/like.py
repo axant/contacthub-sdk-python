@@ -8,8 +8,8 @@ class Like(object):
     """
     DATE_PROPERTIES = {'createdTime': "%Y-%m-%d %H:%M"}
 
-    def __init__(self, json_properties):
-        self.json_json_properties=json_properties
+    def __init__(self, **properties):
+        self.properties=properties
 
     def __getattr__(self, item):
         """
@@ -19,8 +19,8 @@ class Like(object):
         :return: an element of the dictionary, or datetime object if element associated at the key contains a datetime format object
         """
         if item in self.DATE_PROPERTIES:
-            return datetime.strptime(self.json_json_properties[item], self.DATE_PROPERTIES[item])
+            return datetime.strptime(self.properties[item], self.DATE_PROPERTIES[item])
         try:
-            return self.json_json_properties[item]
+            return self.properties[item]
         except KeyError as e:
             raise AttributeError("%s object has no attribute %s" %(type(self).__name__, e))
