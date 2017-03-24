@@ -53,7 +53,7 @@ class Query(object):
     def all(self):
         """
         Get all queried data of an entity from the API
-        :return: a list of Entity object
+        :return: a list of Property object
         """
         complete_query = {'name': 'query', 'query': self.inner_query}
         if self.entity is Customer:

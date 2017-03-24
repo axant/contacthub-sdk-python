@@ -4,7 +4,7 @@ from unittest import TestSuite
 import mock
 
 from contacthub.models import Contacts
-from contacthub.models import Entity
+from contacthub.models import Property
 from contacthub.models.customer import Customer
 from contacthub.workspace import Workspace
 from tests.utility import FakeHTTPResponse
@@ -73,14 +73,14 @@ class TestNode(TestSuite):
 
     @mock.patch('requests.post', return_value=FakeHTTPResponse())
     def test_add_customer(self, mock_get):
-        c = Customer(node=self.node, base=Entity(contacts=Entity(email='email')))
+        c = Customer(node=self.node, base=Property(contacts=Property(email='email')))
         self.node.add_customer(customer=c)
         body = {'nodeId': self.node.node_id, 'base': {'contacts': {'email': 'email'}}, 'extended': {}, 'tags': {'auto': [], 'manual': []}}
         mock_get.assert_called_with(self.base_url, headers=self.headers_expected, json=body)
 
     @mock.patch('requests.post', return_value=FakeHTTPResponse())
     def test_add_customer_extended(self, mock_get):
-        c = Customer(node=self.node, base=Entity(contacts=Entity(email='email')))
+        c = Customer(node=self.node, base=Property(contacts=Property(email='email')))
         c.extended.prova = 'prova'
         self.node.add_customer(customer=c)
         body = {'nodeId': self.node.node_id, 'base': {'contacts': {'email': 'email'}}, 'extended': {'prova':'prova'},
@@ -89,7 +89,7 @@ class TestNode(TestSuite):
 
     @mock.patch('requests.post', return_value=FakeHTTPResponse())
     def test_add_customer_tags(self, mock_get):
-        c = Customer(node=self.node, base=Entity(contacts=Entity(email='email')))
+        c = Customer(node=self.node, base=Property(contacts=Property(email='email')))
         c.extended.prova = 'prova'
         c.tags.auto = ['auto']
         c.tags.manual = ['manual']
@@ -100,7 +100,7 @@ class TestNode(TestSuite):
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse())
     def test_update_customer_not_full(self, mock_patch):
-        c = Customer(node=self.node, id='01', base=Entity(contacts=Entity(email='email')))
+        c = Customer(node=self.node, id='01', base=Property(contacts=Property(email='email')))
         c.extra = 'extra'
         self.node.update_customer(customer=c)
         body = {'extra': 'extra'}
@@ -108,7 +108,7 @@ class TestNode(TestSuite):
 
     @mock.patch('requests.put', return_value=FakeHTTPResponse())
     def test_update_customer_full(self, mock_get):
-        c = Customer(node=self.node, id='01', base=Entity(contacts=Entity(email='email', fax='fax')))
+        c = Customer(node=self.node, id='01', base=Property(contacts=Property(email='email', fax='fax')))
         c.base.contacts.email = 'email1234'
         self.node.update_customer(customer=c, full_update=True)
         body = {'id':'01', 'base': {'contacts': {'email': 'email1234', 'fax': 'fax'}}, 'extended': {},

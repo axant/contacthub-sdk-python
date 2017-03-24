@@ -1,25 +1,25 @@
-from contacthub.models import Entity
+from contacthub.models import Property
 
 
 class Event(object):
     """
     Event model
     """
-    __slots__ = ('properties',)
-    SUBPROPERTIES = ['properties']
+    __slots__ = ('internal_properties','mute')
 
-    def __init__(self, **properties):
+    def __init__(self, **internal_properties):
         """
         :param customer_json_properties: A dictionary containing the json_properties related to customers
         """
-        if properties is None:
-            properties = Entity()
-        self.properties = properties
+        if internal_properties is None:
+            internal_properties = Property()
+        self.internal_properties = internal_properties
+        self.mute = {}
 
     @classmethod
-    def from_dict(cls, properties=None, **kwargs):
-        o = cls(**properties)
-        o.properties = properties or {}
+    def from_dict(cls, internal_properties=None, **kwargs):
+        o = cls(**internal_properties)
+        o.internal_properties = internal_properties or {}
         return o
 
     def __getattr__(self, item):
@@ -29,26 +29,23 @@ class Event(object):
         :param item: the key of the base property dict
         :return: an element of the dictionary, or an object if the element associated at the key containse an object or a list
         """
-        if item in self.SUBPROPERTIES:
-            try:
-                return Entity.from_dict(properties=self.properties[item])
-            except KeyError:
-                self.properties[item] = {}
-                return Entity.from_dict(properties=self.properties[item])
-        else:
-            try:
-                return self.properties[item]
-            except KeyError as e:
-                raise AttributeError("%s object has no attribute %s" % (type(self).__name__, e))
+        try:
+            if isinstance(self.internal_properties[item], dict):
+                return Property.from_dict(parent_attr=item, parent=self,
+                                          internal_properties=self.internal_properties[item])
+            else:
+                return self.internal_properties[item]
+        except KeyError as e:
+            raise AttributeError("%s object has no attribute %s" % (type(self).__name__, e))
 
     def __setattr__(self, attr, val):
         if attr in self.__slots__:
             return super(Event, self).__setattr__(attr, val)
         else:
-            if isinstance(val, Entity):
-                self.properties[attr] = val.properties
+            if isinstance(val, Property):
+                self.internal_properties[attr] = val.internal_properties
             else:
-                self.properties[attr] = val
+                self.internal_properties[attr] = val
 
     class TYPES:
         """

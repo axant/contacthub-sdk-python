@@ -4,10 +4,11 @@ from datetime import datetime
 
 import mock
 
+from contacthub.lib.read_only_list import ReadOnlyList
 from contacthub.models import BaseProperties
 from contacthub.models.customer import Customer
 from contacthub.models.education import Education
-from contacthub.models.entity import Entity
+from contacthub.models.property import Property
 from contacthub.models.event import Event
 from contacthub.models.job import Job
 from contacthub.models.like import Like
@@ -35,13 +36,13 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_base(self):
         for customer in self.customers:
-            assert type(customer.base) is Entity, type(customer.base)
+            assert type(customer.base) is Property, type(customer.base)
 
     def test_customer_tags(self):
         tags = self.customers[0].tags
-        assert type(tags) is Entity, type(tags)
-        assert type(tags.auto) is list, type(tags.auto)
-        assert type(tags.manual) is list, type(tags.manual)
+        assert type(tags) is Property, type(tags)
+        assert type(tags.auto) is ReadOnlyList, type(tags.auto)
+        assert type(tags.manual) is ReadOnlyList, type(tags.manual)
         assert tags.auto[0] == 'auto', tags.auto[0]
         assert tags.manual[0] == 'manual', tags.manual[0]
 
@@ -54,33 +55,33 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_tags_empty(self):
         tags = self.customers[1].tags
-        assert type(tags) is Entity, type(tags)
-        assert type(tags.auto) is list, type(tags.auto)
-        assert type(tags.manual) is list, type(tags.manual)
+        assert type(tags) is Property, type(tags)
+        assert type(tags.auto) is ReadOnlyList, type(tags.auto)
+        assert type(tags.manual) is ReadOnlyList, type(tags.manual)
         assert len(tags.auto) == 0, len(tags.auto)
         assert len(tags.manual) == 0, len(tags.manual)
 
     def test_customer_contacts_other_contacts(self):
         other_contact = self.customers[0].base.contacts.otherContacts[0]
-        assert type(other_contact) is Entity, type(other_contact)
+        assert type(other_contact) is Property, type(other_contact)
         assert other_contact.name == 'name', other_contact.name
         assert other_contact.value == 'value', other_contact.value
 
     def test_customer_contacts_mobile_devices(self):
         mobile_device = self.customers[0].base.contacts.mobileDevices[0]
-        assert type(mobile_device) is Entity, type(mobile_device)
+        assert type(mobile_device) is Property, type(mobile_device)
         assert mobile_device.identifier == 'identifier', mobile_device.name
         assert mobile_device.name == 'name', mobile_device.value
 
     def test_customer_contacts(self):
         contacts = self.customers[0].base.contacts
-        assert type(contacts) is Entity, type(contacts)
+        assert type(contacts) is Property, type(contacts)
         assert contacts.email == 'email@email.it', contacts.email
         assert contacts.fax == 'fax', contacts.fax
         assert contacts.mobilePhone == 'mobilePhone', contacts.mobilePhone
         assert contacts.phone == 'phone', contacts.phone
-        assert type(contacts.otherContacts) is list, type(contacts.otherContacts)
-        assert type(contacts.mobileDevices) is list, type(contacts.mobileDevices)
+        assert type(contacts.otherContacts) is ReadOnlyList, type(contacts.otherContacts)
+        assert type(contacts.mobileDevices) is ReadOnlyList, type(contacts.mobileDevices)
 
     def test_customer_contacts_other_contacts_empty(self):
         other_contacts = self.customers[1].base.contacts.otherContacts
@@ -92,16 +93,16 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_contacts_empty(self):
         contacts = self.customers[1].base.contacts
-        assert type(contacts) is Entity, type(contacts)
+        assert type(contacts) is Property, type(contacts)
         assert contacts.fax is None, contacts.fax
         assert contacts.mobilePhone is None, contacts.mobilePhone
         assert contacts.phone is None, contacts.phone
-        assert type(contacts.otherContacts) is list, type(contacts.otherContacts)
-        assert type(contacts.mobileDevices) is list, type(contacts.mobileDevices)
+        assert type(contacts.otherContacts) is ReadOnlyList, type(contacts.otherContacts)
+        assert type(contacts.mobileDevices) is ReadOnlyList, type(contacts.mobileDevices)
 
     def test_customer_credentials(self):
         credentials = self.customers[0].base.credential
-        assert type(credentials) is Entity, type(credentials)
+        assert type(credentials) is Property, type(credentials)
         assert credentials.username == 'username', credentials.username
         assert credentials.password == 'password', credentials.password
 
@@ -111,7 +112,7 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_education(self):
         educations = self.customers[0].base.educations
-        assert type(educations) is list, type(educations)
+        assert type(educations) is ReadOnlyList, type(educations)
         education = educations[0]
         assert type(education) is Education, type(education)
         assert education.schoolType == Education.SCHOOL_TYPES.COLLEGE,  education.schoolType
@@ -123,7 +124,7 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_unexsistant_attribute(self):
         educations = self.customers[0].base.educations
-        assert type(educations) is list, type(educations)
+        assert type(educations) is ReadOnlyList, type(educations)
         education = educations[0]
         try:
             attr = education.attr
@@ -132,14 +133,14 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_education_empty(self):
         educations = self.customers[1].base.educations
-        assert type(educations) is list, type(educations)
+        assert type(educations) is ReadOnlyList, type(educations)
         assert len(educations) == 0, len(educations)
 
     def test_customer_subscriptions(self):
         subscriptions = self.customers[0].base.subscriptions
-        assert type(subscriptions) is list, type(subscriptions)
+        assert type(subscriptions) is ReadOnlyList, type(subscriptions)
         subscription = subscriptions[0]
-        assert type(subscription) is Entity, type(subscription)
+        assert type(subscription) is Property, type(subscription)
         assert subscription.id == "id",  subscription.id
         assert subscription.name == "name", subscription.name
         assert subscription.type == "type", subscription.type
@@ -149,24 +150,24 @@ class TestCustomer(unittest.TestCase):
         assert subscription.subscriberId == "subscriberId", subscription.id
         #assert type(subscription.registeredAt) is datetime, type(subscription.registeredAt)
         #assert type(subscription.updatedAt) is datetime, type(subscription.updatedAt)
-        assert type(subscription.preferences) is list, type(subscription.preferences)
+        assert type(subscription.preferences) is ReadOnlyList, type(subscription.preferences)
 
     def test_customer_subscriptions_preferences(self):
         preferences = self.customers[0].base.subscriptions[0].preferences
-        assert type(preferences) is list, type(preferences)
+        assert type(preferences) is ReadOnlyList, type(preferences)
         preference = preferences[0]
-        assert type(preference) is Entity, type(preference)
+        assert type(preference) is Property, type(preference)
         assert preference.key == "key", preference.key
         assert preference.value == "value", preference.value
 
     def test_customer_subscriptions_empty(self):
         subscriptions = self.customers[1].base.subscriptions
-        assert type(subscriptions) is list, type(subscriptions)
+        assert type(subscriptions) is ReadOnlyList, type(subscriptions)
         assert len(subscriptions) == 0, len(subscriptions)
 
     def test_customer_jobs(self):
         jobs = self.customers[0].base.jobs
-        assert type(jobs) is list, type(jobs)
+        assert type(jobs) is ReadOnlyList, type(jobs)
         job = jobs[0]
         assert type(job) is Job, type(job)
         assert job.companyIndustry == 'companyIndustry', job.companyIndustry
@@ -178,24 +179,24 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_like(self):
         likes = self.customers[0].base.likes
-        assert type(likes) is list, type(likes)
+        assert type(likes) is ReadOnlyList, type(likes)
         like = likes[0]
         assert type(like) is Like, type(like)
 
     def test_customer_jobs_empty(self):
         jobs = self.customers[1].base.jobs
-        assert type(jobs) is list, type(jobs)
+        assert type(jobs) is ReadOnlyList, type(jobs)
         assert len(jobs) == 0, len(jobs)
 
     def test_customer_address(self):
         address = self.customers[0].base.address
-        assert type(address) is Entity, type(address)
+        assert type(address) is Property, type(address)
         assert address.street == 'street', address.street
         assert address.city == 'city', address.city
         assert address.country == 'country', address.country
         assert address.province == 'province', address.province
         assert address.zip == 'zip', address.zip
-        assert type(address.geo) is Entity,  type(address.geo)
+        assert type(address.geo) is Property,  type(address.geo)
 
     def test_customer_address_geo(self):
         geo = self.customers[0].base.address.geo
@@ -251,7 +252,7 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_property_unexistent_attr(self):
         with self.assertRaises(AttributeError) as context:
-            p = Entity({'attributo':1})
+            p = Property({'attributo':1})
             attr = p.attr
         self.assertTrue('attr' in str(context.exception))
 
@@ -274,7 +275,7 @@ class TestCustomer(unittest.TestCase):
         events = self.customers[0].events
         params_expected = {'customerId': self.customers[0].id}
         mock_get_event.assert_called_with(self.base_url_events, params=params_expected, headers=self.headers_expected)
-        assert isinstance(events, list), type(events)
+        assert isinstance(events, ReadOnlyList), type(events)
         assert events[0].type == Event.TYPES.ADDED_COMPARE, events[0].type
 
     def test_all_events_new_customer(self):
@@ -285,7 +286,7 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_create_extra(self):
         c = Customer(node=self.node, extra='extra')
-        assert c.properties['extra'] == 'extra', c.properties['extra']
+        assert c.internal_properties['extra'] == 'extra', c.internal_properties['extra']
         assert c.extra == 'extra', c.extra
 
     @mock.patch('requests.delete', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
@@ -318,8 +319,8 @@ class TestCustomer(unittest.TestCase):
                          'tags': {'auto': ['auto'], 'manual': ['manual']}}
         mock_post.return_value = json.loads(FakeHTTPResponse(resp_path='tests/util/fake_post_response').text)
         c = Customer(node=self.node,
-            base=Entity(
-                contacts=Entity(email='email@email.email')
+            base=Property(
+                contacts=Property(email='email@email.email')
             )
         )
 
@@ -338,8 +339,8 @@ class TestCustomer(unittest.TestCase):
     # def test_post_customer_creation_second_method(self, mock_post):
     #     expected_body = {'base': {'contacts': {'email': 'email@email.email'}}, 'extra': 'extra'}
     #     mock_post.return_value = json.loads(FakeHTTPResponse(resp_path='tests/util/fake_post_response').text)
-    #     c = Customer(base=Entity(), node=self.node)
-    #     c.base.contacts = Entity(email='email@email.email')
+    #     c = Customer(base=Property(), node=self.node)
+    #     c.base.contacts = Property(email='email@email.email')
     #     c.extra = 'extra'
     #     posted = c.post()
     #     mock_post.assert_called_with(body=expected_body, force_update=False)
@@ -351,7 +352,7 @@ class TestCustomer(unittest.TestCase):
     def test_post_customer_creation_second_method(self, mock_post):
         expected_body = {'base': {'contacts': {'email': 'email@email.email'}}, 'extra': 'extra', 'extended': {}, 'tags': {'auto': [], 'manual': []}}
         mock_post.return_value = json.loads(FakeHTTPResponse(resp_path='tests/util/fake_post_response').text)
-        c = Customer(node=self.node,base=Entity())
+        c = Customer(node=self.node,base=Property())
         c.base.contacts = {'email': 'email@email.email'}
         c.extra = 'extra'
         posted = c.post()
@@ -372,7 +373,7 @@ class TestCustomer(unittest.TestCase):
     def test_put(self, mock_patch):
         self.customers[0].base.firstName = 'fn'
         self.customers[0].put()
-        body = deepcopy(self.customers[0].properties)
+        body = deepcopy(self.customers[0].internal_properties)
         body.pop('updatedAt')
         body.pop('registeredAt')
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
@@ -380,103 +381,103 @@ class TestCustomer(unittest.TestCase):
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_entity(self, mock_patch):
-        self.customers[0].extended = Entity(a=1, prova=Entity(b=1))
+        self.customers[0].extended = Property(a=1, prova=Property(b=1))
         self.customers[0].patch()
-        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': None}, 'a': 1}}
+        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': []}, 'a': 1}}
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
                                       headers=self.headers_expected, json=body)
 
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_entity_extended_and_base(self, mock_patch):
-        self.customers[0].extended = Entity(a=1, prova=Entity(b=1))
+        self.customers[0].extended = Property(a=1, prova=Property(b=1))
         self.customers[0].base.firstName = 'fn'
         self.customers[0].patch()
-        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': None}, 'a': 1}, 'base': {'firstName': 'fn'}}
+        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': []}, 'a': 1}, 'base': {'firstName': 'fn'}}
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
                                       headers=self.headers_expected, json=body)
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_extended_entity_and_base_entity(self, mock_patch):
-        self.customers[0].extended = Entity(a=1, prova=Entity(b=1))
-        self.customers[0].base = Entity(contacts=Entity(email='email'))
+        self.customers[0].extended = Property(a=1, prova=Property(b=1))
+        self.customers[0].base = Property(contacts=Property(email='email'))
         self.customers[0].patch()
-        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': None}, 'a': 1},
+        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': []}, 'a': 1},
                 'base': {
                     'pictureUrl': None, 'title': None, 'prefix': None, 'firstName': None, 'lastName': None,
                     'middleName': None, 'gender': None, 'dob': None, 'locale': None, 'timezone': None,
                     'contacts':
-                        {'email': 'email', 'fax': None, 'mobilePhone': None, 'phone': None, 'otherContacts': None, 'mobileDevices': None},
-                    'address': None, 'credential': None, 'educations': None, 'likes': None, 'socialProfile': None, 'jobs': None, 'subscriptions': None}}
+                        {'email': 'email', 'fax': None, 'mobilePhone': None, 'phone': None, 'otherContacts': [], 'mobileDevices': []},
+                    'address': None, 'credential': None, 'educations': [], 'likes': [], 'socialProfile':  None, 'jobs': [], 'subscriptions': []}}
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
                                       headers=self.headers_expected, json=body)
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_entity_with_entity(self, mock_patch):
-        self.customers[0].extended = Entity(a=1, prova=Entity(b=1))
-        self.customers[0].base.contacts = Entity(email='email')
+        self.customers[0].extended = Property(a=1, prova=Property(b=1))
+        self.customers[0].base.contacts = Property(email='email')
         self.customers[0].patch()
-        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': None}, 'a': 1},'base':
-            {'contacts':{'email': 'email', 'fax': None, 'mobilePhone': None, 'phone': None, 'otherContacts': None, 'mobileDevices': None}}}
+        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': []}, 'a': 1},'base':
+            {'contacts':{'email': 'email', 'fax': None, 'mobilePhone': None, 'phone': None, 'otherContacts': [], 'mobileDevices': []}}}
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
                                       headers=self.headers_expected, json=body)
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_entity_with_rename(self, mock_patch):
-        self.customers[0].extended = Entity(a=1, prova=Entity(b=1))
-        self.customers[0].base.contacts = Entity(email1='email')
+        self.customers[0].extended = Property(a=1, prova=Property(b=1))
+        self.customers[0].base.contacts = Property(email1='email')
         self.customers[0].patch()
-        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': None}, 'a': 1}, 'base':
-            {'contacts': {'email': None,'email1':'email', 'fax': None, 'mobilePhone': None, 'phone': None, 'otherContacts': None,
-                          'mobileDevices': None}}}
+        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': []}, 'a': 1}, 'base':
+            {'contacts': {'email': None,'email1':'email', 'fax': None, 'mobilePhone': None, 'phone': None, 'otherContacts': [],
+                          'mobileDevices': []}}}
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
                                       headers=self.headers_expected, json=body)
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_entity_with_rename_dict(self, mock_patch):
-        self.customers[0].extended = Entity(a=1, prova=Entity(b=1))
-        self.customers[0].base.contacts = Entity(email1=Entity(a=1))
+        self.customers[0].extended = Property(a=1, prova=Property(b=1))
+        self.customers[0].base.contacts = Property(email1=Property(a=1))
         self.customers[0].patch()
-        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': None}, 'a': 1}, 'base':
+        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': []}, 'a': 1}, 'base':
             {'contacts': {'email': None, 'email1': {'a': 1}, 'fax': None, 'mobilePhone': None, 'phone': None,
-                          'otherContacts': None,
-                          'mobileDevices': None}}}
+                          'otherContacts': [],
+                          'mobileDevices': []}}}
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
                                       headers=self.headers_expected, json=body)
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_entity_list(self, mock_patch):
-        self.customers[0].extended = Entity(a=1, prova=Entity(b=1))
-        self.customers[0].base.contacts.otherContacts = [Entity(email1=Entity(a=1))]
+        self.customers[0].extended = Property(a=1, prova=Property(b=1))
+        self.customers[0].base.contacts.otherContacts = [Property(email1=Property(a=1))]
         self.customers[0].patch()
-        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': None}, 'a': 1}, 'base': {'contacts': {'otherContacts': [{'email1': {'a': 1}}]}}}
+        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': []}, 'a': 1}, 'base': {'contacts': {'otherContacts': [{'email1': {'a': 1}}]}}}
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
                                       headers=self.headers_expected, json=body)
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_entity_new_list(self, mock_patch):
-        self.customers[0].base.contacts = Entity(email='email')
-        self.customers[0].base.contacts.otherContacts = [Entity(email1=Entity(a=1))]
+        self.customers[0].base.contacts = Property(email='email')
+        self.customers[0].base.contacts.otherContacts = [Property(email1=Property(a=1))]
         self.customers[0].patch()
-        body = {'base': {'contacts': {'email':'email', 'fax':None, 'mobilePhone':None,'phone':None, 'mobileDevices':None,
+        body = {'base': {'contacts': {'email':'email', 'fax':None, 'mobilePhone':None,'phone':None, 'mobileDevices':[],
                                       'otherContacts': [{'email1': {'a': 1}}]}}}
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
                                       headers=self.headers_expected, json=body)
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_entity_new_list_with_entities(self, mock_patch):
-        self.customers[0].base.contacts = Entity(email='email')
-        self.customers[0].base.contacts.otherContacts = [Entity(email1=Entity(a=Entity(b=1)))]
+        self.customers[0].base.contacts = Property(email='email')
+        self.customers[0].base.contacts.otherContacts = [Property(email1=Property(a=Property(b=1)))]
         self.customers[0].patch()
         body = {'base': {
-            'contacts': {'email': 'email', 'fax': None, 'mobilePhone': None, 'phone': None, 'mobileDevices': None,
+            'contacts': {'email': 'email', 'fax': None, 'mobilePhone': None, 'phone': None, 'mobileDevices': [],
                          'otherContacts': [{'email1': {'a': {'b':1}}}]}}}
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
                                       headers=self.headers_expected, json=body)
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_all_extended(self, mock_patch):
-        self.customers[0].extended = Entity()
+        self.customers[0].extended = Property()
         self.customers[0].patch()
         body = {'extended': {'prova': None}}
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
@@ -484,12 +485,12 @@ class TestCustomer(unittest.TestCase):
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_all_base(self, mock_patch):
-        self.customers[0].base = Entity()
+        self.customers[0].base = Property()
         self.customers[0].patch()
         body = {'base': {'pictureUrl': None, 'title': None, 'prefix': None, 'firstName': None, 'lastName': None,
                          'middleName': None, 'gender': None, 'dob': None, 'locale': None,
-                         'timezone': None, 'contacts': None, 'address': None, 'credential': None, 'educations': None,
-                         'likes': None, 'socialProfile': None, 'jobs': None, 'subscriptions': None}}
+                         'timezone': None, 'contacts': None, 'address': None, 'credential': None, 'educations': [],
+                         'likes': [], 'socialProfile': None, 'jobs': [], 'subscriptions': []}}
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
                                       headers=self.headers_expected, json=body)
 
@@ -500,5 +501,15 @@ class TestCustomer(unittest.TestCase):
         body = {'base':{'contacts': {'otherContacts':[{'name': 'name', 'type': 'TYPE', 'value': 'value'}, {'name': 'Casa di piero', 'type': 'PHONE', 'value': '12343241'}]}}}
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
                                       headers=self.headers_expected, json=body)
+
+    @mock.patch('requests.post',
+                return_value=FakeHTTPResponse(resp_path='tests/util/fake_conflict_response', status_code=409))
+    @mock.patch('requests.patch',
+                return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response', status_code=200))
+    def test_post_with_force_update(self, mock_patch, mock_post):
+        body = {'extra': 'extra', 'base': {'contacts': {'email': 'email@email.email'}}}
+        c = Customer.from_dict(node=self.node, internal_properties=body)
+        posted = c.post(force_update=True)
+        mock_patch.assert_called_with(self.base_url_customer + '/01', headers=self.headers_expected, json=body)
 
 

@@ -2,7 +2,7 @@ import unittest
 from unittest import TestSuite
 
 import mock
-from contacthub.models import Entity
+from contacthub.models import Property
 from requests import HTTPError
 
 from contacthub.DeclarativeAPIManager.declarative_api_customer import CustomerDeclarativeApiManager
@@ -107,12 +107,13 @@ class TestCustomerDeclarativeApiManager(TestSuite):
 
     @mock.patch('requests.post', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_post_customer(self, mock_get):
-        body = {'extra': 'extra', 'base': {'contacts': {'email': 'email@email.email'}}}
         data_expected = {'base': {'contacts': {'email': 'email@email.email'}}, 'extra': 'extra', 'extended': {},
                          'tags': {'auto': [], 'manual': []}, 'nodeId': '123'}
-        c = Customer(node=self.node, **body)
+        c = Customer(node=self.node, extra='extra', base=Property(contacts=Property(email='email@email.email')))
         posted = self.customer_manager.post(customer=c)
+
         mock_get.assert_called_with(self.base_url, headers=self.headers_expected, json=data_expected)
+
         assert isinstance(posted, Customer), type(posted)
         assert posted.base.contacts.email == 'email@email.email', posted.base.contacts.email
         assert posted.extra == 'extra', posted.extra
@@ -182,7 +183,7 @@ class TestCustomerDeclarativeApiManager(TestSuite):
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response', status_code=200))
     def test_post_with_patch(self, mock_patch, mock_post):
         body = {'extra': 'extra', 'base': {'contacts': {'email': 'email@email.email'}}}
-        c = Customer.from_dict(node=self.node, properties=body)
+        c = Customer.from_dict(node=self.node, internal_properties=body)
         posted = self.customer_manager.post(customer=c, force_update=True)
         mock_patch.assert_called_with(self.base_url + '/01', headers=self.headers_expected, json=body)
 
@@ -191,7 +192,7 @@ class TestCustomerDeclarativeApiManager(TestSuite):
     def test_put(self, mock_put):
         body = {'id':'01','extra': 'extra', 'base': {'contacts': {'email': 'email@email.email'}}, 'extended': {},
                 'tags': {'auto': [], 'manual': []}}
-        c = Customer(id='01', node=self.node, extra='extra', base=Entity(contacts=Entity(email='email@email.email')))
+        c = Customer(id='01', node=self.node, extra='extra', base=Property(contacts=Property(email='email@email.email')))
 
         self.customer_manager.put(customer=c)
         mock_put.assert_called_with(self.base_url + '/01', headers=self.headers_expected, json=body)
@@ -213,7 +214,7 @@ class TestCustomerDeclarativeApiManager(TestSuite):
                 return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch(self, mock_put):
         body = { 'base':{'contacts':{'email':'altraemail'}}}
-        c = Customer(id='01', node=self.node, extra='extra', base=Entity(contacts=Entity(email='email@email.email')))
+        c = Customer(id='01', node=self.node, extra='extra', base=Property(contacts=Property(email='email@email.email')))
 
         c.base.contacts.email = 'altraemail'
 
@@ -225,7 +226,7 @@ class TestCustomerDeclarativeApiManager(TestSuite):
                 return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_multiplefield(self, mock_put):
         body = {'base': {'firstName': 'firstName', 'lastName': 'lastName'}}
-        c = Customer(id='01', node=self.node, extra='extra', base=Entity(firstName='first', lastName='last'))
+        c = Customer(id='01', node=self.node, extra='extra', base=Property(firstName='first', lastName='last'))
 
         c.base.firstName = 'firstName'
         c.base.lastName = 'lastName'
@@ -239,7 +240,7 @@ class TestCustomerDeclarativeApiManager(TestSuite):
     def test_patch_list(self, mock_put):
         body = {'base': {'contacts': {'otherContacts':[{'type':'MOBILE', 'name':'otherName', 'value': 'value'},
                                                        {'type':'MOBILE', 'name':'otherName1', 'value': 'value1'}]}}}
-        c = Customer(id='01', node=self.node, extra='extra', base=Entity(contacts=Entity(otherContacts=[{'type':'MOBILE', 'name':'name', 'value': 'value'},
+        c = Customer(id='01', node=self.node, extra='extra', base=Property(contacts=Property(otherContacts=[{'type':'MOBILE', 'name':'name', 'value': 'value'},
                                                                                                         {'type':'MOBILE', 'name':'name1', 'value': 'value1'}])))
 
         c.base.contacts.otherContacts[0].name = 'otherName'
@@ -255,7 +256,7 @@ class TestCustomerDeclarativeApiManager(TestSuite):
     def test_patch_full_list(self, mock_put):
         body = {'base': {'contacts': {'otherContacts':  [{'type': 'MOBILE', 'name': 'otherName', 'value': 'otherValue'}]}}}
         c = Customer(id='01', node=self.node, extra='extra',
-                     base=Entity(contacts=Entity(otherContacts=[{'type': 'MOBILE', 'name': 'name', 'value': 'value'},
+                     base=Property(contacts=Property(otherContacts=[{'type': 'MOBILE', 'name': 'name', 'value': 'value'},
                                                                 {'type': 'MOBILE', 'name': 'name1',
                                                                  'value': 'value1'}])))
 

@@ -3,7 +3,7 @@ import unittest
 import mock
 
 from contacthub.lib.read_only_list import ReadOnlyList
-from contacthub.models import Entity, Properties
+from contacthub.models import Property, Properties
 from contacthub.models.event import Event
 from contacthub.workspace import Workspace
 from tests.utility import FakeHTTPResponse
@@ -37,7 +37,7 @@ class TestEvent(unittest.TestCase):
 
     def test_get_properties(self):
         prop = self.events[0].properties
-        assert isinstance(prop, dict), type(prop)
+        assert isinstance(prop, Property), type(prop)
 
     def test_get_unexsistent(self):
         try:
@@ -47,13 +47,12 @@ class TestEvent(unittest.TestCase):
 
     def test_create_new_event_properties(self):
         e = Event()
-        assert isinstance(e.properties, dict), type(e.properties)
         e.properties = Properties(attr='attr')
-        assert e.properties.attr == 'attr'
+        assert isinstance(e.properties, Property), type(e.properties)
 
     def test_set_event_properties(self):
         e = self.events[0]
-        assert isinstance(e.properties, dict)
+        assert isinstance(e.properties, Property)
         e.context = Event.CONTEXTS.DIGITAL_CAMPAIGN
         assert e.context == Event.CONTEXTS.DIGITAL_CAMPAIGN, e.context
 

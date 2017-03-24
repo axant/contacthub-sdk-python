@@ -22,9 +22,9 @@ class DateEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime.datetime):
             return obj.isoformat()
-        from contacthub.models import Entity
-        if isinstance(obj, Entity):
-            return obj.properties
+        from contacthub.models import Property
+        if isinstance(obj, Property):
+            return obj.internal_properties
         return json.JSONEncoder.default(self, obj)
 
 
@@ -49,7 +49,7 @@ def get_dictionary_paths(d, main_list, tmp_list):
 
 def generate_mutation_tracker(old_properties, new_properties):
     """
-    Given the old properties of an Entity and the new ones, create a new dictionary with all old properties:
+    Given the old properties of an Property and the new ones, create a new dictionary with all old properties:
         - the ones in new_properties updated
         - the ones not in new_properties setted to None
     :param old_properties: The old properties of an entity for create mutation
@@ -68,13 +68,25 @@ def generate_mutation_tracker(old_properties, new_properties):
     for key_paths in main_list_of_paths:
         np = new_properties
         mt = mutation_tracker
+        op = old_properties
         for single_key in key_paths:
             if single_key not in np:
-                mt[single_key] = None
+                if single_key in op and isinstance(op[single_key], list):
+                    mt[single_key] = []
+                else:
+                    mt[single_key] = None
                 break
             else:
                 mt[single_key] = np[single_key]
                 np = np[single_key]
                 mt = mt[single_key]
-
+                op = op[single_key]
     return mutation_tracker
+
+
+def convert_properties_obj_in_prop(properties, property):
+    for k in properties:
+        if isinstance(properties[k], property):
+            properties[k] = properties[k].internal_properties
+        elif isinstance(properties[k], dict):
+            convert_properties_obj_in_prop(properties=properties[k], property=property)

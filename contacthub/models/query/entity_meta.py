@@ -2,7 +2,7 @@ from contacthub.models.query.entity_field import EntityField
 
 
 class EntityMeta(type):
-    """Metaclass for defining an Entity.
+    """Metaclass for defining an Property.
 
     Use this metaclass to handling the __getattr__ method and returns a new EntityField.
     This metaclass is useful for creating query objects and optimize the querying syntax.
@@ -16,7 +16,7 @@ class EntityMeta(type):
 
     def __getattr__(self, item):
         """
-        If you call Entity.field, this function create a new EntityField object with an entity and the requested item
+        If you call Property.field, this function create a new EntityField object with an entity and the requested item
         :param item: the property that we want to query
         :return: a new EntityField object for queries
         """

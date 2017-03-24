@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import json
+
 from contacthub.APIManager.api_customer import CustomerAPIManager
 from contacthub.DeclarativeAPIManager.declarative_api_base import BaseDeclarativeApiManager
 from copy import deepcopy
@@ -51,7 +53,7 @@ class CustomerDeclarativeApiManager(BaseDeclarativeApiManager):
         :param customer: a customer object to insert in customers
         :return:
         """
-        return super(CustomerDeclarativeApiManager, self).post(body=customer.properties, force_update=force_update)
+        return super(CustomerDeclarativeApiManager, self).post(body=customer.internal_properties, force_update=force_update)
 
     def delete(self, customer):
         """
@@ -84,7 +86,7 @@ class CustomerDeclarativeApiManager(BaseDeclarativeApiManager):
         return super(CustomerDeclarativeApiManager, self).patch(_id=customer.id, body=body)
 
     def put(self, customer):
-        body = deepcopy(customer.properties)
+        body = deepcopy(customer.internal_properties)
         body.pop('registeredAt', None)
         body.pop('updatedAt', None)
         if 'base' in body and 'timezone' in body['base'] and body['base']['timezone'] is None:

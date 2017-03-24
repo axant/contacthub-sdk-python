@@ -95,7 +95,7 @@ class Node(object):
         """
         customer = self.get_customer(id=customer.id)
         new_tags = customer.tags.manual
-        new_tags.append(tag)
+        new_tags += [tag]
         customer.tags.manual = new_tags
         self.update_customer(customer)
 
@@ -106,7 +106,7 @@ class Node(object):
         :param tag: a string, int, representing the tag to add
         """
         customer = self.get_customer(id=customer.id)
-        new_tags = customer.tags.manual
+        new_tags = list(customer.tags.manual)
         try:
             new_tags.remove(tag)
             customer.tags.manual = new_tags

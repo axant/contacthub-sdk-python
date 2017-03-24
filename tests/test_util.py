@@ -24,10 +24,15 @@ class TestEvent(unittest.TestCase):
         rol = ReadOnlyList(self.list)
         assert rol.__repr__() == [1,2,3].__repr__(), rol.__repr__()
 
-
     def test_read_only_list_len(self):
         rol = ReadOnlyList(self.list)
         assert len(rol) == 3, len(rol)
+
+    def test_read_only_list_not_reverse(self):
+        try:
+            ReadOnlyList(self.list).reverse()
+        except ValueError as e:
+            assert 'proxy' in str(e)
 
     def test_date_encoder(self):
         try:
