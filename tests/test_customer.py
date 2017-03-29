@@ -19,7 +19,6 @@ from tests.utility import FakeHTTPResponse
 
 
 class TestCustomer(unittest.TestCase):
-
     @classmethod
     @mock.patch('requests.get', return_value=FakeHTTPResponse())
     def setUp(cls, mock_get):
@@ -45,7 +44,6 @@ class TestCustomer(unittest.TestCase):
         assert type(tags.manual) is ReadOnlyList, type(tags.manual)
         assert tags.auto[0] == 'auto', tags.auto[0]
         assert tags.manual[0] == 'manual', tags.manual[0]
-
 
     def test_customer_tags_wrog_attr(self):
         try:
@@ -115,7 +113,7 @@ class TestCustomer(unittest.TestCase):
         assert type(educations) is ReadOnlyList, type(educations)
         education = educations[0]
         assert type(education) is Education, type(education)
-        assert education.schoolType == Education.SCHOOL_TYPES.COLLEGE,  education.schoolType
+        assert education.schoolType == Education.SCHOOL_TYPES.COLLEGE, education.schoolType
         assert education.schoolName == 'schoolName', education.schoolName
         assert education.schoolConcentration == 'schoolConcentration', education.schoolConcentration
         assert education.startYear == 1994, education.startYear
@@ -141,15 +139,15 @@ class TestCustomer(unittest.TestCase):
         assert type(subscriptions) is ReadOnlyList, type(subscriptions)
         subscription = subscriptions[0]
         assert type(subscription) is Property, type(subscription)
-        assert subscription.id == "id",  subscription.id
+        assert subscription.id == "id", subscription.id
         assert subscription.name == "name", subscription.name
         assert subscription.type == "type", subscription.type
         assert subscription.subscribed, subscription.subscribed
-        #assert type(subscription.startDate) is datetime, type(subscription.startDate)
-        #assert type(subscription.endDate) is datetime, type(subscription.endDate)
+        # assert type(subscription.startDate) is datetime, type(subscription.startDate)
+        # assert type(subscription.endDate) is datetime, type(subscription.endDate)
         assert subscription.subscriberId == "subscriberId", subscription.id
-        #assert type(subscription.registeredAt) is datetime, type(subscription.registeredAt)
-        #assert type(subscription.updatedAt) is datetime, type(subscription.updatedAt)
+        # assert type(subscription.registeredAt) is datetime, type(subscription.registeredAt)
+        # assert type(subscription.updatedAt) is datetime, type(subscription.updatedAt)
         assert type(subscription.preferences) is ReadOnlyList, type(subscription.preferences)
 
     def test_customer_subscriptions_preferences(self):
@@ -173,8 +171,8 @@ class TestCustomer(unittest.TestCase):
         assert job.companyIndustry == 'companyIndustry', job.companyIndustry
         assert job.companyName == 'companyName', job.companyName
         assert job.jobTitle == 'jobTitle', job.jobTitle
-        assert type(job.startDate) is datetime, type(job.startDate)
-        assert type(job.endDate) is datetime, type(job.endDate)
+        assert type(job.startDate) is str, type(job.startDate)
+        assert type(job.endDate) is str, type(job.endDate)
         assert job.isCurrent, job.isCurrent
 
     def test_customer_like(self):
@@ -196,7 +194,7 @@ class TestCustomer(unittest.TestCase):
         assert address.country == 'country', address.country
         assert address.province == 'province', address.province
         assert address.zip == 'zip', address.zip
-        assert type(address.geo) is Property,  type(address.geo)
+        assert type(address.geo) is Property, type(address.geo)
 
     def test_customer_address_geo(self):
         geo = self.customers[0].base.address.geo
@@ -239,7 +237,6 @@ class TestCustomer(unittest.TestCase):
             attr = self.customers[0].base.contacts.attr
         self.assertTrue('attr' in str(context.exception))
 
-
     def test_customer_base_unexistent_attr(self):
         with self.assertRaises(AttributeError) as context:
             attr = self.customers[0].base.attr
@@ -252,7 +249,7 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_property_unexistent_attr(self):
         with self.assertRaises(AttributeError) as context:
-            p = Property({'attributo':1})
+            p = Property({'attributo': 1})
             attr = p.attr
         self.assertTrue('attr' in str(context.exception))
 
@@ -268,7 +265,7 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_like_created_time(self):
         ct = self.customers[0].base.likes[0].createdTime
-        assert isinstance(ct, datetime), type(datetime)
+        assert isinstance(ct, str), type(ct)
 
     @mock.patch('requests.get', return_value=FakeHTTPResponse(resp_path='tests/util/fake_event_response'))
     def test_all_events(self, mock_get_event):
@@ -286,7 +283,7 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_create_extra(self):
         c = Customer(node=self.node, extra='extra')
-        assert c.internal_properties['extra'] == 'extra', c.internal_properties['extra']
+        assert c.attributes['extra'] == 'extra', c.attributes['extra']
         assert c.extra == 'extra', c.extra
 
     @mock.patch('requests.delete', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
@@ -298,10 +295,11 @@ class TestCustomer(unittest.TestCase):
     def test_delete_created_new_customer(self):
         try:
             Customer(node=self.node).delete()
-        except Exception as e:
-            assert 'delete' in str(e), str(e)
+        except KeyError as e:
+            assert 'id' in str(e), str(e)
 
-    @mock.patch('requests.delete', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response', status_code=401))
+    @mock.patch('requests.delete', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response',
+                                                                 status_code=401))
     def test_delete_not_permitted(self, mock_delete):
         try:
             self.customers[0].delete()
@@ -313,29 +311,27 @@ class TestCustomer(unittest.TestCase):
         Customer(id='01', node=self.node).delete()
         mock_delete.assert_called_with(self.base_url_customer + '/01', headers=self.headers_expected)
 
-    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.post')
+    @mock.patch('contacthub.api_manager.api_customer.CustomerAPIManager.post')
     def test_post_customer_creation_first_method(self, mock_post):
-        expected_body = {'base': {'contacts': {'email': 'email@email.email'}}, 'extra': 'extra', 'extended': {'prova':'prova'},
-                         'tags': {'auto': ['auto'], 'manual': ['manual']}}
+        expected_body = {'base': {'contacts': {'email': 'email@email.email'}}, 'extra': 'extra',
+                         'extended': {'prova': 'prova'}, 'tags': {'auto': ['auto'], 'manual': ['manual']}}
         mock_post.return_value = json.loads(FakeHTTPResponse(resp_path='tests/util/fake_post_response').text)
         c = Customer(node=self.node,
-            base=Property(
-                contacts=Property(email='email@email.email')
-            )
-        )
+                     base=Property(
+                         contacts=Property(email='email@email.email')
+                     )
+                     )
 
         c.extra = 'extra'
         c.extended.prova = 'prova'
         c.tags.auto = ['auto']
         c.tags.manual = ['manual']
 
-        posted = c.post()
+        c.post()
         mock_post.assert_called_with(body=expected_body, force_update=False)
-        assert isinstance(posted, Customer), type(posted)
-        assert posted.base.contacts.email == c.base.contacts.email, posted.base.contacts.email
-        assert posted.extra == c.extra, posted.extra
 
-    # @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.post')
+
+    # @mock.patch('contacthub.api_manager.api_customer.CustomerAPIManager.post')
     # def test_post_customer_creation_second_method(self, mock_post):
     #     expected_body = {'base': {'contacts': {'email': 'email@email.email'}}, 'extra': 'extra'}
     #     mock_post.return_value = json.loads(FakeHTTPResponse(resp_path='tests/util/fake_post_response').text)
@@ -348,32 +344,30 @@ class TestCustomer(unittest.TestCase):
     #     assert posted.base.contacts.email == c.base.contacts.email, posted.base.contacts.email
     #     assert posted.extra == c.extra, posted.extra
 
-    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.post')
+    @mock.patch('contacthub.api_manager.api_customer.CustomerAPIManager.post')
     def test_post_customer_creation_second_method(self, mock_post):
-        expected_body = {'base': {'contacts': {'email': 'email@email.email'}}, 'extra': 'extra', 'extended': {}, 'tags': {'auto': [], 'manual': []}}
+        expected_body = {'base': {'contacts': {'email': 'email@email.email'}}, 'extra': 'extra', 'extended': {},
+                         'tags': {'auto': [], 'manual': []}}
         mock_post.return_value = json.loads(FakeHTTPResponse(resp_path='tests/util/fake_post_response').text)
-        c = Customer(node=self.node,base=Property())
+        c = Customer(node=self.node, base=Property())
         c.base.contacts = {'email': 'email@email.email'}
         c.extra = 'extra'
-        posted = c.post()
+        c.post()
         mock_post.assert_called_with(body=expected_body, force_update=False)
-        assert isinstance(posted, Customer), type(posted)
-        assert posted.base.contacts.email == c.base.contacts.email, posted.base.contacts.email
-        assert posted.extra == c.extra, posted.extra
-
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch(self, mock_patch):
         self.customers[0].base.firstName = 'fn'
         self.customers[0].patch()
-        body = {'base':{'firstName':'fn'}}
-        mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id, headers=self.headers_expected, json=body)
+        body = {'base': {'firstName': 'fn'}}
+        mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
+                                      headers=self.headers_expected, json=body)
 
     @mock.patch('requests.put', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_put(self, mock_patch):
         self.customers[0].base.firstName = 'fn'
         self.customers[0].put()
-        body = deepcopy(self.customers[0].internal_properties)
+        body = deepcopy(self.customers[0].attributes)
         body.pop('updatedAt')
         body.pop('registeredAt')
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
@@ -386,7 +380,6 @@ class TestCustomer(unittest.TestCase):
         body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': []}, 'a': 1}}
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
                                       headers=self.headers_expected, json=body)
-
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_entity_extended_and_base(self, mock_patch):
@@ -407,8 +400,10 @@ class TestCustomer(unittest.TestCase):
                     'pictureUrl': None, 'title': None, 'prefix': None, 'firstName': None, 'lastName': None,
                     'middleName': None, 'gender': None, 'dob': None, 'locale': None, 'timezone': None,
                     'contacts':
-                        {'email': 'email', 'fax': None, 'mobilePhone': None, 'phone': None, 'otherContacts': [], 'mobileDevices': []},
-                    'address': None, 'credential': None, 'educations': [], 'likes': [], 'socialProfile':  None, 'jobs': [], 'subscriptions': []}}
+                        {'email': 'email', 'fax': None, 'mobilePhone': None, 'phone': None, 'otherContacts': [],
+                         'mobileDevices': []},
+                    'address': None, 'credential': None, 'educations': [], 'likes': [], 'socialProfile': None,
+                    'jobs': [], 'subscriptions': []}}
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
                                       headers=self.headers_expected, json=body)
 
@@ -417,8 +412,9 @@ class TestCustomer(unittest.TestCase):
         self.customers[0].extended = Property(a=1, prova=Property(b=1))
         self.customers[0].base.contacts = Property(email='email')
         self.customers[0].patch()
-        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': []}, 'a': 1},'base':
-            {'contacts':{'email': 'email', 'fax': None, 'mobilePhone': None, 'phone': None, 'otherContacts': [], 'mobileDevices': []}}}
+        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': []}, 'a': 1}, 'base':
+            {'contacts': {'email': 'email', 'fax': None, 'mobilePhone': None, 'phone': None, 'otherContacts': [],
+                          'mobileDevices': []}}}
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
                                       headers=self.headers_expected, json=body)
 
@@ -428,7 +424,8 @@ class TestCustomer(unittest.TestCase):
         self.customers[0].base.contacts = Property(email1='email')
         self.customers[0].patch()
         body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': []}, 'a': 1}, 'base':
-            {'contacts': {'email': None,'email1':'email', 'fax': None, 'mobilePhone': None, 'phone': None, 'otherContacts': [],
+            {'contacts': {'email': None, 'email1': 'email', 'fax': None, 'mobilePhone': None, 'phone': None,
+                          'otherContacts': [],
                           'mobileDevices': []}}}
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
                                       headers=self.headers_expected, json=body)
@@ -450,7 +447,8 @@ class TestCustomer(unittest.TestCase):
         self.customers[0].extended = Property(a=1, prova=Property(b=1))
         self.customers[0].base.contacts.otherContacts = [Property(email1=Property(a=1))]
         self.customers[0].patch()
-        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': []}, 'a': 1}, 'base': {'contacts': {'otherContacts': [{'email1': {'a': 1}}]}}}
+        body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': []}, 'a': 1}, 'base':
+            {'contacts': {'otherContacts': [{'email1': {'a': 1}}]}}}
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
                                       headers=self.headers_expected, json=body)
 
@@ -459,8 +457,9 @@ class TestCustomer(unittest.TestCase):
         self.customers[0].base.contacts = Property(email='email')
         self.customers[0].base.contacts.otherContacts = [Property(email1=Property(a=1))]
         self.customers[0].patch()
-        body = {'base': {'contacts': {'email':'email', 'fax':None, 'mobilePhone':None,'phone':None, 'mobileDevices':[],
-                                      'otherContacts': [{'email1': {'a': 1}}]}}}
+        body = {'base': {
+            'contacts': {'email': 'email', 'fax': None, 'mobilePhone': None, 'phone': None, 'mobileDevices': [],
+                         'otherContacts': [{'email1': {'a': 1}}]}}}
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
                                       headers=self.headers_expected, json=body)
 
@@ -471,7 +470,7 @@ class TestCustomer(unittest.TestCase):
         self.customers[0].patch()
         body = {'base': {
             'contacts': {'email': 'email', 'fax': None, 'mobilePhone': None, 'phone': None, 'mobileDevices': [],
-                         'otherContacts': [{'email1': {'a': {'b':1}}}]}}}
+                         'otherContacts': [{'email1': {'a': {'b': 1}}}]}}}
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
                                       headers=self.headers_expected, json=body)
 
@@ -496,9 +495,11 @@ class TestCustomer(unittest.TestCase):
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_elem_in_list(self, mock_patch):
-        self.customers[0].base.contacts.otherContacts[0].type='TYPE'
+        self.customers[0].base.contacts.otherContacts[0].type = 'TYPE'
         self.customers[0].patch()
-        body = {'base':{'contacts': {'otherContacts':[{'name': 'name', 'type': 'TYPE', 'value': 'value'}, {'name': 'Casa di piero', 'type': 'PHONE', 'value': '12343241'}]}}}
+        body = {'base': {'contacts': {'otherContacts': [{'name': 'name', 'type': 'TYPE', 'value': 'value'},
+                                                        {'name': 'Casa di piero', 'type': 'PHONE',
+                                                         'value': '12343241'}]}}}
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
                                       headers=self.headers_expected, json=body)
 
@@ -508,8 +509,27 @@ class TestCustomer(unittest.TestCase):
                 return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response', status_code=200))
     def test_post_with_force_update(self, mock_patch, mock_post):
         body = {'extra': 'extra', 'base': {'contacts': {'email': 'email@email.email'}}}
-        c = Customer.from_dict(node=self.node, internal_properties=body)
+        c = Customer.from_dict(node=self.node, attributes=body)
         posted = c.post(force_update=True)
+        body.pop('nodeId')
         mock_patch.assert_called_with(self.base_url_customer + '/01', headers=self.headers_expected, json=body)
 
+    def test_create_customer_with_default_schema(self):
+        c = Customer(node=self.node, default_props={'prop': {'prop1': 'value1'}, 'prop2': 'value2'},
+                     prop3=Property(prop4='value4'))
+        internal = {'prop': {'prop1': 'value1'}, 'prop2': 'value2', 'prop3': {'prop4': 'value4'}}
+        assert c.attributes == internal, c.attributes
 
+    def test_from_dict_no_props(self):
+        c = Customer.from_dict(node=self.node)
+        assert c.attributes == {}, c.attributes
+        prop = {}
+        c = Customer.from_dict(node=self.node, attributes= prop)
+        assert c.attributes is prop, c.attributes
+
+    def test_customer_patch_new_prop(self):
+        c = Customer(node=self.node, default_props={'prop': {'prop1': 'value1'}, 'prop2': 'value2'},
+                     prop3=Property(prop4='value4'))
+
+        c.prop5 = Property(prop6='value5')
+        assert c.mute == {'prop5': {'prop6': 'value5'}}, c.mute

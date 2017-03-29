@@ -1,6 +1,8 @@
 import json
 
-from contacthub.DeclarativeAPIManager.declarative_api_customer import CustomerDeclarativeApiManager
+from contacthub.api_manager.api_customer import CustomerAPIManager
+from contacthub.errors.operation_not_permitted import OperationNotPermitted
+from contacthub.lib.read_only_list import ReadOnlyList
 from contacthub.models.customer import Customer
 from contacthub.models.query.criterion import Criterion
 from copy import deepcopy
@@ -57,7 +59,11 @@ class Query(object):
         """
         complete_query = {'name': 'query', 'query': self.inner_query}
         if self.entity is Customer:
-            return CustomerDeclarativeApiManager(node=self.node, entity=Customer).get_all(query=complete_query)
+            customers = []
+            resp = CustomerAPIManager(self.node).get_all(query=complete_query)
+            for customer in resp['elements']:
+                customers.append(self.entity.from_dict(node=self.node, attributes=customer))
+            return ReadOnlyList(customers)
 
     def filter(self, criterion):
         """
@@ -66,7 +72,7 @@ class Query(object):
         :return: a Query object containing the JSON object representing a query for the APIs
         """
         if self.inner_query and self.inner_query['type'] == 'combined':
-            raise Exception('Operation not permitted')
+            raise OperationNotPermitted('Cannot apply a filter on a combined query.')
         query_ret = {'type': 'simple', 'name': 'query', 'are': {}}
         new_query = {}
         if self.condition is None:

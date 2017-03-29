@@ -5,21 +5,21 @@ class Event(object):
     """
     Event model
     """
-    __slots__ = ('internal_properties','mute')
+    __slots__ = ('attributes','mute')
 
-    def __init__(self, **internal_properties):
+    def __init__(self, **attributes):
         """
         :param customer_json_properties: A dictionary containing the json_properties related to customers
         """
-        if internal_properties is None:
-            internal_properties = Property()
-        self.internal_properties = internal_properties
+        if attributes is None:
+            attributes = Property()
+        self.attributes = attributes
         self.mute = {}
 
     @classmethod
-    def from_dict(cls, internal_properties=None, **kwargs):
-        o = cls(**internal_properties)
-        o.internal_properties = internal_properties or {}
+    def from_dict(cls, attributes=None, **kwargs):
+        o = cls(**attributes)
+        o.attributes = attributes or {}
         return o
 
     def __getattr__(self, item):
@@ -30,11 +30,11 @@ class Event(object):
         :return: an element of the dictionary, or an object if the element associated at the key containse an object or a list
         """
         try:
-            if isinstance(self.internal_properties[item], dict):
+            if isinstance(self.attributes[item], dict):
                 return Property.from_dict(parent_attr=item, parent=self,
-                                          internal_properties=self.internal_properties[item])
+                                          attributes=self.attributes[item])
             else:
-                return self.internal_properties[item]
+                return self.attributes[item]
         except KeyError as e:
             raise AttributeError("%s object has no attribute %s" % (type(self).__name__, e))
 
@@ -43,9 +43,9 @@ class Event(object):
             return super(Event, self).__setattr__(attr, val)
         else:
             if isinstance(val, Property):
-                self.internal_properties[attr] = val.internal_properties
+                self.attributes[attr] = val.attributes
             else:
-                self.internal_properties[attr] = val
+                self.attributes[attr] = val
 
     class TYPES:
         """

@@ -3,6 +3,7 @@ from contacthub.lib.read_only_list import ReadOnlyList
 import json
 
 from contacthub.lib.utils import DateEncoder, get_dictionary_paths, generate_mutation_tracker
+import datetime
 
 
 class TestEvent(unittest.TestCase):
@@ -39,6 +40,10 @@ class TestEvent(unittest.TestCase):
             json.dumps(ReadOnlyList, cls=DateEncoder)
         except TypeError as e:
             assert 'JSON' in str(e)
+
+    def test_date_encoder_date(self):
+        j = json.dumps(datetime.date(2017,10,1), cls=DateEncoder)
+        assert "2017-10-01" in j, j
 
     def test_get_dictionary_paths(self):
         a = {'b': {'c': {'d': 1, 'e': 2}, 'f': {'g': 1}}}

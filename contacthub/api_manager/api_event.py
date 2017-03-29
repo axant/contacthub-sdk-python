@@ -3,7 +3,7 @@ import json
 import requests
 from requests import HTTPError
 
-from contacthub.APIManager.api_base import BaseAPIManager
+from contacthub.api_manager.api_base import BaseAPIManager
 
 
 class EventAPIManager(BaseAPIManager):

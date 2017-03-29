@@ -137,7 +137,7 @@ class TestQuery(unittest.TestCase):
             {'type': 'simple', 'name': 'query', 'are':
                 {'condition':
                      {'type': 'atomic', 'attribute': 'base.dob', 'operator': 'BETWEEN',
-                      'value': ['2011-12-11T00:00:00', '2015-12-11T00:00:00']}}},
+                      'value': ["2011-12-11T00:00:00Z", "2015-12-11T00:00:00Z"]}}},
                                       })
         mock_get.assert_called_with(self.base_url, headers=self.headers_expected, params=params)
 
@@ -271,7 +271,7 @@ class TestQuery(unittest.TestCase):
 
         mock_get.assert_called_with(self.base_url, headers=self.headers_expected, params=params)
 
-    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all',
+    @mock.patch('contacthub.api_manager.api_customer.CustomerAPIManager.get_all',
                 return_value=json.loads(FakeHTTPResponse().text))
     def test_or(self, mock_get):
         self.node.query(Customer).filter(
@@ -287,9 +287,9 @@ class TestQuery(unittest.TestCase):
                  }
              }
                                                                     }
-        mock_get.assert_called_with(externalId=None, page=None, query=query, size=None)
+        mock_get.assert_called_with(query=query)
 
-    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all',
+    @mock.patch('contacthub.api_manager.api_customer.CustomerAPIManager.get_all',
                 return_value=json.loads(FakeHTTPResponse().text))
     def test_and(self, mock_get):
         self.node.query(Customer).filter(
@@ -305,9 +305,9 @@ class TestQuery(unittest.TestCase):
                  }
              }
                                                                     }
-        mock_get.assert_called_with(externalId=None, page=None, query=query, size=None)
+        mock_get.assert_called_with(query=query)
 
-    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all',
+    @mock.patch('contacthub.api_manager.api_customer.CustomerAPIManager.get_all',
                 return_value=json.loads(FakeHTTPResponse().text))
     def test_and_or(self, mock_get):
         self.node.query(Customer).filter(
@@ -331,10 +331,9 @@ class TestQuery(unittest.TestCase):
              }
                                                                     }
 
+        mock_get.assert_called_with(query=query)
 
-        mock_get.assert_called_with(externalId=None, page=None, query=query, size=None)
-
-    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all',
+    @mock.patch('contacthub.api_manager.api_customer.CustomerAPIManager.get_all',
                 return_value=json.loads(FakeHTTPResponse().text))
     def test_or_and(self, mock_get):
         self.node.query(Customer).filter(
@@ -358,9 +357,9 @@ class TestQuery(unittest.TestCase):
              }
                                                                     }
 
-        mock_get.assert_called_with(externalId=None, page=None, query=query, size=None)
+        mock_get.assert_called_with(query=query)
 
-    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all',
+    @mock.patch('contacthub.api_manager.api_customer.CustomerAPIManager.get_all',
                 return_value=json.loads(FakeHTTPResponse().text))
     def test_succesive_simple_filters(self, mock_get):
         q1 = self.node.query(Customer).filter(Customer.base.firstName == 'firstName')
@@ -378,9 +377,9 @@ class TestQuery(unittest.TestCase):
              }
                                                                     }
 
-        mock_get.assert_called_with(externalId=None, page=None, query=query, size=None)
+        mock_get.assert_called_with(query=query)
 
-    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all', return_value=json.loads(FakeHTTPResponse().text))
+    @mock.patch('contacthub.api_manager.api_customer.CustomerAPIManager.get_all', return_value=json.loads(FakeHTTPResponse().text))
     def test_succesive_complex_filters(self, mock_get):
         q1 = self.node.query(Customer).filter((Customer.base.firstName == 'firstName') | (Customer.extra == 'extra'))
         q2 = q1.filter(Customer.base.lastName == 'lastName')
@@ -405,9 +404,9 @@ class TestQuery(unittest.TestCase):
                  }
              }
                                                                     }
-        mock_get.assert_called_with(externalId=None, page=None, query=query, size=None)
+        mock_get.assert_called_with(query=query)
 
-    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all',
+    @mock.patch('contacthub.api_manager.api_customer.CustomerAPIManager.get_all',
                 return_value=json.loads(FakeHTTPResponse().text))
     def test_succesive_complex_filters_or(self, mock_get):
         q1 = self.node.query(Customer).filter((Customer.base.firstName == 'firstName') | (Customer.extra == 'extra'))
@@ -439,9 +438,9 @@ class TestQuery(unittest.TestCase):
                  }
              }
                  }
-        mock_get.assert_called_with(externalId=None, page=None, query=query, size=None)
+        mock_get.assert_called_with(query=query)
 
-    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all',
+    @mock.patch('contacthub.api_manager.api_customer.CustomerAPIManager.get_all',
                 return_value=json.loads(FakeHTTPResponse().text))
     def test_succesive_complex_filters_and(self, mock_get):
         q1 = self.node.query(Customer).filter((Customer.base.firstName == 'firstName') & (Customer.extra == 'extra'))
@@ -471,9 +470,9 @@ class TestQuery(unittest.TestCase):
                  }
              }
                  }
-        mock_get.assert_called_with(externalId=None, page=None, query=query, size=None)
+        mock_get.assert_called_with(query=query)
 
-    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all',
+    @mock.patch('contacthub.api_manager.api_customer.CustomerAPIManager.get_all',
                 return_value=json.loads(FakeHTTPResponse().text))
     def test_and_query(self, mock_get):
         q1 = self.node.query(Customer).filter((Customer.base.firstName == 'firstName') | (Customer.extra == 'extra'))
@@ -508,9 +507,9 @@ class TestQuery(unittest.TestCase):
              }
                  }
 
-        mock_get.assert_called_with(externalId=None, page=None, query=query, size=None)
+        mock_get.assert_called_with(query=query)
 
-    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all',
+    @mock.patch('contacthub.api_manager.api_customer.CustomerAPIManager.get_all',
                 return_value=json.loads(FakeHTTPResponse().text))
     def test_or_query(self, mock_get):
         q1 = self.node.query(Customer).filter((Customer.base.firstName == 'firstName') | (Customer.extra == 'extra'))
@@ -544,9 +543,9 @@ class TestQuery(unittest.TestCase):
              }
                  }
 
-        mock_get.assert_called_with(externalId=None, page=None, query=query, size=None)
+        mock_get.assert_called_with(query=query)
 
-    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all',
+    @mock.patch('contacthub.api_manager.api_customer.CustomerAPIManager.get_all',
                 return_value=json.loads(FakeHTTPResponse().text))
     def test_or_combined_query(self, mock_get):
         q1 = self.node.query(Customer).filter(
@@ -607,9 +606,9 @@ class TestQuery(unittest.TestCase):
                   }]
                  }}
 
-        mock_get.assert_called_with(externalId=None, page=None, query=query, size=None)
+        mock_get.assert_called_with(query=query)
 
-    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all',
+    @mock.patch('contacthub.api_manager.api_customer.CustomerAPIManager.get_all',
                 return_value=json.loads(FakeHTTPResponse().text))
     def test_and_combined_query(self, mock_get):
         q1 = self.node.query(Customer).filter(
@@ -669,10 +668,9 @@ class TestQuery(unittest.TestCase):
                 ]
                  }]
                                             }}
+        mock_get.assert_called_with(query=query)
 
-        mock_get.assert_called_with(externalId=None, page=None, query=query, size=None)
-
-    @mock.patch('contacthub.APIManager.api_customer.CustomerAPIManager.get_all',
+    @mock.patch('contacthub.api_manager.api_customer.CustomerAPIManager.get_all',
                 return_value=json.loads(FakeHTTPResponse().text))
     def test_filter_complex(self, mock_get):
         try:
@@ -682,5 +680,5 @@ class TestQuery(unittest.TestCase):
             qor = q1 | q2
             qor.filter(Customer.base.firstName == 'firstName')
         except Exception as e:
-            assert 'Operation' in str(e), str(e)
+            assert 'Cannot apply a filter on a combined query' in str(e), str(e)
 

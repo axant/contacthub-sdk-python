@@ -8,6 +8,8 @@ class FakeHTTPResponse:
 
     @property
     def text(self):
+        if not self.resp_path:
+            return None
         if self.status_code == 200:
             fake_response = open(self.resp_path, 'r')
             return fake_response.read()

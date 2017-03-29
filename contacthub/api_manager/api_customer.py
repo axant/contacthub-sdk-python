@@ -3,8 +3,7 @@ import json
 
 from requests import HTTPError
 
-from contacthub.APIManager.api_base import BaseAPIManager
-from contacthub.models.query.entity_meta import EntityMeta
+from contacthub.api_manager.api_base import BaseAPIManager
 from contacthub.lib.utils import DateEncoder
 
 class CustomerAPIManager(BaseAPIManager):
@@ -17,7 +16,7 @@ class CustomerAPIManager(BaseAPIManager):
         Indicates at the BaseAPIManager that this class operate on customers.
         :param node: the Node object for retrieving customers data
         """
-        super(CustomerAPIManager, self).__init__(node, EntityMeta.Enitites.CUSTOMERS)
+        super(CustomerAPIManager, self).__init__(node, 'customers')
 
     def get_all(self, externalId=None, fields=None, query=None, size=None, page=None, **kwargs):
         """
@@ -63,7 +62,8 @@ class CustomerAPIManager(BaseAPIManager):
             body['nodeId'] = self.node.node_id
             request_url = self.request_url
         else:
-            request_url = self.request_url + urls_extra
+            request_url = self.request_url + "/" + urls_extra
+        body = json.loads(json.dumps(body, cls=DateEncoder))
         resp = requests.post(request_url, json=body, headers=self.headers)
         response_text = json.loads(resp.text)
         if 200 <= resp.status_code < 300:
@@ -73,14 +73,20 @@ class CustomerAPIManager(BaseAPIManager):
             return self.patch(_id=response_text['data']['customer']['id'], body=body)
         raise HTTPError("Code: %s, message: %s" % (resp.status_code, response_text))
 
-    def delete(self, _id):
+    def delete(self, _id, urls_extra=None):
         """
         Delete a customer in /customers by its id
         :param _id: the id of the customer to delete
         :return: a JSON format loaded representing the respnse from the API
         """
-        resp = requests.delete(self.request_url + '/' + str(_id), headers=self.headers)
-        response_text = json.loads(resp.text)
+        request_url = self.request_url + '/' + str(_id)
+        if urls_extra:
+            request_url += '/' + urls_extra
+        resp = requests.delete(request_url, headers=self.headers)
+        if resp.text:
+            response_text = json.loads(resp.text)
+        else:
+            response_text = resp.text
         if 200 <= resp.status_code < 300:
             return response_text
         raise HTTPError("Code: %s, message: %s" % (resp.status_code, response_text))
@@ -91,7 +97,7 @@ class CustomerAPIManager(BaseAPIManager):
         :param _id:
         :param body: the JSON format body for patching the customer
         :return: a JSON format loaded representing the respnse from the API
-                """
+        """
 
         body = json.dumps(body, cls=DateEncoder)
         resp = requests.patch(self.request_url + '/' + str(_id), json=json.loads(body), headers=self.headers)
@@ -100,14 +106,18 @@ class CustomerAPIManager(BaseAPIManager):
             return response_text
         raise HTTPError("Code: %s, message: %s" % (resp.status_code, response_text))
 
-    def put(self, _id, body):
+    def put(self, _id, body, urls_extra=None):
         """
         PATCH a  customer in /customers
         :param _id:
         :param body: the JSON format body for patching the customer
         :return: a JSON format loaded representing the respnse from the API
-                """
-        resp = requests.put(self.request_url + '/' + str(_id), json=body, headers=self.headers)
+        """
+        request_url = self.request_url + '/' + str(_id)
+        if urls_extra:
+            request_url += '/' + urls_extra
+        body = json.loads(json.dumps(body, cls=DateEncoder))
+        resp = requests.put(request_url, json=body, headers=self.headers)
         response_text = json.loads(resp.text)
         if 200 <= resp.status_code < 300:
             return response_text

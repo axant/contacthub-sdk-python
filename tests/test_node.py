@@ -68,13 +68,13 @@ class TestNode(TestSuite):
     @mock.patch('requests.delete', return_value=FakeHTTPResponse())
     def test_delete_customer(self, mock_get):
         c = Customer(node=self.node, id='01')
-        self.node.delete_customer(c)
+        self.node.delete_customer(c.id)
         mock_get.assert_called_with(self.base_url + '/01', headers=self.headers_expected)
 
     @mock.patch('requests.post', return_value=FakeHTTPResponse())
     def test_add_customer(self, mock_get):
         c = Customer(node=self.node, base=Property(contacts=Property(email='email')))
-        self.node.add_customer(customer=c)
+        self.node.add_customer(**c.to_dict())
         body = {'nodeId': self.node.node_id, 'base': {'contacts': {'email': 'email'}}, 'extended': {}, 'tags': {'auto': [], 'manual': []}}
         mock_get.assert_called_with(self.base_url, headers=self.headers_expected, json=body)
 
@@ -82,7 +82,7 @@ class TestNode(TestSuite):
     def test_add_customer_extended(self, mock_get):
         c = Customer(node=self.node, base=Property(contacts=Property(email='email')))
         c.extended.prova = 'prova'
-        self.node.add_customer(customer=c)
+        self.node.add_customer(**c.to_dict())
         body = {'nodeId': self.node.node_id, 'base': {'contacts': {'email': 'email'}}, 'extended': {'prova':'prova'},
                 'tags': {'auto': [], 'manual': []}}
         mock_get.assert_called_with(self.base_url, headers=self.headers_expected, json=body)
@@ -93,7 +93,7 @@ class TestNode(TestSuite):
         c.extended.prova = 'prova'
         c.tags.auto = ['auto']
         c.tags.manual = ['manual']
-        self.node.add_customer(customer=c)
+        self.node.add_customer(**c.to_dict())
         body = {'nodeId': self.node.node_id, 'base': {'contacts': {'email': 'email'}}, 'extended': {'prova': 'prova'},
                 'tags': {'auto': ['auto'], 'manual': ['manual']}}
         mock_get.assert_called_with(self.base_url, headers=self.headers_expected, json=body)
@@ -102,7 +102,7 @@ class TestNode(TestSuite):
     def test_update_customer_not_full(self, mock_patch):
         c = Customer(node=self.node, id='01', base=Property(contacts=Property(email='email')))
         c.extra = 'extra'
-        self.node.update_customer(customer=c)
+        self.node.update_customer(c.id, **c.mutation_tracker())
         body = {'extra': 'extra'}
         mock_patch.assert_called_with(self.base_url + '/01', headers=self.headers_expected, json=body)
 
@@ -110,8 +110,8 @@ class TestNode(TestSuite):
     def test_update_customer_full(self, mock_get):
         c = Customer(node=self.node, id='01', base=Property(contacts=Property(email='email', fax='fax')))
         c.base.contacts.email = 'email1234'
-        self.node.update_customer(customer=c, full_update=True)
-        body = {'id':'01', 'base': {'contacts': {'email': 'email1234', 'fax': 'fax'}}, 'extended': {},
+        self.node.update_customer(full_update=True, **c.to_dict())
+        body = {'id': '01', 'base': {'contacts': {'email': 'email1234', 'fax': 'fax'}}, 'extended': {},
                 'tags': {'auto': [], 'manual': []}}
         mock_get.assert_called_with(self.base_url + '/01', headers=self.headers_expected, json=body)
 
@@ -120,8 +120,7 @@ class TestNode(TestSuite):
     def test_add_customer_session(self, mock_get):
         s_id = self.node.create_session_id()
         body = {'value': str(s_id)}
-
-        self.node.add_customer_session(customer=Customer(id='01', node=self.node), session_id=s_id)
+        self.node.add_customer_session(session_id=s_id, **Customer(id='01', node=self.node).to_dict())
         mock_get.assert_called_with(self.base_url + '/01/sessions', headers=self.headers_expected, json=body)
 
     @mock.patch('requests.get',
@@ -129,7 +128,7 @@ class TestNode(TestSuite):
     @mock.patch('requests.patch',
                 return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_add_tag(self, mock_patch, mock_get):
-        self.node.add_tag(customer=Customer(id='b6023673-b47a-4654-a53c-74bbc0204a20', node=self.node), tag='tag1')
+        self.node.add_tag(customer_id='b6023673-b47a-4654-a53c-74bbc0204a20', tag='tag1')
         mock_get.assert_called_with(self.base_url + '/b6023673-b47a-4654-a53c-74bbc0204a20', headers=self.headers_expected)
         mock_patch.assert_called_with(self.base_url + '/b6023673-b47a-4654-a53c-74bbc0204a20', headers=self.headers_expected, json={'tags':{'manual':['manual','tag1']}})
 
@@ -138,7 +137,7 @@ class TestNode(TestSuite):
     @mock.patch('requests.patch',
                 return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_remove_tag(self, mock_patch, mock_get):
-        self.node.remove_tag(customer=Customer(id='b6023673-b47a-4654-a53c-74bbc0204a20', node=self.node), tag='manual')
+        self.node.remove_tag(customer_id='b6023673-b47a-4654-a53c-74bbc0204a20', tag='manual')
         mock_get.assert_called_with(self.base_url + '/b6023673-b47a-4654-a53c-74bbc0204a20',
                                     headers=self.headers_expected)
         mock_patch.assert_called_with(self.base_url + '/b6023673-b47a-4654-a53c-74bbc0204a20',
@@ -151,7 +150,7 @@ class TestNode(TestSuite):
     def test_remove_tag_unexistent(self, mock_patch, mock_get):
 
         try:
-            self.node.remove_tag(customer=Customer(id='b6023673-b47a-4654-a53c-74bbc0204a20', node=self.node), tag='asd')
+            self.node.remove_tag(customer_id='b6023673-b47a-4654-a53c-74bbc0204a20', tag='asd')
             mock_get.assert_called_with(self.base_url + '/b6023673-b47a-4654-a53c-74bbc0204a20',
                                         headers=self.headers_expected)
         except ValueError as e:

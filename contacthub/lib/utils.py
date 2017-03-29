@@ -21,10 +21,12 @@ def list_item(_class, JSON_list):
 class DateEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime.datetime):
+            return obj.strftime("%Y-%m-%dT%H:%M:%SZ")
+        if isinstance(obj, datetime.date):
             return obj.isoformat()
         from contacthub.models import Property
         if isinstance(obj, Property):
-            return obj.internal_properties
+            return obj.attributes
         return json.JSONEncoder.default(self, obj)
 
 
@@ -87,6 +89,22 @@ def generate_mutation_tracker(old_properties, new_properties):
 def convert_properties_obj_in_prop(properties, property):
     for k in properties:
         if isinstance(properties[k], property):
-            properties[k] = properties[k].internal_properties
+            properties[k] = properties[k].attributes
         elif isinstance(properties[k], dict):
             convert_properties_obj_in_prop(properties=properties[k], property=property)
+
+
+def resolve_mutation_tracker(mutation_tracker):
+    body = {}
+    for key in mutation_tracker:
+        update_dictionary = body
+        splitted = key.split('.')
+        last_element = splitted[-1:][0]
+        for attr in splitted:
+            if attr == last_element:
+                update_dictionary[attr] = mutation_tracker[key]
+            else:
+                if attr not in update_dictionary:
+                    update_dictionary[attr] = {}
+                update_dictionary = update_dictionary[attr]
+    return body

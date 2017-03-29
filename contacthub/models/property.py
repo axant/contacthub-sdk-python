@@ -15,25 +15,25 @@ class Property(object):
 
     SUBPROPERTIES_LIST = {'educations': Education, 'likes': Like, 'jobs': Job}
 
-    __slots__ = ('internal_properties', 'parent_attr', 'mute', 'parent')
+    __slots__ = ('attributes', 'parent_attr', 'mute', 'parent')
 
-    def __init__(self, parent=None, parent_attr=None, **internal_properties):
+    def __init__(self, parent=None, parent_attr=None, **attributes):
         """
         :param json_properties: A dictionary with json_properties to return or set
         """
         self.parent_attr = parent_attr
         self.parent = parent
         self.mute = parent.mute if parent else None
-        convert_properties_obj_in_prop(properties=internal_properties, property=Property)
-        self.internal_properties = internal_properties
+        convert_properties_obj_in_prop(properties=attributes, property=Property)
+        self.attributes = attributes
 
     @classmethod
-    def from_dict(cls, parent=None, parent_attr=None, internal_properties=None):
+    def from_dict(cls, parent=None, parent_attr=None, attributes=None):
         o = cls(parent=parent, parent_attr=parent_attr)
-        if internal_properties is None:
-            o.internal_properties = {}
+        if attributes is None:
+            o.attributes = {}
         else:
-            o.internal_properties = internal_properties
+            o.attributes = attributes
         return o
 
     def __getattr__(self, item):
@@ -46,21 +46,24 @@ class Property(object):
         """
         try:
             if item in self.SUBPROPERTIES_LIST:
-                return ReadOnlyList(list_item(self.SUBPROPERTIES_LIST[item], self.internal_properties[item]))
-            if isinstance(self.internal_properties[item], dict):
+                obj_list_ret = []
+                for elements in self.attributes[item]:
+                    obj_list_ret.append(self.SUBPROPERTIES_LIST[item](customer=self.parent, **elements))
+                return ReadOnlyList(obj_list_ret)
+            if isinstance(self.attributes[item], dict):
                 return Property.from_dict(parent_attr=self.parent_attr + '.' + item, parent=self,
-                                        internal_properties=self.internal_properties[item])
-            elif isinstance(self.internal_properties[item], list):
-                if self.internal_properties[item] and isinstance(self.internal_properties[item][0], dict):
+                                        attributes=self.attributes[item])
+            elif isinstance(self.attributes[item], list):
+                if self.attributes[item] and isinstance(self.attributes[item][0], dict):
                     list_sub_prob = []
-                    for elem in self.internal_properties[item]:
+                    for elem in self.attributes[item]:
                         list_sub_prob.append(Property.from_dict(parent_attr=self.parent_attr + '.' + item, parent=self,
-                                                              internal_properties=elem))
+                                                              attributes=elem))
                 else:
-                    list_sub_prob = self.internal_properties[item]
+                    list_sub_prob = self.attributes[item]
                 return ReadOnlyList(list_sub_prob)
 
-            return self.internal_properties[item]
+            return self.attributes[item]
         except KeyError as e:
             raise AttributeError("%s object has no attribute %s" %(type(self).__name__, e))
 
@@ -70,17 +73,17 @@ class Property(object):
         else:
             if isinstance(val, Property):
                 try:
-                    mutations = generate_mutation_tracker(self.internal_properties[attr], val.internal_properties)
-                    update_tracking_with_new_prop(mutations, val.internal_properties)
+                    mutations = generate_mutation_tracker(self.attributes[attr], val.attributes)
+                    update_tracking_with_new_prop(mutations, val.attributes)
                     self.mute[self.parent_attr + '.' + attr] = mutations
                 except KeyError as e:
-                    self.mute[attr] = val.internal_properties
-                self.internal_properties[attr] = val.internal_properties
+                    self.mute[attr] = val.attributes
+                self.attributes[attr] = val.attributes
             else:
-                self.internal_properties[attr] = val
+                self.attributes[attr] = val
                 field = self.parent_attr.split('.')[-1:][0]
-                if isinstance(self.parent.internal_properties[field], list):
-                    self.mute[self.parent_attr] = self.parent.internal_properties[field]
+                if isinstance(self.parent.attributes[field], list):
+                    self.mute[self.parent_attr] = self.parent.attributes[field]
                 else:
                     self.mute[self.parent_attr + '.' + attr] = val
 
