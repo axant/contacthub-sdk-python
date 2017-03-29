@@ -171,8 +171,6 @@ class TestCustomer(unittest.TestCase):
         assert job.companyIndustry == 'companyIndustry', job.companyIndustry
         assert job.companyName == 'companyName', job.companyName
         assert job.jobTitle == 'jobTitle', job.jobTitle
-        assert type(job.startDate) is str, type(job.startDate)
-        assert type(job.endDate) is str, type(job.endDate)
         assert job.isCurrent, job.isCurrent
 
     def test_customer_like(self):
@@ -263,9 +261,6 @@ class TestCustomer(unittest.TestCase):
             attr = self.customers[0].base.likes[0].attr
         self.assertTrue('attr' in str(context.exception))
 
-    def test_customer_like_created_time(self):
-        ct = self.customers[0].base.likes[0].createdTime
-        assert isinstance(ct, str), type(ct)
 
     @mock.patch('requests.get', return_value=FakeHTTPResponse(resp_path='tests/util/fake_event_response'))
     def test_all_events(self, mock_get_event):
@@ -533,3 +528,12 @@ class TestCustomer(unittest.TestCase):
 
         c.prop5 = Property(prop6='value5')
         assert c.mute == {'prop5': {'prop6': 'value5'}}, c.mute
+
+    @mock.patch('requests.put', return_value=FakeHTTPResponse())
+    def test_put_no_timezone(self, mock_put):
+        c = Customer(node=self.node, id='01')
+        c.base.timezone = None
+        c.put()
+        params_expected= {'id':'01', 'base': {'contacts': {}, 'timezone':'Europe/Rome'}, 'extended': {},
+                          'tags':{'manual':[], 'auto':[]}}
+        mock_put.assert_called_with(self.base_url_customer + '/01', headers=self.headers_expected, json=params_expected)

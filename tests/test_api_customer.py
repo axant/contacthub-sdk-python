@@ -96,6 +96,28 @@ class TestCustomerAPIManager(TestSuite):
         mock_delete.assert_called_with(self.base_url + '/01/likes/02', headers=self.headers_expected)
         assert not a, a
 
+    @mock.patch('requests.get',
+                return_value=FakeHTTPResponse())
+    def test_get_all_external_id(self, mock_get):
+        a = self.customer_manager.get_all(externalId='01')
+        params_expected = {'nodeId': '123', 'externalId':'01'}
+        mock_get.assert_called_with(self.base_url, headers=self.headers_expected, params=params_expected)
+
+    @mock.patch('requests.get',
+                return_value=FakeHTTPResponse())
+    def test_get_all_page_size(self, mock_get):
+        self.customer_manager.get_all(page=1, size=2)
+        params_expected = {'nodeId': '123', 'page': 1, 'size':2}
+        mock_get.assert_called_with(self.base_url, headers=self.headers_expected, params=params_expected)
+
+    @mock.patch('requests.get',
+                return_value=FakeHTTPResponse(status_code=400))
+    def test_get_error(self, mock_get):
+        try:
+            self.customer_manager.get(_id='01')
+        except HTTPError as e:
+            assert 'message' in str(e), str(e)
+
 
 
 

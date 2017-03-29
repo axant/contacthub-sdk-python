@@ -118,7 +118,6 @@ class Node(object):
         new_tags = customer.tags.manual
         new_tags += [tag]
         customer.tags.manual = new_tags
-        print(customer.mute)
         self.update_customer(id=customer_id, **resolve_mutation_tracker(customer.mute))
 
     def remove_tag(self, customer_id, tag):

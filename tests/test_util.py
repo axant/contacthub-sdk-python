@@ -49,11 +49,14 @@ class TestEvent(unittest.TestCase):
         a = {'b': {'c': {'d': 1, 'e': 2}, 'f': {'g': 1}}}
 
         paths_exp = [['b','c','d'], ['b','c','e'], ['b','f','g']]
+        paths_exp = [['b', 'c', 'd'], ['b', 'c', 'e'], ['b', 'f', 'g']]
+
 
         paths = []
         get_dictionary_paths(a, paths, [])
 
-        assert paths == paths_exp, paths
+        for path in paths:
+            assert path in paths_exp, path
 
     def test_generate_mutation_tracker(self):
         d1 = {'a': {'b': 'c', 'd': 'e'}, 'f': 'g'}
@@ -62,6 +65,8 @@ class TestEvent(unittest.TestCase):
         d_exp = {'a': {'beta': 'c', 'b': None, 'd': None}, 'f': None}
         tracker = generate_mutation_tracker(d1,d2)
         assert d_exp ==tracker, tracker
+
+
 
 
 

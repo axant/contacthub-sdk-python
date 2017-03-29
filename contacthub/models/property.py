@@ -1,11 +1,9 @@
-from datetime import datetime
-
 from contacthub.lib.read_only_list import ReadOnlyList
-from contacthub.lib.utils import list_item, get_dictionary_paths, generate_mutation_tracker, convert_properties_obj_in_prop
+from contacthub.lib.utils import generate_mutation_tracker, convert_properties_obj_in_prop
 from contacthub.models.education import Education
 from contacthub.models.job import Job
 from contacthub.models.like import Like
-from copy import deepcopy
+
 
 
 class Property(object):
@@ -84,9 +82,12 @@ class Property(object):
                 field = self.parent_attr.split('.')[-1:][0]
                 if isinstance(self.parent.attributes[field], list):
                     self.mute[self.parent_attr] = self.parent.attributes[field]
+                elif isinstance(self.parent.attributes[field][attr], list):
+                    if self.parent_attr not in self.mute:
+                        self.mute[self.parent_attr] = {}
+                    self.mute[self.parent_attr][attr]=self.parent.attributes[field][attr]
                 else:
                     self.mute[self.parent_attr + '.' + attr] = val
-
 
 def update_tracking_with_new_prop(mutations, new_properties):
     """
