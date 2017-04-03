@@ -5,10 +5,9 @@ from datetime import datetime
 import mock
 
 from contacthub.lib.read_only_list import ReadOnlyList
-from contacthub.models import BaseProperties
 from contacthub.models.customer import Customer
 from contacthub.models.education import Education
-from contacthub.models.property import Property
+from contacthub.models.properties import Properties
 from contacthub.models.event import Event
 from contacthub.models.job import Job
 from contacthub.models.like import Like
@@ -35,11 +34,11 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_base(self):
         for customer in self.customers:
-            assert type(customer.base) is Property, type(customer.base)
+            assert type(customer.base) is Properties, type(customer.base)
 
     def test_customer_tags(self):
         tags = self.customers[0].tags
-        assert type(tags) is Property, type(tags)
+        assert type(tags) is Properties, type(tags)
         assert type(tags.auto) is ReadOnlyList, type(tags.auto)
         assert type(tags.manual) is ReadOnlyList, type(tags.manual)
         assert tags.auto[0] == 'auto', tags.auto[0]
@@ -53,7 +52,7 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_tags_empty(self):
         tags = self.customers[1].tags
-        assert type(tags) is Property, type(tags)
+        assert type(tags) is Properties, type(tags)
         assert type(tags.auto) is ReadOnlyList, type(tags.auto)
         assert type(tags.manual) is ReadOnlyList, type(tags.manual)
         assert len(tags.auto) == 0, len(tags.auto)
@@ -61,19 +60,19 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_contacts_other_contacts(self):
         other_contact = self.customers[0].base.contacts.otherContacts[0]
-        assert type(other_contact) is Property, type(other_contact)
+        assert type(other_contact) is Properties, type(other_contact)
         assert other_contact.name == 'name', other_contact.name
         assert other_contact.value == 'value', other_contact.value
 
     def test_customer_contacts_mobile_devices(self):
         mobile_device = self.customers[0].base.contacts.mobileDevices[0]
-        assert type(mobile_device) is Property, type(mobile_device)
+        assert type(mobile_device) is Properties, type(mobile_device)
         assert mobile_device.identifier == 'identifier', mobile_device.name
         assert mobile_device.name == 'name', mobile_device.value
 
     def test_customer_contacts(self):
         contacts = self.customers[0].base.contacts
-        assert type(contacts) is Property, type(contacts)
+        assert type(contacts) is Properties, type(contacts)
         assert contacts.email == 'email@email.it', contacts.email
         assert contacts.fax == 'fax', contacts.fax
         assert contacts.mobilePhone == 'mobilePhone', contacts.mobilePhone
@@ -91,7 +90,7 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_contacts_empty(self):
         contacts = self.customers[1].base.contacts
-        assert type(contacts) is Property, type(contacts)
+        assert type(contacts) is Properties, type(contacts)
         assert contacts.fax is None, contacts.fax
         assert contacts.mobilePhone is None, contacts.mobilePhone
         assert contacts.phone is None, contacts.phone
@@ -100,7 +99,7 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_credentials(self):
         credentials = self.customers[0].base.credential
-        assert type(credentials) is Property, type(credentials)
+        assert type(credentials) is Properties, type(credentials)
         assert credentials.username == 'username', credentials.username
         assert credentials.password == 'password', credentials.password
 
@@ -138,7 +137,7 @@ class TestCustomer(unittest.TestCase):
         subscriptions = self.customers[0].base.subscriptions
         assert type(subscriptions) is ReadOnlyList, type(subscriptions)
         subscription = subscriptions[0]
-        assert type(subscription) is Property, type(subscription)
+        assert type(subscription) is Properties, type(subscription)
         assert subscription.id == "id", subscription.id
         assert subscription.name == "name", subscription.name
         assert subscription.type == "type", subscription.type
@@ -154,7 +153,7 @@ class TestCustomer(unittest.TestCase):
         preferences = self.customers[0].base.subscriptions[0].preferences
         assert type(preferences) is ReadOnlyList, type(preferences)
         preference = preferences[0]
-        assert type(preference) is Property, type(preference)
+        assert type(preference) is Properties, type(preference)
         assert preference.key == "key", preference.key
         assert preference.value == "value", preference.value
 
@@ -186,13 +185,13 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_address(self):
         address = self.customers[0].base.address
-        assert type(address) is Property, type(address)
+        assert type(address) is Properties, type(address)
         assert address.street == 'street', address.street
         assert address.city == 'city', address.city
         assert address.country == 'country', address.country
         assert address.province == 'province', address.province
         assert address.zip == 'zip', address.zip
-        assert type(address.geo) is Property, type(address.geo)
+        assert type(address.geo) is Properties, type(address.geo)
 
     def test_customer_address_geo(self):
         geo = self.customers[0].base.address.geo
@@ -245,9 +244,9 @@ class TestCustomer(unittest.TestCase):
             attr = self.customers[0].base.subscriptions[0].attr
         self.assertTrue('attr' in str(context.exception))
 
-    def test_customer_property_unexistent_attr(self):
+    def test_customer_properties_unexistent_attr(self):
         with self.assertRaises(AttributeError) as context:
-            p = Property({'attributo': 1})
+            p = Properties({'attributo': 1})
             attr = p.attr
         self.assertTrue('attr' in str(context.exception))
 
@@ -312,8 +311,8 @@ class TestCustomer(unittest.TestCase):
                          'extended': {'prova': 'prova'}, 'tags': {'auto': ['auto'], 'manual': ['manual']}}
         mock_post.return_value = json.loads(FakeHTTPResponse(resp_path='tests/util/fake_post_response').text)
         c = Customer(node=self.node,
-                     base=Property(
-                         contacts=Property(email='email@email.email')
+                     base=Properties(
+                         contacts=Properties(email='email@email.email')
                      )
                      )
 
@@ -330,8 +329,8 @@ class TestCustomer(unittest.TestCase):
     # def test_post_customer_creation_second_method(self, mock_post):
     #     expected_body = {'base': {'contacts': {'email': 'email@email.email'}}, 'extra': 'extra'}
     #     mock_post.return_value = json.loads(FakeHTTPResponse(resp_path='tests/util/fake_post_response').text)
-    #     c = Customer(base=Property(), node=self.node)
-    #     c.base.contacts = Property(email='email@email.email')
+    #     c = Customer(base=Properties(), node=self.node)
+    #     c.base.contacts = Properties(email='email@email.email')
     #     c.extra = 'extra'
     #     posted = c.post()
     #     mock_post.assert_called_with(body=expected_body, force_update=False)
@@ -344,7 +343,7 @@ class TestCustomer(unittest.TestCase):
         expected_body = {'base': {'contacts': {'email': 'email@email.email'}}, 'extra': 'extra', 'extended': {},
                          'tags': {'auto': [], 'manual': []}}
         mock_post.return_value = json.loads(FakeHTTPResponse(resp_path='tests/util/fake_post_response').text)
-        c = Customer(node=self.node, base=Property())
+        c = Customer(node=self.node, base=Properties())
         c.base.contacts = {'email': 'email@email.email'}
         c.extra = 'extra'
         c.post()
@@ -370,7 +369,7 @@ class TestCustomer(unittest.TestCase):
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_entity(self, mock_patch):
-        self.customers[0].extended = Property(a=1, prova=Property(b=1))
+        self.customers[0].extended = Properties(a=1, prova=Properties(b=1))
         self.customers[0].patch()
         body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': []}, 'a': 1}}
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
@@ -378,7 +377,7 @@ class TestCustomer(unittest.TestCase):
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_entity_extended_and_base(self, mock_patch):
-        self.customers[0].extended = Property(a=1, prova=Property(b=1))
+        self.customers[0].extended = Properties(a=1, prova=Properties(b=1))
         self.customers[0].base.firstName = 'fn'
         self.customers[0].patch()
         body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': []}, 'a': 1}, 'base': {'firstName': 'fn'}}
@@ -387,8 +386,8 @@ class TestCustomer(unittest.TestCase):
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_extended_entity_and_base_entity(self, mock_patch):
-        self.customers[0].extended = Property(a=1, prova=Property(b=1))
-        self.customers[0].base = Property(contacts=Property(email='email'))
+        self.customers[0].extended = Properties(a=1, prova=Properties(b=1))
+        self.customers[0].base = Properties(contacts=Properties(email='email'))
         self.customers[0].patch()
         body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': []}, 'a': 1},
                 'base': {
@@ -404,8 +403,8 @@ class TestCustomer(unittest.TestCase):
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_entity_with_entity(self, mock_patch):
-        self.customers[0].extended = Property(a=1, prova=Property(b=1))
-        self.customers[0].base.contacts = Property(email='email')
+        self.customers[0].extended = Properties(a=1, prova=Properties(b=1))
+        self.customers[0].base.contacts = Properties(email='email')
         self.customers[0].patch()
         body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': []}, 'a': 1}, 'base':
             {'contacts': {'email': 'email', 'fax': None, 'mobilePhone': None, 'phone': None, 'otherContacts': [],
@@ -415,8 +414,8 @@ class TestCustomer(unittest.TestCase):
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_entity_with_rename(self, mock_patch):
-        self.customers[0].extended = Property(a=1, prova=Property(b=1))
-        self.customers[0].base.contacts = Property(email1='email')
+        self.customers[0].extended = Properties(a=1, prova=Properties(b=1))
+        self.customers[0].base.contacts = Properties(email1='email')
         self.customers[0].patch()
         body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': []}, 'a': 1}, 'base':
             {'contacts': {'email': None, 'email1': 'email', 'fax': None, 'mobilePhone': None, 'phone': None,
@@ -427,8 +426,8 @@ class TestCustomer(unittest.TestCase):
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_entity_with_rename_dict(self, mock_patch):
-        self.customers[0].extended = Property(a=1, prova=Property(b=1))
-        self.customers[0].base.contacts = Property(email1=Property(a=1))
+        self.customers[0].extended = Properties(a=1, prova=Properties(b=1))
+        self.customers[0].base.contacts = Properties(email1=Properties(a=1))
         self.customers[0].patch()
         body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': []}, 'a': 1}, 'base':
             {'contacts': {'email': None, 'email1': {'a': 1}, 'fax': None, 'mobilePhone': None, 'phone': None,
@@ -439,8 +438,8 @@ class TestCustomer(unittest.TestCase):
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_entity_list(self, mock_patch):
-        self.customers[0].extended = Property(a=1, prova=Property(b=1))
-        self.customers[0].base.contacts.otherContacts = [Property(email1=Property(a=1))]
+        self.customers[0].extended = Properties(a=1, prova=Properties(b=1))
+        self.customers[0].base.contacts.otherContacts = [Properties(email1=Properties(a=1))]
         self.customers[0].patch()
         body = {'extended': {'prova': {'b': 1, 'oggetto': None, 'list': []}, 'a': 1}, 'base':
             {'contacts': {'otherContacts': [{'email1': {'a': 1}}]}}}
@@ -449,8 +448,8 @@ class TestCustomer(unittest.TestCase):
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_entity_new_list(self, mock_patch):
-        self.customers[0].base.contacts = Property(email='email')
-        self.customers[0].base.contacts.otherContacts = [Property(email1=Property(a=1))]
+        self.customers[0].base.contacts = Properties(email='email')
+        self.customers[0].base.contacts.otherContacts = [Properties(email1=Properties(a=1))]
         self.customers[0].patch()
         body = {'base': {
             'contacts': {'email': 'email', 'fax': None, 'mobilePhone': None, 'phone': None, 'mobileDevices': [],
@@ -460,8 +459,8 @@ class TestCustomer(unittest.TestCase):
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_entity_new_list_with_entities(self, mock_patch):
-        self.customers[0].base.contacts = Property(email='email')
-        self.customers[0].base.contacts.otherContacts = [Property(email1=Property(a=Property(b=1)))]
+        self.customers[0].base.contacts = Properties(email='email')
+        self.customers[0].base.contacts.otherContacts = [Properties(email1=Properties(a=Properties(b=1)))]
         self.customers[0].patch()
         body = {'base': {
             'contacts': {'email': 'email', 'fax': None, 'mobilePhone': None, 'phone': None, 'mobileDevices': [],
@@ -471,7 +470,7 @@ class TestCustomer(unittest.TestCase):
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_all_extended(self, mock_patch):
-        self.customers[0].extended = Property()
+        self.customers[0].extended = Properties()
         self.customers[0].patch()
         body = {'extended': {'prova': None}}
         mock_patch.assert_called_with(self.base_url_customer + '/' + self.customers[0].id,
@@ -479,7 +478,7 @@ class TestCustomer(unittest.TestCase):
 
     @mock.patch('requests.patch', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_patch_all_base(self, mock_patch):
-        self.customers[0].base = Property()
+        self.customers[0].base = Properties()
         self.customers[0].patch()
         body = {'base': {'pictureUrl': None, 'title': None, 'prefix': None, 'firstName': None, 'lastName': None,
                          'middleName': None, 'gender': None, 'dob': None, 'locale': None,
@@ -511,7 +510,7 @@ class TestCustomer(unittest.TestCase):
 
     def test_create_customer_with_default_schema(self):
         c = Customer(node=self.node, default_props={'prop': {'prop1': 'value1'}, 'prop2': 'value2'},
-                     prop3=Property(prop4='value4'))
+                     prop3=Properties(prop4='value4'))
         internal = {'prop': {'prop1': 'value1'}, 'prop2': 'value2', 'prop3': {'prop4': 'value4'}}
         assert c.attributes == internal, c.attributes
 
@@ -524,9 +523,9 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_patch_new_prop(self):
         c = Customer(node=self.node, default_props={'prop': {'prop1': 'value1'}, 'prop2': 'value2'},
-                     prop3=Property(prop4='value4'))
+                     prop3=Properties(prop4='value4'))
 
-        c.prop5 = Property(prop6='value5')
+        c.prop5 = Properties(prop6='value5')
         assert c.mute == {'prop5': {'prop6': 'value5'}}, c.mute
 
     @mock.patch('requests.put', return_value=FakeHTTPResponse())

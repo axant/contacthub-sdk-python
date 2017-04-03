@@ -8,7 +8,7 @@ from contacthub.lib.utils import generate_mutation_tracker, convert_properties_o
 from contacthub.models.event import Event
 from six import with_metaclass
 
-from contacthub.models.property import Property
+from contacthub.models.properties import Properties
 from contacthub.models.query.entity_meta import EntityMeta
 
 
@@ -23,7 +23,7 @@ class Customer(with_metaclass(EntityMeta, object)):
         :param json_properties: A dictionary containing the json_properties related to customers
         """
 
-        convert_properties_obj_in_prop(properties=attributes, property=Property)
+        convert_properties_obj_in_prop(properties=attributes, properties_class=Properties)
         if default_props is None:
             if 'base' not in attributes:
                 attributes['base'] = {}
@@ -57,14 +57,14 @@ class Customer(with_metaclass(EntityMeta, object)):
 
     def __getattr__(self, item):
         """
-        Check if a key is in the dictionary and return it if it's a simple property. Otherwise, if the
+        Check if a key is in the dictionary and return it if it's a simple properties. Otherwise, if the
         element contains an object or list, redirect this element at the corresponding class.
-        :param item: the key of the base property dict
+        :param item: the key of the base properties dict
         :return: an element of the dictionary, or an object if the element associated at the key containse an object or a list
         """
         try:
             if isinstance(self.attributes[item], dict):
-                return Property.from_dict(parent_attr=item, parent=self, attributes=self.attributes[item])
+                return Properties.from_dict(parent_attr=item, parent=self, attributes=self.attributes[item])
             else:
                 return self.attributes[item]
         except KeyError as e:
@@ -74,7 +74,7 @@ class Customer(with_metaclass(EntityMeta, object)):
         if attr in self.__slots__:
             return super(Customer, self).__setattr__(attr, val)
         else:
-            if isinstance(val, Property):
+            if isinstance(val, Properties):
                 try:
                     tracker = generate_mutation_tracker(self.attributes[attr], val.attributes)
                     for key in val.attributes:
@@ -101,7 +101,7 @@ class Customer(with_metaclass(EntityMeta, object)):
             events = []
             resp = self.event_api_manager.get_all(customer_id=self.attributes['id'])
             for event in resp['elements']:
-                events.append(Event(**event))
+                events.append(Event.from_dict(node=self.node, attributes=event))
             return ReadOnlyList(events)
         raise Exception('Cannot retrieve events from a new customer created.')
 

@@ -11,7 +11,7 @@ class EntityField(object):
 
     def __init__(self, entity, field):
         """
-        :param entity: Property
+        :param entity: properties
         :param field: field
         """
         self.entity = entity
@@ -19,8 +19,8 @@ class EntityField(object):
 
     def __getattr__(self, item):
         """
-        Multiple level property handling, like Property.field1.field2, creting a new EntityFiled object with
-        Property.field1 as entity and a field2 as field
+        Multiple level properties handling, like properties.field1.field2, creting a new EntityFiled object with
+        properties.field1 as entity and a field2 as field
         :param item: the field for creating an new EntityField object
         :return: a new EntityField object
         """

@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 from contacthub.api_manager.api_customer import CustomerAPIManager
-from contacthub.lib.utils import resolve_mutation_tracker
+from contacthub.api_manager.api_event import EventAPIManager
+from contacthub.lib.utils import resolve_mutation_tracker, convert_properties_obj_in_prop
+from contacthub.models import Properties
 
 from contacthub.models.customer import Customer
 from contacthub.models.education import Education
+from contacthub.models.event import Event
 from contacthub.models.job import Job
 from contacthub.models.like import Like
 from contacthub.models.query.query import Query
@@ -14,6 +17,7 @@ class Node(object):
     """
     Node class for accessing data on a ContactHub node.
     """
+
     def __init__(self, workspace, node_id):
         """
         :param workspace: A Workspace Object for authenticating on ContactHub
@@ -22,6 +26,7 @@ class Node(object):
         self.workspace = workspace
         self.node_id = str(node_id)
         self.customer_api_manager = CustomerAPIManager(node=self)
+        self.event_api_manager = EventAPIManager(node=self)
 
     def get_customers(self, externalId=None, page=None, size=None):
         """
@@ -219,10 +224,39 @@ class Node(object):
         entity_attrs = self.customer_api_manager.put(_id=customer_id, body=attributes, urls_extra='educations/' + id)
         return Education(customer=self.get_customer(id=customer_id), **entity_attrs)
 
+    def get_events(self, customer_id, event_type=None, context=None, event_mode=None, date_from=None, date_to=None,
+                   page=None, size=None):
+        """
 
+        :param customer_id:
+        :param event_type:
+        :param context:
+        :param event_mode:
+        :param date_from:
+        :param date_to:
+        :param page:
+        :param size:
+        :return:
+        """
+        events = []
+        resp = self.event_api_manager.get_all(customer_id=customer_id, type=event_type, mode=event_mode, dateFrom=date_from,
+                                       dateTo=date_to, page=page, size=size, context=context)
+        for event in resp['elements']:
+            events.append(Event(node=self, **event))
+        return events
 
+    def get_event(self, id):
+        """
 
+        :param id:
+        :return:
+        """
+        return Event(node=self, **self.event_api_manager.get(_id=id))
 
+    def add_event(self, **attributes):
+        convert_properties_obj_in_prop(properties=attributes, properties_class=Properties)
+        self.event_api_manager.post(body=attributes)
+        return Event(node=self, **attributes)
 
 
 

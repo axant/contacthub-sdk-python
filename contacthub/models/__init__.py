@@ -1,5 +1,4 @@
-from contacthub.models.property import Property
+from contacthub.models.properties import Properties
 
-Contacts=Property
-Properties=Property
-BaseProperties=Property
+
+Properties=Properties

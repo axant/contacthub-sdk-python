@@ -6,14 +6,14 @@ from contacthub.models.like import Like
 
 
 
-class Property(object):
+class Properties(object):
     """
-    Generic property for all entities
+    Generic Properties for all entities
     """
 
     SUBPROPERTIES_LIST = {'educations': Education, 'likes': Like, 'jobs': Job}
 
-    __slots__ = ('attributes', 'parent_attr', 'mute', 'parent')
+    __attributes__ = ('attributes', 'parent_attr', 'mute', 'parent')
 
     def __init__(self, parent=None, parent_attr=None, **attributes):
         """
@@ -22,7 +22,7 @@ class Property(object):
         self.parent_attr = parent_attr
         self.parent = parent
         self.mute = parent.mute if parent else None
-        convert_properties_obj_in_prop(properties=attributes, property=Property)
+        convert_properties_obj_in_prop(properties=attributes, properties_class=Properties)
         self.attributes = attributes
 
     @classmethod
@@ -36,9 +36,9 @@ class Property(object):
 
     def __getattr__(self, item):
         """
-        Check if a key is in the dictionary and return it if it's a simple property. Otherwise, if the
+        Check if a key is in the dictionary and return it if it's a simple Properties. Otherwise, if the
         element contains an object or list, redirect this element at the corresponding class.
-        :param item: the key of the base property dict
+        :param item: the key of the base Properties dict
         :return: an element of the dictionary, or an object if the element associated at the key containse an object or
         a list
         """
@@ -46,16 +46,18 @@ class Property(object):
             if item in self.SUBPROPERTIES_LIST:
                 obj_list_ret = []
                 for elements in self.attributes[item]:
-                    obj_list_ret.append(self.SUBPROPERTIES_LIST[item](customer=self.parent, **elements))
+                    obj_list_ret.append(self.SUBPROPERTIES_LIST[item].from_dict(customer=self.parent,
+                                                                                attributes=elements,
+                                                                                parent_attr=self.parent_attr + '.' + item))
                 return ReadOnlyList(obj_list_ret)
             if isinstance(self.attributes[item], dict):
-                return Property.from_dict(parent_attr=self.parent_attr + '.' + item, parent=self,
+                return Properties.from_dict(parent_attr=self.parent_attr + '.' + item, parent=self,
                                         attributes=self.attributes[item])
             elif isinstance(self.attributes[item], list):
                 if self.attributes[item] and isinstance(self.attributes[item][0], dict):
                     list_sub_prob = []
                     for elem in self.attributes[item]:
-                        list_sub_prob.append(Property.from_dict(parent_attr=self.parent_attr + '.' + item, parent=self,
+                        list_sub_prob.append(Properties.from_dict(parent_attr=self.parent_attr + '.' + item, parent=self,
                                                               attributes=elem))
                 else:
                     list_sub_prob = self.attributes[item]
@@ -66,28 +68,45 @@ class Property(object):
             raise AttributeError("%s object has no attribute %s" %(type(self).__name__, e))
 
     def __setattr__(self, attr, val):
-        if attr in self.__slots__:
-            return super(Property, self).__setattr__(attr, val)
+        """
+
+        :param attr:
+        :param val:
+        :return:
+        """
+        if attr in self.__attributes__:
+            return super(Properties, self).__setattr__(attr, val)
         else:
-            if isinstance(val, Property):
-                try:
-                    mutations = generate_mutation_tracker(self.attributes[attr], val.attributes)
-                    update_tracking_with_new_prop(mutations, val.attributes)
-                    self.mute[self.parent_attr + '.' + attr] = mutations
-                except KeyError as e:
-                    self.mute[attr] = val.attributes
+            if isinstance(val, Properties):
+                if self.mute is not None:
+                    try:
+                        mutations = generate_mutation_tracker(self.attributes[attr], val.attributes)
+                        update_tracking_with_new_prop(mutations, val.attributes)
+                        self.mute[self.parent_attr + '.' + attr] = mutations
+                    except KeyError as e:
+                        self.mute[attr] = val.attributes
                 self.attributes[attr] = val.attributes
             else:
-                self.attributes[attr] = val
-                field = self.parent_attr.split('.')[-1:][0]
-                if isinstance(self.parent.attributes[field], list):
-                    self.mute[self.parent_attr] = self.parent.attributes[field]
-                elif isinstance(self.parent.attributes[field][attr], list):
-                    if self.parent_attr not in self.mute:
-                        self.mute[self.parent_attr] = {}
-                    self.mute[self.parent_attr][attr]=self.parent.attributes[field][attr]
+                if isinstance(val, list) and val and (isinstance(val[0], Job)
+                                                      or isinstance(val[0], Education)
+                                                      or isinstance(val[0], Like)
+                                                      or isinstance(val[0], Properties)):
+                    self.attributes[attr] = []
+                    for elem in val:
+                        self.attributes[attr] += [elem.attributes]
                 else:
-                    self.mute[self.parent_attr + '.' + attr] = val
+                    self.attributes[attr] = val
+                if self.mute is not None:
+                    field = self.parent_attr.split('.')[-1:][0]
+                    if isinstance(self.parent.attributes[field], list):
+                        self.mute[self.parent_attr] = self.parent.attributes[field]
+                    elif isinstance(self.parent.attributes[field][attr], list):
+                        if self.parent_attr not in self.mute:
+                            self.mute[self.parent_attr] = {}
+                        self.mute[self.parent_attr][attr] = self.parent.attributes[field][attr]
+                    else:
+                        self.mute[self.parent_attr + '.' + attr] = val
+
 
 def update_tracking_with_new_prop(mutations, new_properties):
     """

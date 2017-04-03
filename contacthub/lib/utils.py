@@ -11,9 +11,6 @@ class DateEncoder(json.JSONEncoder):
             return obj.strftime("%Y-%m-%dT%H:%M:%SZ")
         if isinstance(obj, datetime.date):
             return obj.isoformat()
-        from contacthub.models import Property
-        if isinstance(obj, Property):
-            return obj.attributes
         return json.JSONEncoder.default(self, obj)
 
 
@@ -38,7 +35,7 @@ def get_dictionary_paths(d, main_list, tmp_list):
 
 def generate_mutation_tracker(old_properties, new_properties):
     """
-    Given the old properties of an Property and the new ones, create a new dictionary with all old properties:
+    Given the old properties of an properties and the new ones, create a new dictionary with all old properties:
         - the ones in new_properties updated
         - the ones not in new_properties setted to None
     :param old_properties: The old properties of an entity for create mutation
@@ -73,12 +70,17 @@ def generate_mutation_tracker(old_properties, new_properties):
     return mutation_tracker
 
 
-def convert_properties_obj_in_prop(properties, property):
+def convert_properties_obj_in_prop(properties, properties_class):
     for k in properties:
-        if isinstance(properties[k], property):
+        if isinstance(properties[k], properties_class):
             properties[k] = properties[k].attributes
+        if isinstance(properties[k], list):
+            for elem in properties[k]:
+                if isinstance(elem, properties_class):
+                    index = properties[k].index(elem)
+                    properties[k][index] = elem.attributes
         elif isinstance(properties[k], dict):
-            convert_properties_obj_in_prop(properties=properties[k], property=property)
+            convert_properties_obj_in_prop(properties=properties[k], properties_class=properties_class)
 
 
 def resolve_mutation_tracker(mutation_tracker):

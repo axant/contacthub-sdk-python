@@ -2,6 +2,7 @@ import json
 import unittest
 
 import mock
+from datetime import datetime
 from requests import HTTPError
 
 from contacthub.api_manager.api_event import EventAPIManager
@@ -43,4 +44,70 @@ class TestEventAPIManager(unittest.TestCase):
             self.event_manager.get_all(customer_id="123")
         except HTTPError as e:
             mock_get_all.assert_called_with(self.base_url, headers=self.headers_expected, params=params_expected)
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse(resp_path="tests/util/fake_event_response"))
+    def test_get_all_events_type(self, mock_get_all):
+        params_expected = {'customerId': '123', 'type':'type'}
+        resp = self.event_manager.get_all(customer_id="123", type='type')
+        mock_get_all.assert_called_with(self.base_url, headers=self.headers_expected, params=params_expected)
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse(resp_path="tests/util/fake_event_response"))
+    def test_get_all_events_context(self, mock_get_all):
+        params_expected = {'customerId': '123', 'context': 'context'}
+        resp = self.event_manager.get_all(customer_id="123", context='context')
+        mock_get_all.assert_called_with(self.base_url, headers=self.headers_expected, params=params_expected)
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse(resp_path="tests/util/fake_event_response"))
+    def test_get_all_events_mode(self, mock_get_all):
+        params_expected = {'customerId': '123', 'mode': 'mode'}
+        resp = self.event_manager.get_all(customer_id="123", mode='mode')
+        mock_get_all.assert_called_with(self.base_url, headers=self.headers_expected, params=params_expected)
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse(resp_path="tests/util/fake_event_response"))
+    def test_get_all_events_dateFrom_dateTo(self, mock_get_all):
+        params_expected = {'customerId': '123', 'dateFrom': '2000-01-01T00:00:00Z', 'dateTo':'2010-01-01T00:00:00Z'}
+        resp = self.event_manager.get_all(customer_id="123", dateFrom=datetime(2000,1,1), dateTo=datetime(2010,1,1))
+        mock_get_all.assert_called_with(self.base_url, headers=self.headers_expected, params=params_expected)
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse(resp_path="tests/util/fake_event_response"))
+    def test_get_all_events_dateFrom_dateTo_str(self, mock_get_all):
+        params_expected = {'customerId': '123', 'dateFrom': '2000-01-01T00:00:00Z', 'dateTo': '2010-01-01T00:00:00Z'}
+        resp = self.event_manager.get_all(customer_id="123", dateFrom='2000-01-01T00:00:00Z', dateTo='2010-01-01T00:00:00Z')
+        mock_get_all.assert_called_with(self.base_url, headers=self.headers_expected, params=params_expected)
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse(resp_path="tests/util/fake_event_response"))
+    def test_get_all_events_page_size(self, mock_get_all):
+        params_expected = {'customerId': '123', 'page': 1, 'size': 2}
+        resp = self.event_manager.get_all(customer_id="123", page=1, size=2)
+        mock_get_all.assert_called_with(self.base_url, headers=self.headers_expected, params=params_expected)
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse(resp_path="tests/util/fake_event_response"))
+    def test_get(self, mock_get):
+        self.event_manager.get(_id='01')
+        mock_get.assert_called_with(self.base_url + '/01', headers=self.headers_expected)
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse(resp_path="tests/util/fake_event_response", status_code=400))
+    def test_get_error(self, mock_get):
+        try:
+            self.event_manager.get(_id='01')
+        except HTTPError as e:
+            assert 'message' in str(e)
+
+    @mock.patch('requests.post',
+                return_value=FakeHTTPResponse(resp_path="tests/util/fake_event_response"))
+    def test_post(self, mock_post):
+        self.event_manager.post(body={'a':'b'})
+        mock_post.assert_called_with(self.base_url, headers=self.headers_expected, json={'a':'b'})
+
+    @mock.patch('requests.post',
+                return_value=FakeHTTPResponse(resp_path="tests/util/fake_event_response", status_code=400))
+    def test_post_error(self, mock_post):
+        try:
+            self.event_manager.post(body={'a': 'b'})
+        except HTTPError as e:
+            mock_post.assert_called_with(self.base_url, headers=self.headers_expected, json={'a': 'b'})
+            assert 'message' in str(e)
+
+
+
 
