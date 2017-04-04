@@ -1,0 +1,296 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>contacthub.models.customer &mdash; contacthub 0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="contacthub 0.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">contacthub 0.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for contacthub.models.customer</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">from</span> <span class="nn">contacthub._api_manager._api_customer</span> <span class="kn">import</span> <span class="n">_CustomerAPIManager</span>
+<span class="kn">from</span> <span class="nn">contacthub._api_manager._api_event</span> <span class="kn">import</span> <span class="n">_EventAPIManager</span>
+<span class="kn">from</span> <span class="nn">contacthub.errors.operation_not_permitted</span> <span class="kn">import</span> <span class="n">OperationNotPermitted</span>
+<span class="kn">from</span> <span class="nn">contacthub.lib.read_only_list</span> <span class="kn">import</span> <span class="n">ReadOnlyList</span>
+<span class="kn">from</span> <span class="nn">contacthub.lib.utils</span> <span class="kn">import</span> <span class="n">generate_mutation_tracker</span><span class="p">,</span> <span class="n">convert_properties_obj_in_prop</span><span class="p">,</span> \
+    <span class="n">resolve_mutation_tracker</span>
+<span class="kn">from</span> <span class="nn">contacthub.models.event</span> <span class="kn">import</span> <span class="n">Event</span>
+<span class="kn">from</span> <span class="nn">six</span> <span class="kn">import</span> <span class="n">with_metaclass</span>
+
+<span class="kn">from</span> <span class="nn">contacthub.models.properties</span> <span class="kn">import</span> <span class="n">Properties</span>
+<span class="kn">from</span> <span class="nn">contacthub.models.query.entity_meta</span> <span class="kn">import</span> <span class="n">EntityMeta</span>
+
+
+<div class="viewcode-block" id="Customer"><a class="viewcode-back" href="../../../contacthub.models.html#contacthub.models.customer.Customer">[docs]</a><span class="k">class</span> <span class="nc">Customer</span><span class="p">(</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">EntityMeta</span><span class="p">,</span> <span class="nb">object</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Customer entity</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;attributes&#39;</span><span class="p">,</span> <span class="s1">&#39;node&#39;</span><span class="p">,</span> <span class="s1">&#39;customer_api_manager&#39;</span><span class="p">,</span> <span class="s1">&#39;event_api_manager&#39;</span><span class="p">,</span> <span class="s1">&#39;mute&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">default_props</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize a customer in a node with the specified attributes.</span>
+
+<span class="sd">        :param node: the node of the customer</span>
+<span class="sd">        :param default_props: the attributes schema. By default is the following dictionary:</span>
+<span class="sd">            {</span>
+<span class="sd">            &#39;base&#39;:</span>
+<span class="sd">                    {</span>
+<span class="sd">                    &#39;contacts&#39;: {}</span>
+<span class="sd">                    },</span>
+<span class="sd">            &#39;extended&#39;: {},</span>
+<span class="sd">            &#39;tags&#39;: {</span>
+<span class="sd">                    &#39;manual&#39;: [],</span>
+<span class="sd">                    &#39;auto&#39;: []</span>
+<span class="sd">                    }</span>
+<span class="sd">            }</span>
+<span class="sd">        :param attributes: key-value arguments for generating the structure of Customer&#39;s attributes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">convert_properties_obj_in_prop</span><span class="p">(</span><span class="n">properties</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span> <span class="n">properties_class</span><span class="o">=</span><span class="n">Properties</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">default_props</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;base&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
+                <span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">if</span> <span class="s1">&#39;contacts&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">]:</span>
+                <span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">][</span><span class="s1">&#39;contacts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">if</span> <span class="s1">&#39;extended&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">attributes</span> <span class="ow">or</span> <span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;extended&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;extended&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">if</span> <span class="s1">&#39;tags&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">attributes</span> <span class="ow">or</span> <span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;tags&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;tags&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;auto&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;manual&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span> <span class="o">=</span> <span class="n">attributes</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">default_props</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span> <span class="o">=</span> <span class="n">default_props</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">node</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">customer_api_manager</span> <span class="o">=</span> <span class="n">_CustomerAPIManager</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_api_manager</span> <span class="o">=</span> <span class="n">_EventAPIManager</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mute</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a new Customer initialized by a specified dictionary of attributes</span>
+
+<span class="sd">        :rtype: Customer</span>
+<span class="sd">        :param node: the node of the customer</span>
+<span class="sd">        :param attributes: a dictionary representing the attributes of the new Customer</span>
+<span class="sd">        :return: a new Customer object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">o</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">attributes</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">o</span><span class="o">.</span><span class="n">attributes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">o</span><span class="o">.</span><span class="n">attributes</span> <span class="o">=</span> <span class="n">attributes</span>
+        <span class="k">return</span> <span class="n">o</span>
+
+    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert this Customer in a dictionary containing his attributes.</span>
+
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        :return: a new dictionary representing the attributes of this Customer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if a key is in the dictionary and return it if it&#39;s a simple attribute. Otherwise, if the</span>
+<span class="sd">        element contains an object or list, redirect this element at the corresponding class.</span>
+
+<span class="sd">        :param item: the key of the base properties dict</span>
+<span class="sd">        :return: the item in the attributes dictionary if it&#39;s present, raise AttributeError otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">item</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">Properties</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">parent_attr</span><span class="o">=</span><span class="n">item</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">item</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> object has no attribute </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        x.__setattr__(&#39;attr&#39;, val) &lt;==&gt; x.attr = val</span>
+<span class="sd">        If `val` is simple type value (dictionary, list, str, int, ecc.), update the attributes dictionary with new</span>
+<span class="sd">        values, otherwise, if `val` is instance of Properties, check for mutations in the Properties object.</span>
+<span class="sd">        This method generate the mutation tracker dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__slots__</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Customer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">Properties</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">tracker</span> <span class="o">=</span> <span class="n">generate_mutation_tracker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">attr</span><span class="p">],</span> <span class="n">val</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tracker</span> <span class="ow">or</span> <span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="n">tracker</span> <span class="ow">and</span> <span class="n">val</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
+                            <span class="n">tracker</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">mute</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">tracker</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">mute</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">attributes</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">attributes</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mute</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+
+    <span class="vm">__metaclass__</span> <span class="o">=</span> <span class="n">EntityMeta</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get all the events associated to this Customer.</span>
+
+<span class="sd">        :rtype: list</span>
+<span class="sd">        :return: A list containing Events object associated to this Customer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="ow">and</span> <span class="s1">&#39;id&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
+            <span class="n">events</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_api_manager</span><span class="o">.</span><span class="n">get_all</span><span class="p">(</span><span class="n">customer_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">resp</span><span class="p">[</span><span class="s1">&#39;elements&#39;</span><span class="p">]:</span>
+                <span class="n">events</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Event</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">event</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">ReadOnlyList</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">OperationNotPermitted</span><span class="p">(</span><span class="s1">&#39;Cannot retrieve events from a new customer created.&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_update</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Post this Customer in the associated Node.</span>
+
+<span class="sd">        :param force_update: if it&#39;s True and the customer already exists in the node, patch the customer with the</span>
+<span class="sd">        modified properties.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">customer_api_manager</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">,</span> <span class="n">force_update</span><span class="o">=</span><span class="n">force_update</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete this customer from the associated Node.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">customer_api_manager</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">patch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Patch this customer in the associated node, updating his attributes with the modified ones.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tracker</span> <span class="o">=</span> <span class="n">resolve_mutation_tracker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mute</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">customer_api_manager</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="n">body</span><span class="o">=</span><span class="n">tracker</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Put this customer in the associated node, substituting all the old attributes with the ones in this Customer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;registeredAt&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;updatedAt&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;base&#39;</span> <span class="ow">in</span> <span class="n">body</span> <span class="ow">and</span> <span class="s1">&#39;timezone&#39;</span> <span class="ow">in</span> <span class="n">body</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">body</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">][</span><span class="s1">&#39;timezone&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">body</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">][</span><span class="s1">&#39;timezone&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Europe/Rome&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">customer_api_manager</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">mutation_tracker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the mutation tracker for this customer</span>
+
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        :return: the mutation tracker of this customer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">resolve_mutation_tracker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mute</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">SUBSCRIPTION_KINDS</span><span class="p">:</span>
+        <span class="n">DIGITAL_MESSAGE</span> <span class="o">=</span> <span class="s1">&#39;DIGITAL_MESSAGE&#39;</span><span class="p">,</span>
+        <span class="n">SERVICE</span> <span class="o">=</span> <span class="s1">&#39;SERVICE&#39;</span><span class="p">,</span>
+        <span class="n">OTHER</span> <span class="o">=</span> <span class="s1">&#39;OTHER&#39;</span>
+
+    <span class="k">class</span> <span class="nc">OTHER_CONTACT_TYPES</span><span class="p">:</span>
+        <span class="n">MOBILE</span> <span class="o">=</span> <span class="s1">&#39;MOBILE&#39;</span><span class="p">,</span>
+        <span class="n">PHONE</span> <span class="o">=</span> <span class="s1">&#39;PHONE&#39;</span><span class="p">,</span>
+        <span class="n">EMAIL</span> <span class="o">=</span> <span class="s1">&#39;EMAIL&#39;</span><span class="p">,</span>
+        <span class="n">FAX</span> <span class="o">=</span> <span class="s1">&#39;FAX&#39;</span><span class="p">,</span>
+        <span class="n">OTHER</span> <span class="o">=</span> <span class="s1">&#39;OTHER&#39;</span>
+
+    <span class="k">class</span> <span class="nc">MOBILE_DEVICE_TYPES</span><span class="p">:</span>
+        <span class="n">APN</span> <span class="o">=</span> <span class="s1">&#39;APN&#39;</span><span class="p">,</span>
+        <span class="n">GCM</span> <span class="o">=</span> <span class="s1">&#39;GCM&#39;</span><span class="p">,</span>
+        <span class="n">WP</span> <span class="o">=</span> <span class="s1">&#39;WP&#39;</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">contacthub 0.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2017, Axant.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+    </div>
+  </body>
+</html>

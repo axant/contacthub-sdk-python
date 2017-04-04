@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>contacthub.models.like &mdash; contacthub 0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="contacthub 0.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">contacthub 0.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for contacthub.models.like</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">contacthub._api_manager._api_customer</span> <span class="kn">import</span> <span class="n">_CustomerAPIManager</span>
+
+
+<div class="viewcode-block" id="Like"><a class="viewcode-back" href="../../../contacthub.models.html#contacthub.models.like.Like">[docs]</a><span class="k">class</span> <span class="nc">Like</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Like entiti definition</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__attributes__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;attributes&#39;</span><span class="p">,</span> <span class="s1">&#39;customer&#39;</span><span class="p">,</span> <span class="s1">&#39;customer_api_manager&#39;</span><span class="p">,</span> <span class="s1">&#39;entity_name&#39;</span><span class="p">,</span> <span class="s1">&#39;parent_attr&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">customer</span><span class="p">,</span> <span class="n">parent_attr</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize a new Like object for customer in a node with the specified attributes.</span>
+
+<span class="sd">        :param customer: the customer associated to this Like object</span>
+<span class="sd">        :param parent_attr: the parent attribute for compiling the mutation tracker dictionary</span>
+<span class="sd">        :param attributes: key-value arguments for generating the structure of the Like&#39;s attributes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">customer</span> <span class="o">=</span> <span class="n">customer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span> <span class="o">=</span> <span class="n">attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">customer_api_manager</span> <span class="o">=</span> <span class="n">_CustomerAPIManager</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="n">customer</span><span class="o">.</span><span class="n">node</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entity_name</span> <span class="o">=</span> <span class="s1">&#39;likes&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent_attr</span> <span class="o">=</span> <span class="n">parent_attr</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Like.from_dict"><a class="viewcode-back" href="../../../contacthub.models.html#contacthub.models.like.Like.from_dict">[docs]</a>    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">customer</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">parent_attr</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a new Like initialized by a specified dictionary of attributes</span>
+
+<span class="sd">        :param customer: the customer associated to this Like object</span>
+<span class="sd">        :param parent_attr: the parent attribute for compiling the mutation tracker dictionary</span>
+<span class="sd">        :param attributes: key-value arguments for generating the structure of the Like&#39;s attributes</span>
+<span class="sd">        :return: a new Like object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">o</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">customer</span><span class="o">=</span><span class="n">customer</span><span class="p">,</span> <span class="n">parent_attr</span><span class="o">=</span><span class="n">parent_attr</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">attributes</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">o</span><span class="o">.</span><span class="n">attributes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">o</span><span class="o">.</span><span class="n">attributes</span> <span class="o">=</span> <span class="n">attributes</span>
+        <span class="k">return</span> <span class="n">o</span></div>
+
+<div class="viewcode-block" id="Like.to_dict"><a class="viewcode-back" href="../../../contacthub.models.html#contacthub.models.like.Like.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert this Like in a dictionary containing his attributes.</span>
+
+<span class="sd">        :return: a new dictionary representing the attributes of this Like</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if a key is in the dictionary and return it if it&#39;s a simple properties</span>
+
+<span class="sd">        :param item: the key of the base properties dict</span>
+<span class="sd">        :return: the item in the attributes dictionary if it&#39;s present, raise AttributeError otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> object has no attribute </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        x.__setattr__(&#39;attr&#39;, val) &lt;==&gt; x.attr = val</span>
+<span class="sd">        Update the attributes dictionary with the val specified.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__attributes__</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Like</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_attr</span><span class="p">:</span>
+                <span class="n">attr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_attr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">:][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">base_attr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_attr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">:][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">base_attr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="n">mute</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="n">mute</span><span class="p">[</span><span class="n">base_attr</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="n">mute</span><span class="p">[</span><span class="n">base_attr</span><span class="p">][</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">base_attr</span><span class="p">][</span><span class="n">attr</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Like.post"><a class="viewcode-back" href="../../../contacthub.models.html#contacthub.models.like.Like.post">[docs]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Post this Like in the list of the Like for a Customer(specified in the constructor of the Like)</span>
+
+<span class="sd">        :return: a Like object representing the posted Like</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">entity_attrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">customer_api_manager</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">,</span> <span class="n">urls_extra</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+                                                                                       <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;base&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_name</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="n">entity_attrs</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Like.delete"><a class="viewcode-back" href="../../../contacthub.models.html#contacthub.models.like.Like.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove this Like from the list of the Like for a Customer(specified in the constructor of</span>
+<span class="sd">        the Like)</span>
+
+<span class="sd">        :return: a Like object representing the deleted Like</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">customer_api_manager</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                         <span class="n">urls_extra</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_name</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Like.put"><a class="viewcode-back" href="../../../contacthub.models.html#contacthub.models.like.Like.put">[docs]</a>    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Put this Like in the list of the Like for a Customer(specified in the constructor of the Like)</span>
+
+<span class="sd">        :return: a Like object representing the putted Like</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">find</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="k">for</span> <span class="n">like</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_name</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">like</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]:</span>
+                    <span class="n">find</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">find</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Like object doesn&#39;t exists in the specified customer&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Like object doesn&#39;t exists in the specified customer&quot;</span><span class="p">)</span>
+
+        <span class="n">entity_attrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">customer_api_manager</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">,</span>
+                                                     <span class="n">urls_extra</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_name</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">like</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_name</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">like</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">entity_attrs</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]:</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_name</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">like</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_name</span><span class="p">][</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">entity_attrs</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">contacthub 0.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2017, Axant.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+    </div>
+  </body>
+</html>

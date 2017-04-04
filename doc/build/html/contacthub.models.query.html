@@ -1,0 +1,350 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>contacthub.models.query package &mdash; contacthub 0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="contacthub 0.0 documentation" href="index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">contacthub 0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="contacthub-models-query-package">
+<h1>contacthub.models.query package<a class="headerlink" href="#contacthub-models-query-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-contacthub.models.query.criterion">
+<span id="contacthub-models-query-criterion-module"></span><h2>contacthub.models.query.criterion module<a class="headerlink" href="#module-contacthub.models.query.criterion" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="contacthub.models.query.criterion.Criterion">
+<em class="property">class </em><code class="descclassname">contacthub.models.query.criterion.</code><code class="descname">Criterion</code><span class="sig-paren">(</span><em>first_element</em>, <em>operator</em>, <em>second_element=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/query/criterion.html#Criterion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.query.criterion.Criterion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Criterion class for applying a criteria to our queries.
+A criteria consists of three elements:</p>
+<ul class="simple">
+<li>the queried attributes, an EntityField element if the criteria has a simple operator, another Criteria otherwise</li>
+<li>an operator, simple or complex, for querying data</li>
+<li>a value or a list of value to perform the comparision if the criteria has a simple operator, another Criteria
+otherwise</li>
+</ul>
+<p>This criteria is consumed by a QueryBuilder object for returning a new Query object containing a dictionary
+representing the query in ContactHub</p>
+<dl class="class">
+<dt id="contacthub.models.query.criterion.Criterion.COMPLEX_OPERATORS">
+<em class="property">class </em><code class="descname">COMPLEX_OPERATORS</code><a class="reference internal" href="_modules/contacthub/models/query/criterion.html#Criterion.COMPLEX_OPERATORS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.query.criterion.Criterion.COMPLEX_OPERATORS" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of complex operators handled in ContactHub</p>
+<dl class="attribute">
+<dt id="contacthub.models.query.criterion.Criterion.COMPLEX_OPERATORS.AND">
+<code class="descname">AND</code><em class="property"> = 'and'</em><a class="headerlink" href="#contacthub.models.query.criterion.Criterion.COMPLEX_OPERATORS.AND" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.query.criterion.Criterion.COMPLEX_OPERATORS.OPERATORS">
+<code class="descname">OPERATORS</code><em class="property"> = ['and', 'or']</em><a class="headerlink" href="#contacthub.models.query.criterion.Criterion.COMPLEX_OPERATORS.OPERATORS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.query.criterion.Criterion.COMPLEX_OPERATORS.OR">
+<code class="descname">OR</code><em class="property"> = 'or'</em><a class="headerlink" href="#contacthub.models.query.criterion.Criterion.COMPLEX_OPERATORS.OR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS">
+<em class="property">class </em><code class="descclassname">Criterion.</code><code class="descname">SIMPLE_OPERATORS</code><a class="reference internal" href="_modules/contacthub/models/query/criterion.html#Criterion.SIMPLE_OPERATORS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of simple operators handled in ContactHub</p>
+<dl class="attribute">
+<dt id="contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS.BETWEEN">
+<code class="descname">BETWEEN</code><em class="property"> = 'BETWEEN'</em><a class="headerlink" href="#contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS.BETWEEN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS.EQUALS">
+<code class="descname">EQUALS</code><em class="property"> = 'EQUALS'</em><a class="headerlink" href="#contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS.EQUALS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS.GT">
+<code class="descname">GT</code><em class="property"> = 'GT'</em><a class="headerlink" href="#contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS.GT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS.GTE">
+<code class="descname">GTE</code><em class="property"> = 'GTE'</em><a class="headerlink" href="#contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS.GTE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS.IN">
+<code class="descname">IN</code><em class="property"> = 'IN'</em><a class="headerlink" href="#contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS.IN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS.IS_NOT_NULL">
+<code class="descname">IS_NOT_NULL</code><em class="property"> = 'IS_NOT_NULL'</em><a class="headerlink" href="#contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS.IS_NOT_NULL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS.IS_NULL">
+<code class="descname">IS_NULL</code><em class="property"> = 'IS_NULL'</em><a class="headerlink" href="#contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS.IS_NULL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS.LT">
+<code class="descname">LT</code><em class="property"> = 'LT'</em><a class="headerlink" href="#contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS.LT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS.LTE">
+<code class="descname">LTE</code><em class="property"> = 'LTE'</em><a class="headerlink" href="#contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS.LTE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS.NOT_EQUALS">
+<code class="descname">NOT_EQUALS</code><em class="property"> = 'NOT_EQUALS'</em><a class="headerlink" href="#contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS.NOT_EQUALS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS.NOT_IN">
+<code class="descname">NOT_IN</code><em class="property"> = 'NOT_IN'</em><a class="headerlink" href="#contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS.NOT_IN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS.OPERATORS">
+<code class="descname">OPERATORS</code><em class="property"> = ['EQUALS', 'NOT_EQUALS', 'GT', 'GTE', 'LT', 'LTE', 'IN', 'NOT_IN', 'IS_NULL', 'IS_NOT_NULL', 'BETWEEN']</em><a class="headerlink" href="#contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS.OPERATORS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-contacthub.models.query.entity_field">
+<span id="contacthub-models-query-entity-field-module"></span><h2>contacthub.models.query.entity_field module<a class="headerlink" href="#module-contacthub.models.query.entity_field" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="contacthub.models.query.entity_field.EntityField">
+<em class="property">class </em><code class="descclassname">contacthub.models.query.entity_field.</code><code class="descname">EntityField</code><span class="sig-paren">(</span><em>entity</em>, <em>field</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/query/entity_field.html#EntityField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.query.entity_field.EntityField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class for creating Critierion object for queries.
+Use this class for handling all operation that you want to implements in queries syntax and create new Criterion
+with related operations.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-contacthub.models.query.entity_meta">
+<span id="contacthub-models-query-entity-meta-module"></span><h2>contacthub.models.query.entity_meta module<a class="headerlink" href="#module-contacthub.models.query.entity_meta" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="contacthub.models.query.entity_meta.EntityMeta">
+<em class="property">class </em><code class="descclassname">contacthub.models.query.entity_meta.</code><code class="descname">EntityMeta</code><a class="reference internal" href="_modules/contacthub/models/query/entity_meta.html#EntityMeta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.query.entity_meta.EntityMeta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">type</span></code></p>
+<p>Metaclass for Properties class.
+Use this metaclass to handling the __getattr__ method and returns a new EntityField.
+This metaclass is useful for creating query objects and optimize the querying syntax.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-contacthub.models.query.query">
+<span id="contacthub-models-query-query-module"></span><h2>contacthub.models.query.query module<a class="headerlink" href="#module-contacthub.models.query.query" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="contacthub.models.query.query.Query">
+<em class="property">class </em><code class="descclassname">contacthub.models.query.query.</code><code class="descname">Query</code><span class="sig-paren">(</span><em>node</em>, <em>entity</em>, <em>previous_query=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/query/query.html#Query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.query.query.Query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Query object for applying the specified query in the APIs.</p>
+<p>Use this class for interact with the DeclarativeAPIManager Layer or APIManagerLevel and return the queried as object
+or json format variables</p>
+<dl class="method">
+<dt id="contacthub.models.query.query.Query.all">
+<code class="descname">all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/query/query.html#Query.all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.query.query.Query.all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all queried data of an entity from the API</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a ReadOnly list with all object queried</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="contacthub.models.query.query.Query.filter">
+<code class="descname">filter</code><span class="sig-paren">(</span><em>criterion</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/query/query.html#Query.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.query.query.Query.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new API Like query for ContactHub APIs (JSON Format)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>criterion</strong> &#8211; the Criterion object for fields for query data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a Query object containing the JSON object representing a query for the APIs</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-contacthub.models.query">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-contacthub.models.query" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="contacthub.models.query.between_">
+<code class="descclassname">contacthub.models.query.</code><code class="descname">between_</code><span class="sig-paren">(</span><em>attribute</em>, <em>value1</em>, <em>value2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/query.html#between_"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.query.between_" title="Permalink to this definition">¶</a></dt>
+<dd><p>In operation for check if a str representing a date or a datetime object is between value1 and value2</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>attribute</strong> &#8211; a date attribute to check if is between two values</li>
+<li><strong>value1</strong> &#8211; the the lower extreme for compare the date attribute</li>
+<li><strong>value2</strong> &#8211; the the upper extreme for compare the date attribute</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a new Criterion object representing the BETWEEN operation</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="contacthub.models.query.in_">
+<code class="descclassname">contacthub.models.query.</code><code class="descname">in_</code><span class="sig-paren">(</span><em>value</em>, <em>list_attribute</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/query.html#in_"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.query.in_" title="Permalink to this definition">¶</a></dt>
+<dd><p>IN operation for check if a value is in a list attribute</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>value</strong> &#8211; the value to check if is in the given list</li>
+<li><strong>list_attribute</strong> &#8211; a list attribute for checking the presence of the value</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a new Criterion object representing the IN operation between a list and a value</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="contacthub.models.query.not_in_">
+<code class="descclassname">contacthub.models.query.</code><code class="descname">not_in_</code><span class="sig-paren">(</span><em>value</em>, <em>list_attribute</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/query.html#not_in_"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.query.not_in_" title="Permalink to this definition">¶</a></dt>
+<dd><p>NOT IN operation for check if a value is NOT in a list attribute</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>value</strong> &#8211; the value to check if is not in the given list</li>
+<li><strong>list_attribute</strong> &#8211; a list attribute for checking the absence of the value</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a new Criterion object representing the NOT IN operation between a list and a value</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">contacthub.models.query package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-contacthub.models.query.criterion">contacthub.models.query.criterion module</a></li>
+<li><a class="reference internal" href="#module-contacthub.models.query.entity_field">contacthub.models.query.entity_field module</a></li>
+<li><a class="reference internal" href="#module-contacthub.models.query.entity_meta">contacthub.models.query.entity_meta module</a></li>
+<li><a class="reference internal" href="#module-contacthub.models.query.query">contacthub.models.query.query module</a></li>
+<li><a class="reference internal" href="#module-contacthub.models.query">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/contacthub.models.query.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">contacthub 0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2017, Axant.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+    </div>
+  </body>
+</html>

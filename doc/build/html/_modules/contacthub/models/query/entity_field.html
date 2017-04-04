@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>contacthub.models.query.entity_field &mdash; contacthub 0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="contacthub 0.0 documentation" href="../../../../index.html" />
+    <link rel="up" title="contacthub.models.query" href="../query.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">contacthub 0.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../query.html" accesskey="U">contacthub.models.query</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for contacthub.models.query.entity_field</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">from</span> <span class="nn">contacthub.models.query.criterion</span> <span class="kn">import</span> <span class="n">Criterion</span>
+
+
+<div class="viewcode-block" id="EntityField"><a class="viewcode-back" href="../../../../contacthub.models.query.html#contacthub.models.query.entity_field.EntityField">[docs]</a><span class="k">class</span> <span class="nc">EntityField</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for creating Critierion object for queries.</span>
+<span class="sd">    Use this class for handling all operation that you want to implements in queries syntax and create new Criterion</span>
+<span class="sd">    with related operations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param entity: properties</span>
+<span class="sd">        :param field: field</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entity</span> <span class="o">=</span> <span class="n">entity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">field</span> <span class="o">=</span> <span class="n">field</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Multiple level properties handling, like properties.field1.field2, creting a new EntityFiled object with</span>
+<span class="sd">        properties.field1 as entity and a field2 as field</span>
+<span class="sd">        :param item: the field for creating an new EntityField object</span>
+<span class="sd">        :return: a new EntityField object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">EntityField</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Overriding the == operator</span>
+<span class="sd">        :param other: a value for fetching data</span>
+<span class="sd">        :return: a new Criterion object representing the criteria for querying data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">other</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Criterion</span><span class="o">.</span><span class="n">SIMPLE_OPERATORS</span><span class="o">.</span><span class="n">IS_NULL</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Criterion</span><span class="o">.</span><span class="n">SIMPLE_OPERATORS</span><span class="o">.</span><span class="n">EQUALS</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Overriding the != operator</span>
+<span class="sd">        :param other: a value for fetching data</span>
+<span class="sd">        :return:  a new Criterion object representing the criteria for querying data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">other</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Criterion</span><span class="o">.</span><span class="n">SIMPLE_OPERATORS</span><span class="o">.</span><span class="n">IS_NOT_NULL</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Criterion</span><span class="o">.</span><span class="n">SIMPLE_OPERATORS</span><span class="o">.</span><span class="n">NOT_EQUALS</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Overriding the &lt; operator</span>
+<span class="sd">        :param other: a value for fetching data</span>
+<span class="sd">        :return:  a new Criterion object representing the criteria for querying data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Criterion</span><span class="o">.</span><span class="n">SIMPLE_OPERATORS</span><span class="o">.</span><span class="n">LT</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Overriding the &gt;= operator</span>
+<span class="sd">        :param other: a value for fetching data</span>
+<span class="sd">        :return:  a new Criterion object representing the criteria for querying data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Criterion</span><span class="o">.</span><span class="n">SIMPLE_OPERATORS</span><span class="o">.</span><span class="n">LTE</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Overriding the &gt; operator</span>
+<span class="sd">        :param other: a value for fetching data</span>
+<span class="sd">        :return:  a new Criterion object representing the criteria for querying data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Criterion</span><span class="o">.</span><span class="n">SIMPLE_OPERATORS</span><span class="o">.</span><span class="n">GT</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Overriding the &lt;= operator</span>
+<span class="sd">        :param other: a value for fetching data</span>
+<span class="sd">        :return:  a new Criterion object representing the criteria for querying data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Criterion</span><span class="o">.</span><span class="n">SIMPLE_OPERATORS</span><span class="o">.</span><span class="n">GTE</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">contacthub 0.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../query.html" >contacthub.models.query</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2017, Axant.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+    </div>
+  </body>
+</html>

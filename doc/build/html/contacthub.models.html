@@ -1,0 +1,817 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>contacthub.models package &mdash; contacthub 0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="contacthub 0.0 documentation" href="index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">contacthub 0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="contacthub-models-package">
+<h1>contacthub.models package<a class="headerlink" href="#contacthub-models-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contacthub.models.query.html">contacthub.models.query package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contacthub.models.query.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contacthub.models.query.html#module-contacthub.models.query.criterion">contacthub.models.query.criterion module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contacthub.models.query.html#module-contacthub.models.query.entity_field">contacthub.models.query.entity_field module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contacthub.models.query.html#module-contacthub.models.query.entity_meta">contacthub.models.query.entity_meta module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contacthub.models.query.html#module-contacthub.models.query.query">contacthub.models.query.query module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contacthub.models.query.html#module-contacthub.models.query">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-contacthub.models.customer">
+<span id="contacthub-models-customer-module"></span><h2>contacthub.models.customer module<a class="headerlink" href="#module-contacthub.models.customer" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt id="contacthub.models.customer.Customer">
+<code class="descclassname">contacthub.models.customer.</code><code class="descname">Customer</code><a class="reference internal" href="_modules/contacthub/models/customer.html#Customer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.customer.Customer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Customer entity</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-contacthub.models.education">
+<span id="contacthub-models-education-module"></span><h2>contacthub.models.education module<a class="headerlink" href="#module-contacthub.models.education" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="contacthub.models.education.Education">
+<em class="property">class </em><code class="descclassname">contacthub.models.education.</code><code class="descname">Education</code><span class="sig-paren">(</span><em>customer</em>, <em>parent_attr=None</em>, <em>**attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/education.html#Education"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.education.Education" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Education entity definition.</p>
+<dl class="class">
+<dt id="contacthub.models.education.Education.SCHOOL_TYPES">
+<em class="property">class </em><code class="descname">SCHOOL_TYPES</code><a class="reference internal" href="_modules/contacthub/models/education.html#Education.SCHOOL_TYPES"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.education.Education.SCHOOL_TYPES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subclasses with school types for the schoolType field of Education</p>
+<dl class="attribute">
+<dt id="contacthub.models.education.Education.SCHOOL_TYPES.COLLEGE">
+<code class="descname">COLLEGE</code><em class="property"> = 'COLLEGE'</em><a class="headerlink" href="#contacthub.models.education.Education.SCHOOL_TYPES.COLLEGE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.education.Education.SCHOOL_TYPES.HIGH_SCHOOL">
+<code class="descname">HIGH_SCHOOL</code><em class="property"> = 'HIGH_SCHOOL'</em><a class="headerlink" href="#contacthub.models.education.Education.SCHOOL_TYPES.HIGH_SCHOOL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.education.Education.SCHOOL_TYPES.OTHER">
+<code class="descname">OTHER</code><em class="property"> = 'OTHER'</em><a class="headerlink" href="#contacthub.models.education.Education.SCHOOL_TYPES.OTHER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.education.Education.SCHOOL_TYPES.PRIMARY_SCHOOL">
+<code class="descname">PRIMARY_SCHOOL</code><em class="property"> = 'PRIMARY_SCHOOL'</em><a class="headerlink" href="#contacthub.models.education.Education.SCHOOL_TYPES.PRIMARY_SCHOOL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.education.Education.SCHOOL_TYPES.SECONDARY_SCHOOL">
+<code class="descname">SECONDARY_SCHOOL</code><em class="property"> = 'SECONDARY_SCHOOL'</em><a class="headerlink" href="#contacthub.models.education.Education.SCHOOL_TYPES.SECONDARY_SCHOOL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="contacthub.models.education.Education.delete">
+<code class="descclassname">Education.</code><code class="descname">delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/education.html#Education.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.education.Education.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove this Education from the list of the Education for a Customer(specified in the constructor of
+the Education)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a Education object representing the deleted Education</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="contacthub.models.education.Education.from_dict">
+<em class="property">classmethod </em><code class="descclassname">Education.</code><code class="descname">from_dict</code><span class="sig-paren">(</span><em>customer</em>, <em>attributes=None</em>, <em>parent_attr=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/education.html#Education.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.education.Education.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new Education initialized by a specified dictionary of attributes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>customer</strong> &#8211; the customer associated to this education object</li>
+<li><strong>parent_attr</strong> &#8211; the parent attribute for compiling the mutation tracker dictionary</li>
+<li><strong>attributes</strong> &#8211; key-value arguments for generating the structure of the Education&#8217;s attributes</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a new Education object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="contacthub.models.education.Education.post">
+<code class="descclassname">Education.</code><code class="descname">post</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/education.html#Education.post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.education.Education.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Post this Education in the list of the Education for a Customer(specified in the constructor of the Education)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a Education object representing the posted Education</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="contacthub.models.education.Education.put">
+<code class="descclassname">Education.</code><code class="descname">put</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/education.html#Education.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.education.Education.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>Put this Education in the list of the Education for a Customer(specified in the constructor of the Education)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a Education object representing the putted Education</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="contacthub.models.education.Education.to_dict">
+<code class="descclassname">Education.</code><code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/education.html#Education.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.education.Education.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert this Education in a dictionary containing his attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a new dictionary representing the attributes of this Education</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-contacthub.models.event">
+<span id="contacthub-models-event-module"></span><h2>contacthub.models.event module<a class="headerlink" href="#module-contacthub.models.event" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="contacthub.models.event.Event">
+<em class="property">class </em><code class="descclassname">contacthub.models.event.</code><code class="descname">Event</code><span class="sig-paren">(</span><em>node</em>, <em>**attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/event.html#Event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.event.Event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Event entity definition</p>
+<dl class="class">
+<dt id="contacthub.models.event.Event.CONTEXTS">
+<em class="property">class </em><code class="descname">CONTEXTS</code><a class="reference internal" href="_modules/contacthub/models/event.html#Event.CONTEXTS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.event.Event.CONTEXTS" title="Permalink to this definition">¶</a></dt>
+<dd><p>`
+Event subclass for <cite>context</cite> field of Event.
+Choose one of the above  API validated contexts or add your own in case of new types.</p>
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.CONTEXTS.CONTACT_CENTER">
+<code class="descname">CONTACT_CENTER</code><em class="property"> = 'CONTACT_CENTER'</em><a class="headerlink" href="#contacthub.models.event.Event.CONTEXTS.CONTACT_CENTER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.CONTEXTS.DIGITAL_CAMPAIGN">
+<code class="descname">DIGITAL_CAMPAIGN</code><em class="property"> = 'DIGITAL_CAMPAIGN'</em><a class="headerlink" href="#contacthub.models.event.Event.CONTEXTS.DIGITAL_CAMPAIGN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.CONTEXTS.ECOMMERCE">
+<code class="descname">ECOMMERCE</code><em class="property"> = 'ECOMMERCE'</em><a class="headerlink" href="#contacthub.models.event.Event.CONTEXTS.ECOMMERCE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.CONTEXTS.IOT">
+<code class="descname">IOT</code><em class="property"> = 'IOT'</em><a class="headerlink" href="#contacthub.models.event.Event.CONTEXTS.IOT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.CONTEXTS.MOBILE">
+<code class="descname">MOBILE</code><em class="property"> = 'MOBILE'</em><a class="headerlink" href="#contacthub.models.event.Event.CONTEXTS.MOBILE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.CONTEXTS.OTHER">
+<code class="descname">OTHER</code><em class="property"> = 'OTHER'</em><a class="headerlink" href="#contacthub.models.event.Event.CONTEXTS.OTHER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.CONTEXTS.RETAIL">
+<code class="descname">RETAIL</code><em class="property"> = 'RETAIL'</em><a class="headerlink" href="#contacthub.models.event.Event.CONTEXTS.RETAIL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.CONTEXTS.SOCIAL">
+<code class="descname">SOCIAL</code><em class="property"> = 'SOCIAL'</em><a class="headerlink" href="#contacthub.models.event.Event.CONTEXTS.SOCIAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.CONTEXTS.WEB">
+<code class="descname">WEB</code><em class="property"> = 'WEB'</em><a class="headerlink" href="#contacthub.models.event.Event.CONTEXTS.WEB" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="contacthub.models.event.Event.MODES">
+<em class="property">class </em><code class="descclassname">Event.</code><code class="descname">MODES</code><a class="reference internal" href="_modules/contacthub/models/event.html#Event.MODES"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.event.Event.MODES" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="contacthub.models.event.Event.MODES.ACTIVE">
+<code class="descname">ACTIVE</code><em class="property"> = ('ACTIVE',)</em><a class="headerlink" href="#contacthub.models.event.Event.MODES.ACTIVE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.MODES.PASSIVE">
+<code class="descname">PASSIVE</code><em class="property"> = 'PASSIVE'</em><a class="headerlink" href="#contacthub.models.event.Event.MODES.PASSIVE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="contacthub.models.event.Event.TYPES">
+<em class="property">class </em><code class="descclassname">Event.</code><code class="descname">TYPES</code><a class="reference internal" href="_modules/contacthub/models/event.html#Event.TYPES"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.event.Event.TYPES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event subclass for type field of Event.
+Choose one of the above  API validated types or add your own in case of new types.</p>
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.ABANDONED_CART">
+<code class="descname">ABANDONED_CART</code><em class="property"> = 'abandonedCart'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.ABANDONED_CART" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.ADDED_COMPARE">
+<code class="descname">ADDED_COMPARE</code><em class="property"> = 'addedCompare'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.ADDED_COMPARE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.ADDED_PRODUCT">
+<code class="descname">ADDED_PRODUCT</code><em class="property"> = 'addedProduct'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.ADDED_PRODUCT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.ADDED_WISH_LIST">
+<code class="descname">ADDED_WISH_LIST</code><em class="property"> = 'addedWishList'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.ADDED_WISH_LIST" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.CAMPAIGN_BLACKLISTED">
+<code class="descname">CAMPAIGN_BLACKLISTED</code><em class="property"> = 'campaignBlacklisted'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.CAMPAIGN_BLACKLISTED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.CAMPAIGN_BOUNCED">
+<code class="descname">CAMPAIGN_BOUNCED</code><em class="property"> = 'campaignBounced'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.CAMPAIGN_BOUNCED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.CAMPAIGN_LINK_CLICKED">
+<code class="descname">CAMPAIGN_LINK_CLICKED</code><em class="property"> = 'campaignLinkClicked'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.CAMPAIGN_LINK_CLICKED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.CAMPAIGN_MARKED_SPAM">
+<code class="descname">CAMPAIGN_MARKED_SPAM</code><em class="property"> = 'campaignMarkedSpam'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.CAMPAIGN_MARKED_SPAM" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.CAMPAIGN_OPENED">
+<code class="descname">CAMPAIGN_OPENED</code><em class="property"> = 'campaignOpened'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.CAMPAIGN_OPENED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.CAMPAIGN_SENT">
+<code class="descname">CAMPAIGN_SENT</code><em class="property"> = 'campaignSent'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.CAMPAIGN_SENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.CAMPAIGN_SUBSCRIBED">
+<code class="descname">CAMPAIGN_SUBSCRIBED</code><em class="property"> = 'campaignSubscribed'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.CAMPAIGN_SUBSCRIBED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.CAMPAIGN_UNSUBSCRIBED">
+<code class="descname">CAMPAIGN_UNSUBSCRIBED</code><em class="property"> = 'campaignUnsubscribed'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.CAMPAIGN_UNSUBSCRIBED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.CHANGED_SETTING">
+<code class="descname">CHANGED_SETTING</code><em class="property"> = 'changedSetting'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.CHANGED_SETTING" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.CLICKED_LINK">
+<code class="descname">CLICKED_LINK</code><em class="property"> = 'clickedLink'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.CLICKED_LINK" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.CLOSED_TICKET">
+<code class="descname">CLOSED_TICKET</code><em class="property"> = 'closedTicket'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.CLOSED_TICKET" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.COMPLETED_ORDER">
+<code class="descname">COMPLETED_ORDER</code><em class="property"> = 'completedOrder'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.COMPLETED_ORDER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.EVENT_INVITED">
+<code class="descname">EVENT_INVITED</code><em class="property"> = 'eventInvited'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.EVENT_INVITED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.EVENT_PARTECIPATED">
+<code class="descname">EVENT_PARTECIPATED</code><em class="property"> = 'eventParticipated'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.EVENT_PARTECIPATED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.FORM_COMPILED">
+<code class="descname">FORM_COMPILED</code><em class="property"> = 'formCompiled'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.FORM_COMPILED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.GENERIC_ACTIVE_EVENT">
+<code class="descname">GENERIC_ACTIVE_EVENT</code><em class="property"> = 'genericActiveEvent'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.GENERIC_ACTIVE_EVENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.GENERIC_PASSIVE_EVENT">
+<code class="descname">GENERIC_PASSIVE_EVENT</code><em class="property"> = 'genericPassiveEvent'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.GENERIC_PASSIVE_EVENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.LOGGED_IN">
+<code class="descname">LOGGED_IN</code><em class="property"> = 'loggedIn'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.LOGGED_IN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.LOGGED_OUT">
+<code class="descname">LOGGED_OUT</code><em class="property"> = 'loggedOut'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.LOGGED_OUT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.OPENED_TICKET">
+<code class="descname">OPENED_TICKET</code><em class="property"> = 'openedTicket'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.OPENED_TICKET" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.ORDER_SHIPPED">
+<code class="descname">ORDER_SHIPPED</code><em class="property"> = 'orderShipped'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.ORDER_SHIPPED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.REMOVED_COMPARE">
+<code class="descname">REMOVED_COMPARE</code><em class="property"> = 'removedCompare'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.REMOVED_COMPARE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.REMOVED_PRODUCT">
+<code class="descname">REMOVED_PRODUCT</code><em class="property"> = 'removedProduct'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.REMOVED_PRODUCT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.REMOVED_WISHLIST">
+<code class="descname">REMOVED_WISHLIST</code><em class="property"> = 'removedWishList'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.REMOVED_WISHLIST" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.REPLIED_TICKET">
+<code class="descname">REPLIED_TICKET</code><em class="property"> = 'repliedTicket'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.REPLIED_TICKET" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.REVIEWED_PRODUCT">
+<code class="descname">REVIEWED_PRODUCT</code><em class="property"> = 'reviewedProduct'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.REVIEWED_PRODUCT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.SEARCHED">
+<code class="descname">SEARCHED</code><em class="property"> = 'searched'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.SEARCHED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.SERVICE_SUBSCRIBED">
+<code class="descname">SERVICE_SUBSCRIBED</code><em class="property"> = 'serviceSubscribed'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.SERVICE_SUBSCRIBED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.SERVICE_UNSUBSCRIBED">
+<code class="descname">SERVICE_UNSUBSCRIBED</code><em class="property"> = 'serviceUnsubscribed'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.SERVICE_UNSUBSCRIBED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.VIEWED_PAGE">
+<code class="descname">VIEWED_PAGE</code><em class="property"> = 'viewedPage'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.VIEWED_PAGE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.VIEWED_PRODUCT">
+<code class="descname">VIEWED_PRODUCT</code><em class="property"> = 'viewedProduct'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.VIEWED_PRODUCT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="contacthub.models.event.Event.TYPES.VIEWED_PRODUCT_CATEGORY">
+<code class="descname">VIEWED_PRODUCT_CATEGORY</code><em class="property"> = 'viewedProductCategory'</em><a class="headerlink" href="#contacthub.models.event.Event.TYPES.VIEWED_PRODUCT_CATEGORY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="contacthub.models.event.Event.from_dict">
+<em class="property">classmethod </em><code class="descclassname">Event.</code><code class="descname">from_dict</code><span class="sig-paren">(</span><em>node</em>, <em>attributes=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/event.html#Event.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.event.Event.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new Properties initialized by a specified dictionary of attributes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>node</strong> &#8211; the node of the customer supposed to be associated with this event</li>
+<li><strong>attributes</strong> &#8211; key-value arguments for generating the structure of the Education&#8217;s attributes</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a new Properties object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="contacthub.models.event.Event.post">
+<code class="descclassname">Event.</code><code class="descname">post</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/event.html#Event.post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.event.Event.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Post this Event in the associated Node.
+For posting it and associate with a known customer, specify the customer id in the attributes of the Event.
+For associate it to an external Id or a session id of a customer, specify in the bringBackProperties object
+like:
+{&#8216;type&#8217;:&#8217;EXTERNAL_ID&#8217;,
+&#8216;value&#8217;:&#8217;value&#8217;,
+&#8216;nodeId&#8217;:&#8217;nodeId&#8217;
+}</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="contacthub.models.event.Event.to_dict">
+<code class="descclassname">Event.</code><code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/event.html#Event.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.event.Event.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert this Event in a dictionary containing his attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a new dictionary representing the attributes of this Event</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-contacthub.models.job">
+<span id="contacthub-models-job-module"></span><h2>contacthub.models.job module<a class="headerlink" href="#module-contacthub.models.job" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="contacthub.models.job.Job">
+<em class="property">class </em><code class="descclassname">contacthub.models.job.</code><code class="descname">Job</code><span class="sig-paren">(</span><em>customer</em>, <em>parent_attr=None</em>, <em>**attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/job.html#Job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.job.Job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Job entity definition.</p>
+<dl class="method">
+<dt id="contacthub.models.job.Job.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/job.html#Job.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.job.Job.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove this Job from the list of the Job for a Customer(specified in the constructor of
+the Job)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a Job object representing the deleted Job</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="contacthub.models.job.Job.from_dict">
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>customer</em>, <em>attributes=None</em>, <em>parent_attr=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/job.html#Job.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.job.Job.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new Job initialized by a specified dictionary of attributes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>customer</strong> &#8211; the customer associated to this Job object</li>
+<li><strong>parent_attr</strong> &#8211; the parent attribute for compiling the mutation tracker dictionary</li>
+<li><strong>attributes</strong> &#8211; key-value arguments for generating the structure of the Job&#8217;s attributes</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a new Job object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="contacthub.models.job.Job.post">
+<code class="descname">post</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/job.html#Job.post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.job.Job.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Post this Job in the list of the Job for a Customer(specified in the constructor of the Job)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a Job object representing the posted Job</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="contacthub.models.job.Job.put">
+<code class="descname">put</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/job.html#Job.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.job.Job.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>Put this Job in the list of the Job for a Customer(specified in the constructor of the Job)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a Job object representing the putted Job</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="contacthub.models.job.Job.to_dict">
+<code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/job.html#Job.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.job.Job.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert this Job in a dictionary containing his attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a new dictionary representing the attributes of this Job</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-contacthub.models.like">
+<span id="contacthub-models-like-module"></span><h2>contacthub.models.like module<a class="headerlink" href="#module-contacthub.models.like" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="contacthub.models.like.Like">
+<em class="property">class </em><code class="descclassname">contacthub.models.like.</code><code class="descname">Like</code><span class="sig-paren">(</span><em>customer</em>, <em>parent_attr=None</em>, <em>**attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/like.html#Like"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.like.Like" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Like entiti definition</p>
+<dl class="method">
+<dt id="contacthub.models.like.Like.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/like.html#Like.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.like.Like.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove this Like from the list of the Like for a Customer(specified in the constructor of
+the Like)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a Like object representing the deleted Like</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="contacthub.models.like.Like.from_dict">
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>customer</em>, <em>attributes=None</em>, <em>parent_attr=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/like.html#Like.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.like.Like.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new Like initialized by a specified dictionary of attributes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>customer</strong> &#8211; the customer associated to this Like object</li>
+<li><strong>parent_attr</strong> &#8211; the parent attribute for compiling the mutation tracker dictionary</li>
+<li><strong>attributes</strong> &#8211; key-value arguments for generating the structure of the Like&#8217;s attributes</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a new Like object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="contacthub.models.like.Like.post">
+<code class="descname">post</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/like.html#Like.post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.like.Like.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Post this Like in the list of the Like for a Customer(specified in the constructor of the Like)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a Like object representing the posted Like</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="contacthub.models.like.Like.put">
+<code class="descname">put</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/like.html#Like.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.like.Like.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>Put this Like in the list of the Like for a Customer(specified in the constructor of the Like)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a Like object representing the putted Like</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="contacthub.models.like.Like.to_dict">
+<code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/like.html#Like.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.like.Like.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert this Like in a dictionary containing his attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a new dictionary representing the attributes of this Like</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-contacthub.models.properties">
+<span id="contacthub-models-properties-module"></span><h2>contacthub.models.properties module<a class="headerlink" href="#module-contacthub.models.properties" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="contacthub.models.properties.Properties">
+<em class="property">class </em><code class="descclassname">contacthub.models.properties.</code><code class="descname">Properties</code><span class="sig-paren">(</span><em>parent=None</em>, <em>parent_attr=None</em>, <em>**attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/properties.html#Properties"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.properties.Properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Generic Properties for all entities</p>
+<dl class="classmethod">
+<dt id="contacthub.models.properties.Properties.from_dict">
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>parent=None</em>, <em>parent_attr=None</em>, <em>attributes=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/properties.html#Properties.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.properties.Properties.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new Properties initialized by a specified dictionary of attributes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>parent</strong> &#8211; the parent that generate this Properties object</li>
+<li><strong>parent_attr</strong> &#8211; the parent attribute for compiling the mutation tracker dictionary</li>
+<li><strong>attributes</strong> &#8211; key-value arguments for generating the structure of the Education&#8217;s attributes</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a new Properties object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="contacthub.models.properties.Properties.to_dict">
+<code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/properties.html#Properties.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.properties.Properties.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert this Properties object in a dictionary containing his attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a new dictionary representing the attributes of this Properties</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="contacthub.models.properties.update_tracking_with_new_prop">
+<code class="descclassname">contacthub.models.properties.</code><code class="descname">update_tracking_with_new_prop</code><span class="sig-paren">(</span><em>mutations</em>, <em>new_properties</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/models/properties.html#update_tracking_with_new_prop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.models.properties.update_tracking_with_new_prop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add at the mutation tracker the new properties assigned with the setattr at a Properties object</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mutations</strong> &#8211; the dictionary representing the mutation tracker</li>
+<li><strong>new_properties</strong> &#8211; the properties to check for adding new attributes to the mutation tracker</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-contacthub.models">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-contacthub.models" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">contacthub.models package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-contacthub.models.customer">contacthub.models.customer module</a></li>
+<li><a class="reference internal" href="#module-contacthub.models.education">contacthub.models.education module</a></li>
+<li><a class="reference internal" href="#module-contacthub.models.event">contacthub.models.event module</a></li>
+<li><a class="reference internal" href="#module-contacthub.models.job">contacthub.models.job module</a></li>
+<li><a class="reference internal" href="#module-contacthub.models.like">contacthub.models.like module</a></li>
+<li><a class="reference internal" href="#module-contacthub.models.properties">contacthub.models.properties module</a></li>
+<li><a class="reference internal" href="#module-contacthub.models">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/contacthub.models.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">contacthub 0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2017, Axant.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+    </div>
+  </body>
+</html>

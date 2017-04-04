@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>contacthub.models.query.criterion &mdash; contacthub 0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="contacthub 0.0 documentation" href="../../../../index.html" />
+    <link rel="up" title="contacthub.models.query" href="../query.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">contacthub 0.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../query.html" accesskey="U">contacthub.models.query</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for contacthub.models.query.criterion</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+
+<div class="viewcode-block" id="Criterion"><a class="viewcode-back" href="../../../../contacthub.models.query.html#contacthub.models.query.criterion.Criterion">[docs]</a><span class="k">class</span> <span class="nc">Criterion</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Criterion class for applying a criteria to our queries.</span>
+<span class="sd">    A criteria consists of three elements:</span>
+
+<span class="sd">    - the queried attributes, an EntityField element if the criteria has a simple operator, another Criteria otherwise</span>
+<span class="sd">    - an operator, simple or complex, for querying data</span>
+<span class="sd">    - a value or a list of value to perform the comparision if the criteria has a simple operator, another Criteria</span>
+<span class="sd">      otherwise</span>
+
+<span class="sd">    This criteria is consumed by a QueryBuilder object for returning a new Query object containing a dictionary</span>
+<span class="sd">    representing the query in ContactHub</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Criterion.COMPLEX_OPERATORS"><a class="viewcode-back" href="../../../../contacthub.models.query.html#contacthub.models.query.criterion.Criterion.COMPLEX_OPERATORS">[docs]</a>    <span class="k">class</span> <span class="nc">COMPLEX_OPERATORS</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        List of complex operators handled in ContactHub</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">AND</span> <span class="o">=</span> <span class="s1">&#39;and&#39;</span>
+        <span class="n">OR</span> <span class="o">=</span> <span class="s1">&#39;or&#39;</span>
+        <span class="n">OPERATORS</span> <span class="o">=</span> <span class="p">[</span><span class="n">AND</span><span class="p">,</span> <span class="n">OR</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Criterion.SIMPLE_OPERATORS"><a class="viewcode-back" href="../../../../contacthub.models.query.html#contacthub.models.query.criterion.Criterion.SIMPLE_OPERATORS">[docs]</a>    <span class="k">class</span> <span class="nc">SIMPLE_OPERATORS</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        List of simple operators handled in ContactHub</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">EQUALS</span> <span class="o">=</span> <span class="s1">&#39;EQUALS&#39;</span>
+        <span class="n">NOT_EQUALS</span> <span class="o">=</span> <span class="s1">&#39;NOT_EQUALS&#39;</span>
+        <span class="n">GT</span> <span class="o">=</span> <span class="s1">&#39;GT&#39;</span>
+        <span class="n">GTE</span> <span class="o">=</span> <span class="s1">&#39;GTE&#39;</span>
+        <span class="n">LT</span> <span class="o">=</span> <span class="s1">&#39;LT&#39;</span>
+        <span class="n">LTE</span> <span class="o">=</span> <span class="s1">&#39;LTE&#39;</span>
+        <span class="n">IN</span> <span class="o">=</span> <span class="s1">&#39;IN&#39;</span>
+        <span class="n">NOT_IN</span> <span class="o">=</span> <span class="s1">&#39;NOT_IN&#39;</span>
+        <span class="n">IS_NULL</span> <span class="o">=</span> <span class="s1">&#39;IS_NULL&#39;</span>
+        <span class="n">IS_NOT_NULL</span> <span class="o">=</span> <span class="s1">&#39;IS_NOT_NULL&#39;</span>
+        <span class="n">BETWEEN</span> <span class="o">=</span> <span class="s1">&#39;BETWEEN&#39;</span>
+
+        <span class="n">OPERATORS</span> <span class="o">=</span> <span class="p">[</span><span class="n">EQUALS</span><span class="p">,</span> <span class="n">NOT_EQUALS</span><span class="p">,</span> <span class="n">GT</span><span class="p">,</span> <span class="n">GTE</span><span class="p">,</span> <span class="n">LT</span><span class="p">,</span> <span class="n">LTE</span><span class="p">,</span> <span class="n">IN</span><span class="p">,</span> <span class="n">NOT_IN</span><span class="p">,</span> <span class="n">IS_NULL</span><span class="p">,</span> <span class="n">IS_NOT_NULL</span><span class="p">,</span> <span class="n">BETWEEN</span><span class="p">]</span></div>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first_element</span><span class="p">,</span> <span class="n">operator</span><span class="p">,</span> <span class="n">second_element</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param first_element:the attribute where to apply the query, an EntityField element if the criteria has a simple</span>
+<span class="sd">        operator, another Criteria otherwise</span>
+<span class="sd">        :param operator: an operator, simple or complex, for querying data</span>
+<span class="sd">        :param second_element: a value, a list of value to fetch in data if the criteria has a simple operator, another</span>
+<span class="sd">            Criteria otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">first_element</span> <span class="o">=</span> <span class="n">first_element</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">operator</span> <span class="o">=</span> <span class="n">operator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">second_element</span> <span class="o">=</span> <span class="n">second_element</span>
+
+    <span class="k">def</span> <span class="fm">__and__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">criterion</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handling the and operation for criteria, creating a new criteria with complex operator AND</span>
+
+<span class="sd">        :param criterion: a Criterion object to set in AND with this one</span>
+<span class="sd">        :return: a new Criterion object with AND operator</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Criterion</span><span class="o">.</span><span class="n">COMPLEX_OPERATORS</span><span class="o">.</span><span class="n">AND</span><span class="p">,</span> <span class="n">criterion</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__or__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">criterion</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handling the or operation for criteria, creating a new criteria with complex operator OR</span>
+
+<span class="sd">        :param criterion:  a Criterion object to set in OR with this one</span>
+<span class="sd">        :return: a new Criterion object with OR operator</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Criterion</span><span class="o">.</span><span class="n">COMPLEX_OPERATORS</span><span class="o">.</span><span class="n">OR</span><span class="p">,</span> <span class="n">criterion</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">contacthub 0.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../query.html" >contacthub.models.query</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2017, Axant.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+    </div>
+  </body>
+</html>

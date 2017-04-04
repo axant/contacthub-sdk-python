@@ -1,0 +1,272 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>contacthub.lib package &mdash; contacthub 0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="contacthub 0.0 documentation" href="index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">contacthub 0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="contacthub-lib-package">
+<h1>contacthub.lib package<a class="headerlink" href="#contacthub-lib-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-contacthub.lib.read_only_list">
+<span id="contacthub-lib-read-only-list-module"></span><h2>contacthub.lib.read_only_list module<a class="headerlink" href="#module-contacthub.lib.read_only_list" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="contacthub.lib.read_only_list.ReadOnlyList">
+<em class="property">class </em><code class="descclassname">contacthub.lib.read_only_list.</code><code class="descname">ReadOnlyList</code><a class="reference internal" href="_modules/contacthub/lib/read_only_list.html#ReadOnlyList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.lib.read_only_list.ReadOnlyList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">list</span></code></p>
+<p>Read only list for managing list in the entities.
+This class blocks some possible operations on a regular list</p>
+<dl class="staticmethod">
+<dt id="contacthub.lib.read_only_list.ReadOnlyList.append">
+<em class="property">static </em><code class="descname">append</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#contacthub.lib.read_only_list.ReadOnlyList.append" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raise a new ValueError for blocking forbidden operations.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="contacthub.lib.read_only_list.ReadOnlyList.extend">
+<em class="property">static </em><code class="descname">extend</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#contacthub.lib.read_only_list.ReadOnlyList.extend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raise a new ValueError for blocking forbidden operations.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="contacthub.lib.read_only_list.ReadOnlyList.insert">
+<em class="property">static </em><code class="descname">insert</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#contacthub.lib.read_only_list.ReadOnlyList.insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raise a new ValueError for blocking forbidden operations.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="contacthub.lib.read_only_list.ReadOnlyList.not_implemented">
+<em class="property">static </em><code class="descname">not_implemented</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/lib/read_only_list.html#ReadOnlyList.not_implemented"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.lib.read_only_list.ReadOnlyList.not_implemented" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raise a new ValueError for blocking forbidden operations.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="contacthub.lib.read_only_list.ReadOnlyList.pop">
+<em class="property">static </em><code class="descname">pop</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#contacthub.lib.read_only_list.ReadOnlyList.pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raise a new ValueError for blocking forbidden operations.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="contacthub.lib.read_only_list.ReadOnlyList.remove">
+<em class="property">static </em><code class="descname">remove</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#contacthub.lib.read_only_list.ReadOnlyList.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raise a new ValueError for blocking forbidden operations.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="contacthub.lib.read_only_list.ReadOnlyList.reverse">
+<em class="property">static </em><code class="descname">reverse</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#contacthub.lib.read_only_list.ReadOnlyList.reverse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raise a new ValueError for blocking forbidden operations.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-contacthub.lib.utils">
+<span id="contacthub-lib-utils-module"></span><h2>contacthub.lib.utils module<a class="headerlink" href="#module-contacthub.lib.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="contacthub.lib.utils.DateEncoder">
+<em class="property">class </em><code class="descclassname">contacthub.lib.utils.</code><code class="descname">DateEncoder</code><span class="sig-paren">(</span><em>skipkeys=False</em>, <em>ensure_ascii=True</em>, <em>check_circular=True</em>, <em>allow_nan=True</em>, <em>sort_keys=False</em>, <em>indent=None</em>, <em>separators=None</em>, <em>encoding='utf-8'</em>, <em>default=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/lib/utils.html#DateEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.lib.utils.DateEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">json.encoder.JSONEncoder</span></code></p>
+<p>Class for JSON encoding datetime and date object.</p>
+<dl class="method">
+<dt id="contacthub.lib.utils.DateEncoder.default">
+<code class="descname">default</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/lib/utils.html#DateEncoder.default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.lib.utils.DateEncoder.default" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize the given obj for JSON.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>obj</strong> &#8211; the object to serialize</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a string ISO 8601 formatted</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="contacthub.lib.utils.convert_properties_obj_in_prop">
+<code class="descclassname">contacthub.lib.utils.</code><code class="descname">convert_properties_obj_in_prop</code><span class="sig-paren">(</span><em>properties</em>, <em>properties_class</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/lib/utils.html#convert_properties_obj_in_prop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.lib.utils.convert_properties_obj_in_prop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the internal properties of <cite>properties_class</cite> object in a dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>properties</strong> &#8211; the properties of a <cite>properties_class</cite> object to convert</li>
+<li><strong>properties_class</strong> &#8211; if the internal properties of an object are instance of this class,
+we assign at the property the internal attributes instead of the object</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="contacthub.lib.utils.generate_mutation_tracker">
+<code class="descclassname">contacthub.lib.utils.</code><code class="descname">generate_mutation_tracker</code><span class="sig-paren">(</span><em>old_attributes</em>, <em>new_attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/lib/utils.html#generate_mutation_tracker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.lib.utils.generate_mutation_tracker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given old attributes of an entity and the new attributes in a Properties object, this method creates a new
+dictionary based on the whole old attributes dictionary, with:</p>
+<ul class="simple">
+<li>the attributes in old_attributes updated with the attributes in new_attributes</li>
+<li>the attributes not in new_attributes (deleted) setted to None</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>old_attributes</strong> &#8211; The old attributes of an entity for create a mutation tracker dict updated</li>
+<li><strong>new_attributes</strong> &#8211; The new attributes of an entity for create a mutation tracker dict updated</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a dictionary with the mutation between old_attributes and new_attributes</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="contacthub.lib.utils.get_dictionary_paths">
+<code class="descclassname">contacthub.lib.utils.</code><code class="descname">get_dictionary_paths</code><span class="sig-paren">(</span><em>d</em>, <em>main_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/lib/utils.html#get_dictionary_paths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.lib.utils.get_dictionary_paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the given main_list with lists containing all the key-paths of a dictionary.
+For example: The key-paths for this list {a{b:{c:1, d:2}, e:3}} are a,b,c; a,b,d; a,e</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>d</strong> &#8211; the dictionary for gaining all the depth path</li>
+<li><strong>main_list</strong> &#8211; a list for creating al the lists containing the paths of the dictt</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="contacthub.lib.utils.resolve_mutation_tracker">
+<code class="descclassname">contacthub.lib.utils.</code><code class="descname">resolve_mutation_tracker</code><span class="sig-paren">(</span><em>mutation_tracker</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/contacthub/lib/utils.html#resolve_mutation_tracker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#contacthub.lib.utils.resolve_mutation_tracker" title="Permalink to this definition">¶</a></dt>
+<dd><p>From a dictionary with comma separated keys (e.g. {&#8216;a.b.c.d&#8217;: &#8216;e&#8217;}), creates a new dictionary with nested
+dictionaries, each of which containing a key taken from comma separated keys. (e.g. {&#8216;a&#8217;: {&#8216;b&#8217; {&#8216;c&#8217;: {&#8216;d&#8217;: &#8216;e&#8217;}}}})</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mutation_tracker</strong> &#8211; the dictionary with comma separated keys</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a new dictionary containing nested dictionaries with old comma separated keys</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-contacthub.lib">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-contacthub.lib" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">contacthub.lib package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-contacthub.lib.read_only_list">contacthub.lib.read_only_list module</a></li>
+<li><a class="reference internal" href="#module-contacthub.lib.utils">contacthub.lib.utils module</a></li>
+<li><a class="reference internal" href="#module-contacthub.lib">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/contacthub.lib.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">contacthub 0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2017, Axant.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+    </div>
+  </body>
+</html>

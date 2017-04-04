@@ -1,0 +1,22 @@
+contacthub.parsers package
+==========================
+
+Submodules
+----------
+
+contacthub.parsers.config_parser module
+---------------------------------------
+
+.. automodule:: contacthub.parsers.config_parser
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: contacthub.parsers
+    :members:
+    :undoc-members:
+    :show-inheritance:

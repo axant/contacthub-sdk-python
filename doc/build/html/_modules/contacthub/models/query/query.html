@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>contacthub.models.query.query &mdash; contacthub 0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="contacthub 0.0 documentation" href="../../../../index.html" />
+    <link rel="up" title="contacthub.models.query" href="../query.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">contacthub 0.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../query.html" accesskey="U">contacthub.models.query</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for contacthub.models.query.query</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">from</span> <span class="nn">contacthub._api_manager._api_customer</span> <span class="kn">import</span> <span class="n">_CustomerAPIManager</span>
+<span class="kn">from</span> <span class="nn">contacthub.errors.operation_not_permitted</span> <span class="kn">import</span> <span class="n">OperationNotPermitted</span>
+<span class="kn">from</span> <span class="nn">contacthub.lib.read_only_list</span> <span class="kn">import</span> <span class="n">ReadOnlyList</span>
+<span class="kn">from</span> <span class="nn">contacthub.models.customer</span> <span class="kn">import</span> <span class="n">Customer</span>
+<span class="kn">from</span> <span class="nn">contacthub.models.query.criterion</span> <span class="kn">import</span> <span class="n">Criterion</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
+
+<div class="viewcode-block" id="Query"><a class="viewcode-back" href="../../../../contacthub.models.query.html#contacthub.models.query.query.Query">[docs]</a><span class="k">class</span> <span class="nc">Query</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Query object for applying the specified query in the APIs.</span>
+
+<span class="sd">    Use this class for interact with the DeclarativeAPIManager Layer or APIManagerLevel and return the queried as object</span>
+<span class="sd">    or json format variables</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">previous_query</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param previous_query: a query to start creating a new query. This query is the base for the new one.</span>
+<span class="sd">        :param node: the node for applying for fetching data</span>
+<span class="sd">        :param entity: the entity on which apply the query</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">node</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entity</span> <span class="o">=</span> <span class="n">entity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">condition</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inner_query</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="n">previous_query</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inner_query</span> <span class="o">=</span> <span class="n">previous_query</span>
+            <span class="k">if</span> <span class="n">previous_query</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;simple&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">condition</span> <span class="o">=</span> <span class="n">previous_query</span><span class="p">[</span><span class="s1">&#39;are&#39;</span><span class="p">][</span><span class="s1">&#39;condition&#39;</span><span class="p">]</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_combine_query</span><span class="p">(</span><span class="n">query1</span><span class="p">,</span> <span class="n">query2</span><span class="p">,</span> <span class="n">operation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Take two queries and complex operation and create a combined query.</span>
+<span class="sd">        :param query1: the first query to combine</span>
+<span class="sd">        :param query2: the second query to combine</span>
+<span class="sd">        :param operation: the operation for combining the query</span>
+<span class="sd">        :return: a new dictionary containing a combined query</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">query2</span><span class="o">.</span><span class="n">inner_query</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;combined&#39;</span> <span class="ow">and</span> <span class="n">query2</span><span class="o">.</span><span class="n">inner_query</span><span class="p">[</span><span class="s1">&#39;conjunction&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">operation</span><span class="p">:</span>
+            <span class="n">query_ret</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">query2</span><span class="o">.</span><span class="n">inner_query</span><span class="p">)</span>
+            <span class="n">query_ret</span><span class="p">[</span><span class="s1">&#39;queries&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">query1</span><span class="o">.</span><span class="n">inner_query</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">query1</span><span class="o">.</span><span class="n">inner_query</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;combined&#39;</span> <span class="ow">and</span> <span class="n">query1</span><span class="o">.</span><span class="n">inner_query</span><span class="p">[</span><span class="s1">&#39;conjunction&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">operation</span><span class="p">:</span>
+                <span class="n">query_ret</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">query1</span><span class="o">.</span><span class="n">inner_query</span><span class="p">)</span>
+                <span class="n">query_ret</span><span class="p">[</span><span class="s1">&#39;queries&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">query2</span><span class="o">.</span><span class="n">inner_query</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">query_ret</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;combined&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;query&#39;</span><span class="p">,</span> <span class="s1">&#39;conjunction&#39;</span><span class="p">:</span> <span class="n">operation</span><span class="p">,</span>
+                             <span class="s1">&#39;queries&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">query1</span><span class="o">.</span><span class="n">inner_query</span><span class="p">,</span> <span class="n">query2</span><span class="o">.</span><span class="n">inner_query</span><span class="p">]}</span>
+        <span class="k">return</span> <span class="n">query_ret</span>
+
+    <span class="k">def</span> <span class="fm">__and__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Query</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">,</span> <span class="n">entity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">entity</span><span class="p">,</span>
+                     <span class="n">previous_query</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_combine_query</span><span class="p">(</span><span class="n">query1</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">query2</span><span class="o">=</span><span class="n">other</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="s1">&#39;INTERSECT&#39;</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__or__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Query</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">,</span> <span class="n">entity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">entity</span><span class="p">,</span>
+                     <span class="n">previous_query</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_combine_query</span><span class="p">(</span><span class="n">query1</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">query2</span><span class="o">=</span><span class="n">other</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="s1">&#39;UNION&#39;</span><span class="p">))</span>
+
+<div class="viewcode-block" id="Query.all"><a class="viewcode-back" href="../../../../contacthub.models.query.html#contacthub.models.query.query.Query.all">[docs]</a>    <span class="k">def</span> <span class="nf">all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get all queried data of an entity from the API</span>
+
+<span class="sd">        :return: a ReadOnly list with all object queried</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">complete_query</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;query&#39;</span><span class="p">,</span> <span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_query</span><span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity</span> <span class="ow">is</span> <span class="n">Customer</span><span class="p">:</span>
+            <span class="n">customers</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="n">_CustomerAPIManager</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">)</span><span class="o">.</span><span class="n">get_all</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">complete_query</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">customer</span> <span class="ow">in</span> <span class="n">resp</span><span class="p">[</span><span class="s1">&#39;elements&#39;</span><span class="p">]:</span>
+                <span class="n">customers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">customer</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">ReadOnlyList</span><span class="p">(</span><span class="n">customers</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Query.filter"><a class="viewcode-back" href="../../../../contacthub.models.query.html#contacthub.models.query.query.Query.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">criterion</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a new API Like query for ContactHub APIs (JSON Format)</span>
+
+<span class="sd">        :param criterion: the Criterion object for fields for query data</span>
+<span class="sd">        :return: a Query object containing the JSON object representing a query for the APIs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_query</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_query</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;combined&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">OperationNotPermitted</span><span class="p">(</span><span class="s1">&#39;Cannot apply a filter on a combined query.&#39;</span><span class="p">)</span>
+        <span class="n">query_ret</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;simple&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;query&#39;</span><span class="p">,</span> <span class="s1">&#39;are&#39;</span><span class="p">:</span> <span class="p">{}}</span>
+        <span class="n">new_query</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">condition</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">new_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span><span class="p">(</span><span class="n">criterion</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;atomic&#39;</span><span class="p">:</span>
+            <span class="n">new_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_and_query</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span><span class="p">(</span><span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="p">[</span><span class="s1">&#39;conjunction&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">Criterion</span><span class="o">.</span><span class="n">COMPLEX_OPERATORS</span><span class="o">.</span><span class="n">AND</span><span class="p">:</span>
+                <span class="n">new_query</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="p">)</span>
+                <span class="n">new_query</span><span class="p">[</span><span class="s1">&#39;conditions&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_filter</span><span class="p">(</span><span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="p">[</span><span class="s1">&#39;conjunction&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">Criterion</span><span class="o">.</span><span class="n">COMPLEX_OPERATORS</span><span class="o">.</span><span class="n">OR</span><span class="p">:</span>
+                <span class="n">new_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_and_query</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span><span class="p">(</span><span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">))</span>
+        <span class="n">query_ret</span><span class="p">[</span><span class="s1">&#39;are&#39;</span><span class="p">][</span><span class="s1">&#39;condition&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_query</span>
+        <span class="k">return</span> <span class="n">Query</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">,</span> <span class="n">entity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">entity</span><span class="p">,</span> <span class="n">previous_query</span><span class="o">=</span><span class="n">query_ret</span><span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_and_query</span><span class="p">(</span><span class="n">query1</span><span class="p">,</span> <span class="n">query2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Take to dictionary and return a dictionary containing the two queries in AND operation.</span>
+
+<span class="sd">        :param query1: a dictionary containing the a query to put in AND</span>
+<span class="sd">        :param query2: a dictionary containing the a query to put in AND</span>
+<span class="sd">        :return: a new dictionary with the two queries in AND</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">query_ret</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;composite&#39;</span><span class="p">,</span> <span class="s1">&#39;conditions&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="n">query_ret</span><span class="p">[</span><span class="s1">&#39;conditions&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">query1</span><span class="p">)</span>
+        <span class="n">query_ret</span><span class="p">[</span><span class="s1">&#39;conditions&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">query2</span><span class="p">)</span>
+        <span class="n">query_ret</span><span class="p">[</span><span class="s1">&#39;conjunction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;and&#39;</span>
+        <span class="k">return</span> <span class="n">query_ret</span>
+
+    <span class="k">def</span> <span class="nf">_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">criterion</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Private function for creating atomic or composite subqueries found in major query.</span>
+
+<span class="sd">        :param criterion: the Criterion object for fields for query data</span>
+<span class="sd">        :return: a JSON object containing a subquery for creating the query for the APIs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">criterion</span><span class="o">.</span><span class="n">operator</span> <span class="ow">in</span> <span class="n">Criterion</span><span class="o">.</span><span class="n">SIMPLE_OPERATORS</span><span class="o">.</span><span class="n">OPERATORS</span><span class="p">:</span>
+            <span class="n">atomic_query</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;atomic&#39;</span><span class="p">}</span>
+            <span class="n">entity_field</span> <span class="o">=</span> <span class="n">criterion</span><span class="o">.</span><span class="n">first_element</span>
+            <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">entity_field</span><span class="o">.</span><span class="n">field</span><span class="p">]</span>
+
+            <span class="k">while</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">entity_field</span><span class="o">.</span><span class="n">entity</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entity</span><span class="p">):</span>
+                <span class="n">entity_field</span> <span class="o">=</span> <span class="n">entity_field</span><span class="o">.</span><span class="n">entity</span>
+                <span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entity_field</span><span class="o">.</span><span class="n">field</span><span class="p">)</span>
+
+            <span class="n">attribute</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">fields</span><span class="p">):</span>
+                <span class="n">attribute</span> <span class="o">+=</span> <span class="n">field</span>
+                <span class="n">attribute</span> <span class="o">+=</span> <span class="s1">&#39;.&#39;</span>
+
+            <span class="n">attribute</span> <span class="o">=</span> <span class="n">attribute</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">atomic_query</span><span class="p">[</span><span class="s1">&#39;attribute&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">attribute</span>
+            <span class="n">atomic_query</span><span class="p">[</span><span class="s1">&#39;operator&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">criterion</span><span class="o">.</span><span class="n">operator</span>
+            <span class="k">if</span> <span class="n">criterion</span><span class="o">.</span><span class="n">second_element</span><span class="p">:</span>
+                <span class="n">atomic_query</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">criterion</span><span class="o">.</span><span class="n">second_element</span>
+            <span class="k">return</span> <span class="n">atomic_query</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">criterion</span><span class="o">.</span><span class="n">operator</span> <span class="ow">in</span> <span class="n">Criterion</span><span class="o">.</span><span class="n">COMPLEX_OPERATORS</span><span class="o">.</span><span class="n">OPERATORS</span><span class="p">:</span>
+                <span class="n">composite_query</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;composite&#39;</span><span class="p">,</span> <span class="s1">&#39;conditions&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;conjunction&#39;</span><span class="p">:</span> <span class="n">criterion</span><span class="o">.</span><span class="n">operator</span><span class="p">}</span>
+                <span class="n">first_element</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span><span class="p">(</span><span class="n">criterion</span><span class="o">.</span><span class="n">first_element</span><span class="p">)</span>
+                <span class="n">second_element</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span><span class="p">(</span><span class="n">criterion</span><span class="o">.</span><span class="n">second_element</span><span class="p">)</span>
+                <span class="n">composite_query</span><span class="p">[</span><span class="s1">&#39;conditions&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">first_element</span><span class="p">)</span>
+                <span class="n">composite_query</span><span class="p">[</span><span class="s1">&#39;conditions&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">second_element</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">composite_query</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">contacthub 0.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../query.html" >contacthub.models.query</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2017, Axant.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+    </div>
+  </body>
+</html>
