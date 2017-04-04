@@ -1,6 +1,5 @@
-import json
-
-from contacthub.api_manager.api_customer import CustomerAPIManager
+# -*- coding: utf-8 -*-
+from contacthub._api_manager._api_customer import _CustomerAPIManager
 from contacthub.errors.operation_not_permitted import OperationNotPermitted
 from contacthub.lib.read_only_list import ReadOnlyList
 from contacthub.models.customer import Customer
@@ -12,13 +11,14 @@ class Query(object):
     """
     Query object for applying the specified query in the APIs.
 
-    Use this class for interact with the DeclarativeAPIManager Layer or APIManagerLevel and return the queried as object or
-    json format variables
+    Use this class for interact with the DeclarativeAPIManager Layer or APIManagerLevel and return the queried as object
+    or json format variables
     """
+
     def __init__(self, node, entity, previous_query=None):
         """
+        :param previous_query: a query to start creating a new query. This query is the base for the new one.
         :param node: the node for applying for fetching data
-        :param query: a JSON API-like object for querying data
         :param entity: the entity on which apply the query
         """
         self.node = node
@@ -32,6 +32,13 @@ class Query(object):
 
     @staticmethod
     def _combine_query(query1, query2, operation):
+        """
+        Take two queries and complex operation and create a combined query.
+        :param query1: the first query to combine
+        :param query2: the second query to combine
+        :param operation: the operation for combining the query
+        :return: a new dictionary containing a combined query
+        """
         if query2.inner_query['type'] == 'combined' and query2.inner_query['conjunction'] == operation:
             query_ret = deepcopy(query2.inner_query)
             query_ret['queries'].append(query1.inner_query)
@@ -46,7 +53,7 @@ class Query(object):
 
     def __and__(self, other):
         return Query(node=self.node, entity=self.entity,
-                     previous_query=self._combine_query(query1=self,query2=other, operation='INTERSECT'))
+                     previous_query=self._combine_query(query1=self, query2=other, operation='INTERSECT'))
 
     def __or__(self, other):
         return Query(node=self.node, entity=self.entity,
@@ -55,12 +62,13 @@ class Query(object):
     def all(self):
         """
         Get all queried data of an entity from the API
-        :return: a list of properties object
+
+        :return: a ReadOnly list with all object queried
         """
         complete_query = {'name': 'query', 'query': self.inner_query}
         if self.entity is Customer:
             customers = []
-            resp = CustomerAPIManager(self.node).get_all(query=complete_query)
+            resp = _CustomerAPIManager(self.node).get_all(query=complete_query)
             for customer in resp['elements']:
                 customers.append(self.entity.from_dict(node=self.node, attributes=customer))
             return ReadOnlyList(customers)
@@ -68,6 +76,7 @@ class Query(object):
     def filter(self, criterion):
         """
         Create a new API Like query for ContactHub APIs (JSON Format)
+
         :param criterion: the Criterion object for fields for query data
         :return: a Query object containing the JSON object representing a query for the APIs
         """
@@ -90,9 +99,14 @@ class Query(object):
 
     @staticmethod
     def _and_query(query1, query2):
-        query_ret = {}
-        query_ret['type'] = 'composite'
-        query_ret['conditions'] = []
+        """
+        Take to dictionary and return a dictionary containing the two queries in AND operation.
+
+        :param query1: a dictionary containing the a query to put in AND
+        :param query2: a dictionary containing the a query to put in AND
+        :return: a new dictionary with the two queries in AND
+        """
+        query_ret = {'type': 'composite', 'conditions': []}
         query_ret['conditions'].append(query1)
         query_ret['conditions'].append(query2)
         query_ret['conjunction'] = 'and'
@@ -101,6 +115,7 @@ class Query(object):
     def _filter(self, criterion):
         """
         Private function for creating atomic or composite subqueries found in major query.
+
         :param criterion: the Criterion object for fields for query data
         :return: a JSON object containing a subquery for creating the query for the APIs
         """
@@ -128,14 +143,9 @@ class Query(object):
 
         else:
             if criterion.operator in Criterion.COMPLEX_OPERATORS.OPERATORS:
-                composite_query = {'type': 'composite', 'conditions': []}
-                composite_query['conjunction'] = criterion.operator
+                composite_query = {'type': 'composite', 'conditions': [], 'conjunction': criterion.operator}
                 first_element = self._filter(criterion.first_element)
                 second_element = self._filter(criterion.second_element)
                 composite_query['conditions'].append(first_element)
                 composite_query['conditions'].append(second_element)
                 return composite_query
-
-
-
-

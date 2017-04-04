@@ -1,24 +1,39 @@
-from copy import deepcopy, copy
-
-from contacthub.api_manager.api_customer import CustomerAPIManager
+# -*- coding: utf-8 -*-
+from copy import deepcopy
+from contacthub._api_manager._api_customer import _CustomerAPIManager
 
 
 class Job(object):
     """
-    Job model
+    Job entity definition.
     """
 
     __attributes__ = ('attributes', 'customer','customer_api_manager','entity_name', 'parent_attr')
 
     def __init__(self, customer, parent_attr=None, **attributes):
+        """
+        Initialize a new Job object for customer in a node with the specified attributes.
+
+        :param customer: the customer associated to this Job object
+        :param parent_attr: the parent attribute for compiling the mutation tracker dictionary
+        :param attributes: key-value arguments for generating the structure of the Job's attributes
+        """
         self.customer = customer
         self.attributes = attributes
-        self.customer_api_manager = CustomerAPIManager(node=customer.node)
+        self.customer_api_manager = _CustomerAPIManager(node=customer.node)
         self.entity_name = 'jobs'
         self.parent_attr = parent_attr
 
     @classmethod
     def from_dict(cls, customer, attributes=None, parent_attr=None):
+        """
+        Create a new Job initialized by a specified dictionary of attributes
+
+        :param customer: the customer associated to this Job object
+        :param parent_attr: the parent attribute for compiling the mutation tracker dictionary
+        :param attributes: key-value arguments for generating the structure of the Job's attributes
+        :return: a new Job object
+        """
         o = cls(customer=customer, parent_attr=parent_attr)
         if attributes is None:
             o.attributes = {}
@@ -26,12 +41,20 @@ class Job(object):
             o.attributes = attributes
         return o
 
+    def to_dict(self):
+        """
+        Convert this Job in a dictionary containing his attributes.
+
+        :return: a new dictionary representing the attributes of this Job
+        """
+        return deepcopy(self.attributes)
+
     def __getattr__(self, item):
         """
-        Check if a key is in the dictionary and return it if it's a simple properties. Otherwise, if the
-        element is datetime format, return a datetime object
+        Check if a key is in the dictionary and return it if it's a simple properties
+
         :param item: the key of the base properties dict
-        :return: an element of the dictionary, or datetime object if element associated at the key contains a datetime format object
+        :return: the item in the attributes dictionary if it's present, raise AttributeError otherwise.
         """
         try:
             return self.attributes[item]
@@ -39,6 +62,10 @@ class Job(object):
             raise AttributeError("%s object has no attribute %s" %(type(self).__name__, e))
 
     def __setattr__(self, attr, val):
+        """
+        x.__setattr__('attr', val) <==> x.attr = val
+        Update the attributes dictionary with the val specified.
+        """
         if attr in self.__attributes__:
             return super(Job, self).__setattr__(attr, val)
         else:
@@ -50,13 +77,11 @@ class Job(object):
                     self.customer.mute[base_attr] = {}
                 self.customer.mute[base_attr][attr] = self.customer.attributes[base_attr][attr]
 
-    def to_dict(self):
-        return deepcopy(self.attributes)
-
     def post(self):
         """
-        Post this Education in the list of the Education for a Customer(specified in the constructor of the Education)
-        :return: a Education object representing the posted Education
+        Post this Job in the list of the Job for a Customer(specified in the constructor of the Job)
+
+        :return: a Job object representing the posted Job
         """
         entity_attrs = self.customer_api_manager.post(body=self.attributes, urls_extra=self.customer.id + '/'
                                                                                    + self.entity_name)
@@ -68,16 +93,18 @@ class Job(object):
 
     def delete(self):
         """
-        Remove this Education from the list of the Education for a Customer(specified in the constructor of
-        the Education)
-        :return: a Education object representing the deleted Education
+        Remove this Job from the list of the Job for a Customer(specified in the constructor of
+        the Job)
+
+        :return: a Job object representing the deleted Job
         """
         self.customer_api_manager.delete(_id=self.customer.id, urls_extra=self.entity_name + '/' + self.attributes['id'])
 
     def put(self):
         """
-        Put this Education in the list of the Education for a Customer(specified in the constructor of the Education)
-        :return: a Education object representing the putted Education
+        Put this Job in the list of the Job for a Customer(specified in the constructor of the Job)
+
+        :return: a Job object representing the putted Job
         """
         try:
             find = False

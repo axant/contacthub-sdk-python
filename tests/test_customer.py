@@ -298,14 +298,14 @@ class TestCustomer(unittest.TestCase):
         try:
             self.customers[0].delete()
         except HTTPError as e:
-            assert 'message' in str(e), str(e)
+            assert 'Message' in str(e), str(e)
 
     @mock.patch('requests.delete', return_value=FakeHTTPResponse(resp_path='tests/util/fake_post_response'))
     def test_delete_created(self, mock_delete):
         Customer(id='01', node=self.node).delete()
         mock_delete.assert_called_with(self.base_url_customer + '/01', headers=self.headers_expected)
 
-    @mock.patch('contacthub.api_manager.api_customer.CustomerAPIManager.post')
+    @mock.patch('contacthub._api_manager._api_customer._CustomerAPIManager.post')
     def test_post_customer_creation_first_method(self, mock_post):
         expected_body = {'base': {'contacts': {'email': 'email@email.email'}}, 'extra': 'extra',
                          'extended': {'prova': 'prova'}, 'tags': {'auto': ['auto'], 'manual': ['manual']}}
@@ -325,7 +325,7 @@ class TestCustomer(unittest.TestCase):
         mock_post.assert_called_with(body=expected_body, force_update=False)
 
 
-    # @mock.patch('contacthub.api_manager.api_customer.CustomerAPIManager.post')
+    # @mock.patch('contacthub._api_manager._api_customer._CustomerAPIManager.post')
     # def test_post_customer_creation_second_method(self, mock_post):
     #     expected_body = {'base': {'contacts': {'email': 'email@email.email'}}, 'extra': 'extra'}
     #     mock_post.return_value = json.loads(FakeHTTPResponse(resp_path='tests/util/fake_post_response').text)
@@ -338,7 +338,7 @@ class TestCustomer(unittest.TestCase):
     #     assert posted.base.contacts.email == c.base.contacts.email, posted.base.contacts.email
     #     assert posted.extra == c.extra, posted.extra
 
-    @mock.patch('contacthub.api_manager.api_customer.CustomerAPIManager.post')
+    @mock.patch('contacthub._api_manager._api_customer._CustomerAPIManager.post')
     def test_post_customer_creation_second_method(self, mock_post):
         expected_body = {'base': {'contacts': {'email': 'email@email.email'}}, 'extra': 'extra', 'extended': {},
                          'tags': {'auto': [], 'manual': []}}

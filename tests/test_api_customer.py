@@ -4,7 +4,7 @@ from unittest import TestSuite
 import mock
 from requests import HTTPError
 from contacthub.workspace import Workspace
-from contacthub.api_manager.api_customer import CustomerAPIManager
+from contacthub._api_manager._api_customer import _CustomerAPIManager
 from tests.utility import FakeHTTPResponse
 
 
@@ -14,7 +14,7 @@ class TestCustomerAPIManager(TestSuite):
     def setUp(cls):
         w = Workspace(workspace_id=123, token=456)
         cls.node = w.get_node(123)
-        cls.customer_manager = CustomerAPIManager(node=cls.node)
+        cls.customer_manager = _CustomerAPIManager(node=cls.node)
         cls.headers_expected = {'Authorization': 'Bearer 456', 'Content-Type': 'application/json'}
         cls.base_url = 'https://api.contactlab.it/hub/v1/workspaces/123/customers'
 
@@ -53,7 +53,7 @@ class TestCustomerAPIManager(TestSuite):
         try:
             self.customer_manager.post(body={})
         except HTTPError as e:
-            assert 'message' in str(e), str(e)
+            assert 'Message' in str(e), str(e)
 
     @mock.patch('requests.patch',
                 return_value=FakeHTTPResponse(resp_path='tests/util/fake_query_response', status_code=401))
@@ -61,7 +61,7 @@ class TestCustomerAPIManager(TestSuite):
         try:
             self.customer_manager.patch(_id='id', body={})
         except HTTPError as e:
-            assert 'message' in str(e), str(e)
+            assert 'Message' in str(e), str(e)
 
     @mock.patch('requests.put', return_value=FakeHTTPResponse(resp_path='tests/util/fake_query_response'))
     def test_put_customer(self, mock_get):
@@ -75,7 +75,7 @@ class TestCustomerAPIManager(TestSuite):
         try:
             self.customer_manager.put(_id='id', body={})
         except HTTPError as e:
-            assert 'message' in str(e), str(e)
+            assert 'Message' in str(e), str(e)
 
     @mock.patch('requests.delete',
                 return_value=FakeHTTPResponse(resp_path='tests/util/fake_query_response'))
@@ -116,7 +116,7 @@ class TestCustomerAPIManager(TestSuite):
         try:
             self.customer_manager.get(_id='01')
         except HTTPError as e:
-            assert 'message' in str(e), str(e)
+            assert 'Message' in str(e), str(e)
 
 
 

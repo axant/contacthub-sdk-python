@@ -25,3 +25,7 @@ class TestProperties(unittest.TestCase):
         p.prova = Properties(a='b')
         assert p.mute == {'prova': {'a': 'b'}}, p.mute
 
+    def test_to_dict(self):
+        p = Properties(parent=Customer(node=self.node))
+        assert p.to_dict() == p.attributes, p.to_dict()
+

@@ -4,13 +4,13 @@ from configparser import ConfigParser
 DEFAULT_SECTION_HEADER = "DEFAULT"
 
 
-class GeneralConfigParser(object):
+class _GeneralConfigParser(object):
     config_file = None
     parser = None
 
     def __init__(self, config_file_path):
         self.parser = ConfigParser()
-        self.parser.read_file(DefaultSectionHeaderConfigFile(config_file_path))
+        self.parser.read_file(_DefaultSectionHeaderConfigFile(config_file_path))
 
     def get_options(self):
         options = dict(self.parser.items(DEFAULT_SECTION_HEADER))
@@ -19,7 +19,7 @@ class GeneralConfigParser(object):
         return options
 
 
-class DefaultSectionHeaderConfigFile(object):
+class _DefaultSectionHeaderConfigFile(object):
     config_file = None
     _first_read = True
 

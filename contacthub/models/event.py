@@ -1,28 +1,37 @@
+# -*- coding: utf-8 -*-
 from copy import deepcopy
-
-from contacthub.api_manager.api_event import EventAPIManager
+from contacthub._api_manager._api_event import _EventAPIManager
 from contacthub.lib.utils import convert_properties_obj_in_prop
 from contacthub.models import Properties
 
 
-
 class Event(object):
     """
-    Event model
+    Event entity definition
     """
-    __attributes__ = ('attributes','mute', 'node', 'event_api_manager')
+    __attributes__ = ('attributes', 'mute', 'node', 'event_api_manager')
 
     def __init__(self, node, **attributes):
         """
-        :param customer_json_properties: A dictionary containing the json_properties related to customers
+        Initialize a customer in a node with the specified attributes.
+
+        :param node: the node of the customer supposed to be associated with this event
+        :param attributes: key-value arguments for generating the structure of Event's attributes
         """
         convert_properties_obj_in_prop(properties=attributes, properties_class=Properties)
         self.attributes = attributes
         self.node = node
-        self.event_api_manager = EventAPIManager(node=self.node)
+        self.event_api_manager = _EventAPIManager(node=self.node)
 
     @classmethod
     def from_dict(cls, node, attributes=None):
+        """
+        Create a new Properties initialized by a specified dictionary of attributes
+
+        :param node: the node of the customer supposed to be associated with this event
+        :param attributes: key-value arguments for generating the structure of the Education's attributes
+        :return: a new Properties object
+        """
         o = cls(node=node)
         if attributes is None:
             o.attributes = {}
@@ -31,14 +40,21 @@ class Event(object):
         return o
 
     def to_dict(self):
+        """
+        Convert this Event in a dictionary containing his attributes.
+
+        :return: a new dictionary representing the attributes of this Event
+        """
         return deepcopy(self.attributes)
 
     def __getattr__(self, item):
         """
         Check if a key is in the dictionary and return it if it's a simple properties. Otherwise, if the
-        element contains an object or list, redirect this element at the corresponding class.
+        element contains an object, create a new properties representing it.
+
         :param item: the key of the base properties dict
-        :return: an element of the dictionary, or an object if the element associated at the key containse an object or a list
+        :return: an element of the dictionary, or a Properties object if the element associated at the key contains an
+            object
         """
         try:
             if isinstance(self.attributes[item], dict):
@@ -49,6 +65,10 @@ class Event(object):
             raise AttributeError("%s object has no attribute %s" % (type(self).__name__, e))
 
     def __setattr__(self, attr, val):
+        """
+        x.__setattr__('attr', val) <==> x.attr = val
+        Update the attributes dictionary with the val specified.
+        """
         if attr in self.__attributes__:
             return super(Event, self).__setattr__(attr, val)
         else:
@@ -63,12 +83,22 @@ class Event(object):
                     self.attributes[attr] = val
 
     def post(self):
+        """
+        Post this Event in the associated Node.
+        For posting it and associate with a known customer, specify the customer id in the attributes of the Event.
+        For associate it to an external Id or a session id of a customer, specify in the bringBackProperties object
+        like:
+        {'type':'EXTERNAL_ID',
+        'value':'value',
+        'nodeId':'nodeId'
+        }
+        """
         self.event_api_manager.post(body=self.attributes)
 
 
     class TYPES:
         """
-        Event subclass for `type field of Event.
+        Event subclass for type field of Event.
         Choose one of the above  API validated types or add your own in case of new types.
         """
         ABANDONED_CART = "abandonedCart"
@@ -122,6 +152,10 @@ class Event(object):
         SOCIAL = "SOCIAL"
         DIGITAL_CAMPAIGN = "DIGITAL_CAMPAIGN"
         OTHER = "OTHER"
+
+    class MODES:
+        ACTIVE = 'ACTIVE',
+        PASSIVE = 'PASSIVE'
 
 
 

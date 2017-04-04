@@ -1,11 +1,11 @@
+# -*- coding: utf-8 -*-
 from contacthub.models.query.criterion import Criterion
 
 
 class EntityField(object):
     """
     Class for creating Critierion object for queries.
-
-    Use this class for handling all operation that you want to implements in queries syntax  and create new Criterion
+    Use this class for handling all operation that you want to implements in queries syntax and create new Criterion
     with related operations.
     """
 

@@ -5,7 +5,7 @@ import mock
 from datetime import datetime
 from requests import HTTPError
 
-from contacthub.api_manager.api_event import EventAPIManager
+from contacthub._api_manager._api_event import _EventAPIManager
 from contacthub.models.event import Event
 from contacthub.workspace import Workspace
 from tests.utility import FakeHTTPResponse
@@ -16,7 +16,7 @@ class TestEventAPIManager(unittest.TestCase):
     @classmethod
     def setUp(cls):
         w = Workspace(workspace_id=123, token=456)
-        cls.event_manager = EventAPIManager(w.get_node(123))
+        cls.event_manager = _EventAPIManager(w.get_node(123))
         cls.headers_expected = {'Authorization': 'Bearer 456', 'Content-Type': 'application/json'}
         cls.base_url = 'https://api.contactlab.it/hub/v1/workspaces/123/events'
 
@@ -91,7 +91,7 @@ class TestEventAPIManager(unittest.TestCase):
         try:
             self.event_manager.get(_id='01')
         except HTTPError as e:
-            assert 'message' in str(e)
+            assert 'Message' in str(e)
 
     @mock.patch('requests.post',
                 return_value=FakeHTTPResponse(resp_path="tests/util/fake_event_response"))
@@ -106,7 +106,7 @@ class TestEventAPIManager(unittest.TestCase):
             self.event_manager.post(body={'a': 'b'})
         except HTTPError as e:
             mock_post.assert_called_with(self.base_url, headers=self.headers_expected, json={'a': 'b'})
-            assert 'message' in str(e)
+            assert 'Message' in str(e)
 
 
 

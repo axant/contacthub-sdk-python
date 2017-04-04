@@ -7,7 +7,6 @@ import datetime
 
 
 class TestEvent(unittest.TestCase):
-
     def setUp(cls):
         cls.list = [1, 2, 3]
 
@@ -23,7 +22,7 @@ class TestEvent(unittest.TestCase):
 
     def test_read_only_list_repr(self):
         rol = ReadOnlyList(self.list)
-        assert rol.__repr__() == [1,2,3].__repr__(), rol.__repr__()
+        assert rol.__repr__() == [1, 2, 3].__repr__(), rol.__repr__()
 
     def test_read_only_list_len(self):
         rol = ReadOnlyList(self.list)
@@ -42,18 +41,14 @@ class TestEvent(unittest.TestCase):
             assert 'JSON' in str(e)
 
     def test_date_encoder_date(self):
-        j = json.dumps(datetime.date(2017,10,1), cls=DateEncoder)
+        j = json.dumps(datetime.date(2017, 10, 1), cls=DateEncoder)
         assert "2017-10-01" in j, j
 
     def test_get_dictionary_paths(self):
         a = {'b': {'c': {'d': 1, 'e': 2}, 'f': {'g': 1}}}
-
-        paths_exp = [['b','c','d'], ['b','c','e'], ['b','f','g']]
         paths_exp = [['b', 'c', 'd'], ['b', 'c', 'e'], ['b', 'f', 'g']]
-
-
         paths = []
-        get_dictionary_paths(a, paths, [])
+        get_dictionary_paths(a, paths)
 
         for path in paths:
             assert path in paths_exp, path
@@ -63,14 +58,5 @@ class TestEvent(unittest.TestCase):
         d2 = {'a': {'beta': 'c'}}
 
         d_exp = {'a': {'beta': 'c', 'b': None, 'd': None}, 'f': None}
-        tracker = generate_mutation_tracker(d1,d2)
-        assert d_exp ==tracker, tracker
-
-
-
-
-
-
-
-
-
+        tracker = generate_mutation_tracker(d1, d2)
+        assert d_exp == tracker, tracker

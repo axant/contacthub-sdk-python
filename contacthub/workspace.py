@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from contacthub.node import Node
-from contacthub.parsers.config_parser import GeneralConfigParser
+from contacthub._parsers._config_parser import _GeneralConfigParser
 
 
 class Workspace(object):
@@ -26,7 +26,7 @@ class Workspace(object):
         :param file_path: The path of the INI file for the parameters
         :return: a new Workspace object
         """
-        options = GeneralConfigParser(file_path).get_options()
+        options = _GeneralConfigParser(file_path).get_options()
         workspace_id = options.get('workspace_id', '')
         token = options.get('token', '')
         base_url = options.get('base_url', '')

@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-from contacthub.api_manager.api_customer import CustomerAPIManager
-from contacthub.api_manager.api_event import EventAPIManager
+from contacthub._api_manager._api_customer import _CustomerAPIManager
+from contacthub._api_manager._api_event import _EventAPIManager
 from contacthub.lib.utils import resolve_mutation_tracker, convert_properties_obj_in_prop
 from contacthub.models import Properties
-
 from contacthub.models.customer import Customer
 from contacthub.models.education import Education
 from contacthub.models.event import Event
@@ -25,12 +24,13 @@ class Node(object):
         """
         self.workspace = workspace
         self.node_id = str(node_id)
-        self.customer_api_manager = CustomerAPIManager(node=self)
-        self.event_api_manager = EventAPIManager(node=self)
+        self.customer_api_manager = _CustomerAPIManager(node=self)
+        self.event_api_manager = _EventAPIManager(node=self)
 
     def get_customers(self, externalId=None, page=None, size=None):
         """
         Get all the customers in this node
+
         :return: A list containing Customer object of a node
         """
         customers = []
@@ -40,6 +40,14 @@ class Node(object):
         return customers
 
     def get_customer(self, id=None, externalId=None):
+        """
+        Retrieve a customer from the associated node by its id or external ID. Only one parameter can be specified for
+        getting a customer.
+
+        :param id: the id of the customer to retrieve
+        :param externalId: the external id of the customer to retrieve
+        :return: a Customer object representing the fetched customer
+        """
         if id and externalId:
             raise ValueError('Cannot get a customer by both its id and externalId')
         if not id and not externalId:
@@ -57,6 +65,7 @@ class Node(object):
     def query(self, entity):
         """
         Create a QueryBuilder object for a given entity, that allows to filter the entity's data
+
         :param entity: A class of model on which to run the query
         :return: A QueryBuilder object for the specified entity
         """
@@ -64,8 +73,11 @@ class Node(object):
 
     def delete_customer(self, id, **attributes):
         """
-        Delete the specified Customer from contacthub
-        :param customer: a Customer object representing the customer to delete
+        Delete the specified Customer from contacthub. For deleting an existing customer object, you should:
+        node.delete_customer(**c.to_dict())
+
+        :param id: a the id of the customer to delete
+        :param attributes: the attributes of the customer to delete
         :return: an object representing the deleted customer
         """
         return Customer(node=self, **self.customer_api_manager.delete(_id=id))
@@ -74,7 +86,8 @@ class Node(object):
         """
         Add a new customer in contacthub. If the customer already exist and force update is true, this method will update
         the entire customer with new data
-        :param customer: a Customer object representing the customer to add
+
+        :param attributes: the attributes for inserting the customer in the node
         :param force_update: a flag for update an already present customer
         :return: the customer added or updated
         """
@@ -84,8 +97,10 @@ class Node(object):
         """
         Update a customer in contacthub with new data. If full_update is true, this method will update the full customer (PUT)
         and not only the changed data (PATCH)
-        :param customer: a Customer object representing the customer to update
+
+        :param id: the customer ID for updating the customer with new attributes
         :param full_update: a flag for execute a full update to the customer
+        :param attributes: the attributes to patch or put in the customer
         :return: the customer updated
         """
 
@@ -98,8 +113,10 @@ class Node(object):
     def add_customer_session(self, session_id, id, **attributes):
         """
         Add a new session id for a customer.
-        :param customer_id: the customer ID for adding the session id
+
+        :param id: the customer ID for adding the session id
         :param session_id: a session ID for create a new session
+        :param attributes: the customer attributes that should include the ID of the custoemr.
         :return: the session id of the new session inserted
         """
         body = {'value': str(session_id)}
@@ -109,6 +126,7 @@ class Node(object):
     def create_session_id():
         """
         Create a new random session id conformed to the UUID standard
+
         :return: a new session id conformed to the UUID standard
         """
         return uuid.uuid4()
@@ -116,7 +134,8 @@ class Node(object):
     def add_tag(self, customer_id, tag):
         """
         Add a new tag in the list of customer's tags
-        :param customer: the Customer object for adding the tag
+
+        :param customer_id: the id customer in which adding the tag
         :param tag: a string, int, representing the tag to add
         """
         customer = self.get_customer(id=customer_id)
@@ -128,7 +147,8 @@ class Node(object):
     def remove_tag(self, customer_id, tag):
         """
         Remove (if exists) a tag in the list of customer's tag
-        :param customer_id: the Customer object for adding the tag
+
+        :param customer_id: the id customer in which adding the tag
         :param tag: a string, int, representing the tag to add
         """
         customer = self.get_customer(id=customer_id)
@@ -143,8 +163,9 @@ class Node(object):
     def add_job(self, customer_id, **attributes):
         """
         Insert a new Job for the given Customer
-        :param job: the new Job object to insert in the customer's job
-        :param customer: a customer object for inserting the job
+
+        :param customer_id: the id of the customer for adding the job
+        :param attributes: the attributes representing the new job to add
         :return: a Job object representing the added Job
         """
         entity_attrs = self.customer_api_manager.post(body=attributes, urls_extra=customer_id + '/jobs')
@@ -153,16 +174,20 @@ class Node(object):
     def remove_job(self, customer_id, id, **attributes):
         """
         Remove a the given Job for the given Customer
-        :param job: the Job object to remove from the customer's job
-        :param customer: a customer object for removing the job
+
+        :param customer_id: the id of the customer associated to the job to remove
+        :param id: the id of the job to remove
+        :param attributes: the attributes representing the job to delete, including its id
         """
         self.customer_api_manager.delete(_id=customer_id, urls_extra='jobs/' + id)
 
     def update_job(self, customer_id, id, **attributes):
         """
-        Update the given job of the given customer with new data
-        ::param job: the Job object to update in the customer's job
-        :param customer: a customer object for updating the job
+        Update the given job of the given customer with new specified attributes
+
+        :param customer_id: the id of the customer associated to the job to update
+        :param id: the id of the job to update
+        :param attributes: the attributes for update the job
         :return: a Job object representing the updated Job
         """
         entity_attrs = self.customer_api_manager.put(_id=customer_id, body=attributes, urls_extra='jobs/' + id)
@@ -170,56 +195,66 @@ class Node(object):
 
     def add_like(self, customer_id, **attributes):
         """
-        Insert a new Job for the given Customer
-        :param job: the new Job object to insert in the customer's job
-        :param customer: a customer object for inserting the job
-        :return: a Job object representing the added Job
+        Insert a new Like for the given Customer
+
+        :param customer_id: the id of the customer for adding the Like
+        :param attributes: the attributes representing the new Like to add
+        :return: a Like object representing the added Like
         """
         entity_attrs = self.customer_api_manager.post(body=attributes, urls_extra=customer_id + '/likes')
         return Like(customer=self.get_customer(id=customer_id), **entity_attrs)
 
     def remove_like(self, customer_id, id, **attributes):
         """
-        Remove a the given Job for the given Customer
-        :param job: the Job object to remove from the customer's job
-        :param customer: a customer object for removing the job
+        Remove a the given Like for the given Customer
+
+        :param customer_id: the id of the customer associated to the Like to remove
+        :param id: the id of the Like to remove
+        :param attributes: the attributes representing the Like to delete, including its id
         """
         self.customer_api_manager.delete(_id=customer_id, urls_extra='likes/' + id)
 
     def update_like(self, customer_id, id, **attributes):
         """
-        Update the given job of the given customer with new data
-        ::param job: the Job object to update in the customer's job
-        :param customer: a customer object for updating the job
-        :return: a Job object representing the updated Job
+        Update the given Like of the given customer with new specified attributes
+
+        :param customer_id: the id of the customer associated to the Like to update
+        :param id: the id of the Like to update
+        :param attributes: the attributes for update the Like
+        :return: a Like object representing the updated Like
         """
         entity_attrs = self.customer_api_manager.put(_id=customer_id, body=attributes, urls_extra='likes/' + id)
         return Like(customer=self.get_customer(id=customer_id), **entity_attrs)
 
     def add_education(self, customer_id, **attributes):
         """
-        Insert a new Job for the given Customer
-        :param job: the new Job object to insert in the customer's job
-        :param customer: a customer object for inserting the job
-        :return: a Job object representing the added Job
+        Insert a new Education for the given Customer
+
+        :param customer_id: the id of the customer for adding the Education
+        :param attributes: the attributes representing the new Education to add
+        :return: a Education object representing the added Education
         """
         entity_attrs = self.customer_api_manager.post(body=attributes, urls_extra=customer_id + '/educations')
         return Education(customer=self.get_customer(id=customer_id), **entity_attrs)
 
     def remove_education(self, customer_id, id, **attributes):
         """
-        Remove a the given Job for the given Customer
-        :param job: the Job object to remove from the customer's job
-        :param customer: a customer object for removing the job
+        Remove a the given Education for the given Customer
+
+        :param customer_id: the id of the customer associated to the Education to remove
+        :param id: the id of the Education to remove
+        :param attributes: the attributes representing the Education to delete, including its id
         """
         self.customer_api_manager.delete(_id=customer_id, urls_extra='educations/' + id)
 
     def update_education(self, customer_id, id, **attributes):
         """
-        Update the given job of the given customer with new data
-        ::param job: the Job object to update in the customer's job
-        :param customer: a customer object for updating the job
-        :return: a Job object representing the updated Job
+        Update the given Education of the given customer with new specified attributes
+
+        :param customer_id: the id of the customer associated to the Education to update
+        :param id: the id of the Education to update
+        :param attributes: the attributes for update the Education
+        :return: a Education object representing the updated Education
         """
         entity_attrs = self.customer_api_manager.put(_id=customer_id, body=attributes, urls_extra='educations/' + id)
         return Education(customer=self.get_customer(id=customer_id), **entity_attrs)
@@ -227,16 +262,17 @@ class Node(object):
     def get_events(self, customer_id, event_type=None, context=None, event_mode=None, date_from=None, date_to=None,
                    page=None, size=None):
         """
+        Get all events associated to a customer.
 
-        :param customer_id:
-        :param event_type:
-        :param context:
-        :param event_mode:
-        :param date_from:
-        :param date_to:
-        :param page:
-        :param size:
-        :return:
+        :param customer_id: The id of the customer owner of the event
+        :param event_type: the type of the event present in Event.TYPES
+        :param context: the context of the event present in Event.CONTEXT
+        :param event_mode: the mode of event. ACTIVE if the customer made the event, PASSIVE if the customer recive the event
+        :param date_from: From string or datetime for search of event
+        :param date_to: From string or datetime for search of event
+        :param size: the size of the pages containing customers
+        :param page: the number of the page for retrieve customer's data
+        :return: a list containing the fetched events associated to the given customer id
         """
         events = []
         resp = self.event_api_manager.get_all(customer_id=customer_id, type=event_type, mode=event_mode, dateFrom=date_from,
@@ -247,16 +283,26 @@ class Node(object):
 
     def get_event(self, id):
         """
+        Get a single event by its own id
 
-        :param id:
-        :return:
+        :param id: the id of the event to get
+        :return: a new Event object representing the fetched event
         """
         return Event(node=self, **self.event_api_manager.get(_id=id))
 
     def add_event(self, **attributes):
+        """
+        Add an event in this node. For adding it and associate with a known customer, specify the customer id in the
+        attributes of the Event. For associate it to an external Id or a session id of a customer, specify in the
+        bringBackProperties object like:
+        {'type':'EXTERNAL_ID',
+        'value':'value',
+        'nodeId':'nodeId'
+        }
+
+        :param attributes: the attributes of the event to add in the node
+        :return: a new Event object representing the event added in this node
+        """
         convert_properties_obj_in_prop(properties=attributes, properties_class=Properties)
         self.event_api_manager.post(body=attributes)
         return Event(node=self, **attributes)
-
-
-

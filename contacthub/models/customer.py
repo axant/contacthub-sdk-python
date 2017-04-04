@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
 from copy import deepcopy
 
-from contacthub.api_manager.api_customer import CustomerAPIManager
-from contacthub.api_manager.api_event import EventAPIManager
+from contacthub._api_manager._api_customer import _CustomerAPIManager
+from contacthub._api_manager._api_event import _EventAPIManager
+from contacthub.errors.operation_not_permitted import OperationNotPermitted
 from contacthub.lib.read_only_list import ReadOnlyList
 from contacthub.lib.utils import generate_mutation_tracker, convert_properties_obj_in_prop, \
     resolve_mutation_tracker
@@ -14,13 +16,28 @@ from contacthub.models.query.entity_meta import EntityMeta
 
 class Customer(with_metaclass(EntityMeta, object)):
     """
-    Customer model
+    Customer entity
     """
     __slots__ = ('attributes', 'node', 'customer_api_manager', 'event_api_manager', 'mute')
 
     def __init__(self, node, default_props=None, **attributes):
         """
-        :param json_properties: A dictionary containing the json_properties related to customers
+        Initialize a customer in a node with the specified attributes.
+
+        :param node: the node of the customer
+        :param default_props: the attributes schema. By default is the following dictionary:
+            {
+            'base':
+                    {
+                    'contacts': {}
+                    },
+            'extended': {},
+            'tags': {
+                    'manual': [],
+                    'auto': []
+                    }
+            }
+        :param attributes: key-value arguments for generating the structure of Customer's attributes
         """
 
         convert_properties_obj_in_prop(properties=attributes, properties_class=Properties)
@@ -42,12 +59,20 @@ class Customer(with_metaclass(EntityMeta, object)):
             self.attributes = default_props
 
         self.node = node
-        self.customer_api_manager = CustomerAPIManager(node=self.node)
-        self.event_api_manager = EventAPIManager(node=self.node)
+        self.customer_api_manager = _CustomerAPIManager(node=self.node)
+        self.event_api_manager = _EventAPIManager(node=self.node)
         self.mute = {}
 
     @classmethod
     def from_dict(cls, node, attributes=None):
+        """
+        Create a new Customer initialized by a specified dictionary of attributes
+
+        :rtype: Customer
+        :param node: the node of the customer
+        :param attributes: a dictionary representing the attributes of the new Customer
+        :return: a new Customer object
+        """
         o = cls(node=node)
         if attributes is None:
             o.attributes = {}
@@ -55,12 +80,22 @@ class Customer(with_metaclass(EntityMeta, object)):
             o.attributes = attributes
         return o
 
+    def to_dict(self):
+        """
+        Convert this Customer in a dictionary containing his attributes.
+
+        :rtype: dict
+        :return: a new dictionary representing the attributes of this Customer
+        """
+        return deepcopy(self.attributes)
+
     def __getattr__(self, item):
         """
-        Check if a key is in the dictionary and return it if it's a simple properties. Otherwise, if the
+        Check if a key is in the dictionary and return it if it's a simple attribute. Otherwise, if the
         element contains an object or list, redirect this element at the corresponding class.
+
         :param item: the key of the base properties dict
-        :return: an element of the dictionary, or an object if the element associated at the key containse an object or a list
+        :return: the item in the attributes dictionary if it's present, raise AttributeError otherwise.
         """
         try:
             if isinstance(self.attributes[item], dict):
@@ -71,6 +106,12 @@ class Customer(with_metaclass(EntityMeta, object)):
             raise AttributeError("%s object has no attribute %s" % (type(self).__name__, e))
 
     def __setattr__(self, attr, val):
+        """
+        x.__setattr__('attr', val) <==> x.attr = val
+        If `val` is simple type value (dictionary, list, str, int, ecc.), update the attributes dictionary with new
+        values, otherwise, if `val` is instance of Properties, check for mutations in the Properties object.
+        This method generate the mutation tracker dictionary.
+        """
         if attr in self.__slots__:
             return super(Customer, self).__setattr__(attr, val)
         else:
@@ -81,7 +122,7 @@ class Customer(with_metaclass(EntityMeta, object)):
                         if key not in tracker or (key in tracker and val.attributes[key]):
                             tracker[key] = val.attributes[key]
                     self.mute[attr] = tracker
-                except KeyError as e:
+                except KeyError:
                     self.mute[attr] = val.attributes
                 self.attributes[attr] = val.attributes
             else:
@@ -93,9 +134,10 @@ class Customer(with_metaclass(EntityMeta, object)):
     @property
     def events(self):
         """
-        Get all the events in this node for a single customer specified
-        :param id: the id of the customer for fetching the events associated
-        :return: A list containing Events object of a node
+        Get all the events associated to this Customer.
+
+        :rtype: list
+        :return: A list containing Events object associated to this Customer
         """
         if self.node and 'id' in self.attributes:
             events = []
@@ -103,19 +145,34 @@ class Customer(with_metaclass(EntityMeta, object)):
             for event in resp['elements']:
                 events.append(Event.from_dict(node=self.node, attributes=event))
             return ReadOnlyList(events)
-        raise Exception('Cannot retrieve events from a new customer created.')
+        raise OperationNotPermitted('Cannot retrieve events from a new customer created.')
 
     def post(self, force_update=False):
+        """
+        Post this Customer in the associated Node.
+
+        :param force_update: if it's True and the customer already exists in the node, patch the customer with the
+        modified properties.
+        """
         self.customer_api_manager.post(body=self.attributes, force_update=force_update)
 
     def delete(self):
+        """
+        Delete this customer from the associated Node.
+        """
         self.customer_api_manager.delete(_id=self.attributes['id'])
 
     def patch(self):
+        """
+        Patch this customer in the associated node, updating his attributes with the modified ones.
+        """
         tracker = resolve_mutation_tracker(self.mute)
         self.customer_api_manager.patch(_id=self.attributes['id'], body=tracker)
 
     def put(self):
+        """
+        Put this customer in the associated node, substituting all the old attributes with the ones in this Customer.
+        """
         body = deepcopy(self.attributes)
         body.pop('registeredAt', None)
         body.pop('updatedAt', None)
@@ -124,7 +181,27 @@ class Customer(with_metaclass(EntityMeta, object)):
         self.customer_api_manager.put(_id=self.attributes['id'], body=body)
 
     def mutation_tracker(self):
+        """
+        Get the mutation tracker for this customer
+
+        :rtype: dict
+        :return: the mutation tracker of this customer
+        """
         return resolve_mutation_tracker(self.mute)
 
-    def to_dict(self):
-        return deepcopy(self.attributes)
+    class SUBSCRIPTION_KINDS:
+        DIGITAL_MESSAGE = 'DIGITAL_MESSAGE',
+        SERVICE = 'SERVICE',
+        OTHER = 'OTHER'
+
+    class OTHER_CONTACT_TYPES:
+        MOBILE = 'MOBILE',
+        PHONE = 'PHONE',
+        EMAIL = 'EMAIL',
+        FAX = 'FAX',
+        OTHER = 'OTHER'
+
+    class MOBILE_DEVICE_TYPES:
+        APN = 'APN',
+        GCM = 'GCM',
+        WP = 'WP'
