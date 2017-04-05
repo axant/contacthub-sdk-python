@@ -79,7 +79,7 @@ class TestLike(unittest.TestCase):
 
     @mock.patch('requests.post', return_value=FakeHTTPResponse(resp_path='tests/util/fake_like_response'))
     def test_post_like_create_base(self, mock_post):
-        c = Customer(node=self.node, default_props={}, id='01')
+        c = Customer(node=self.node, default_attributes={}, id='01')
         j = Like(customer=c, id='id', category='category', name='name', createdTime='1994-02-11T14:05M')
         j.post()
 

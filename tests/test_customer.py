@@ -509,7 +509,7 @@ class TestCustomer(unittest.TestCase):
         mock_patch.assert_called_with(self.base_url_customer + '/01', headers=self.headers_expected, json=body)
 
     def test_create_customer_with_default_schema(self):
-        c = Customer(node=self.node, default_props={'prop': {'prop1': 'value1'}, 'prop2': 'value2'},
+        c = Customer(node=self.node, default_attributes={'prop': {'prop1': 'value1'}, 'prop2': 'value2'},
                      prop3=Properties(prop4='value4'))
         internal = {'prop': {'prop1': 'value1'}, 'prop2': 'value2', 'prop3': {'prop4': 'value4'}}
         assert c.attributes == internal, c.attributes
@@ -522,7 +522,7 @@ class TestCustomer(unittest.TestCase):
         assert c.attributes is prop, c.attributes
 
     def test_customer_patch_new_prop(self):
-        c = Customer(node=self.node, default_props={'prop': {'prop1': 'value1'}, 'prop2': 'value2'},
+        c = Customer(node=self.node, default_attributes={'prop': {'prop1': 'value1'}, 'prop2': 'value2'},
                      prop3=Properties(prop4='value4'))
 
         c.prop5 = Properties(prop6='value5')

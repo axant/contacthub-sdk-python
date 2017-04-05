@@ -91,6 +91,7 @@ class Node(object):
         :param force_update: a flag for update an already present customer
         :return: the customer added or updated
         """
+        convert_properties_obj_in_prop(properties=attributes, properties_class=Properties)
         return Customer(node=self, **self.customer_api_manager.post(body=attributes, force_update=force_update))
 
     def update_customer(self, id, full_update=False, **attributes):
@@ -103,7 +104,7 @@ class Node(object):
         :param attributes: the attributes to patch or put in the customer
         :return: the customer updated
         """
-
+        convert_properties_obj_in_prop(properties=attributes, properties_class=Properties)
         if full_update:
             attributes['id'] = id
             return Customer(node=self, **self.customer_api_manager.put(_id=id, body=attributes))

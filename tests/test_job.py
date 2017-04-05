@@ -86,7 +86,7 @@ class TestJob(unittest.TestCase):
 
     @mock.patch('requests.post', return_value=FakeHTTPResponse(resp_path='tests/util/fake_job_response'))
     def test_post_job_create_base(self, mock_post):
-        c = Customer(node=self.node, default_props={}, id='01')
+        c = Customer(node=self.node, default_attributes={}, id='01')
         j = Job(customer=c, id='01', companyIndustry='companyIndustry', startDate=u'1994-10-06',
                 endDate=u'1994-10-06', companyName='companyName', jobTitle='jobTitle',
                 isCurrent=True)

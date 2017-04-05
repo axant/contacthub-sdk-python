@@ -140,7 +140,7 @@ class TestNode(TestSuite):
     def test_update_customer_not_full(self, mock_patch):
         c = Customer(node=self.node, id='01', base=Properties(contacts=Properties(email='email')))
         c.extra = 'extra'
-        self.node.update_customer(c.id, **c.mutation_tracker())
+        self.node.update_customer(c.id, **c.get_mutation_tracker())
         body = {'extra': 'extra'}
         mock_patch.assert_called_with(self.base_url + '/01', headers=self.headers_expected, json=body)
 

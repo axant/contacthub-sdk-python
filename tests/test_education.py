@@ -81,7 +81,7 @@ class TestEducation(unittest.TestCase):
 
     @mock.patch('requests.post', return_value=FakeHTTPResponse(resp_path='tests/util/fake_education_response'))
     def test_post_education_create_base(self, mock_post):
-        c = Customer(node=self.node, default_props={}, id='01')
+        c = Customer(node=self.node, default_attributes={}, id='01')
         e = Education(customer=c, id='01', schoolType='COLLEGE', startYear=1994, endYear=2000,
                       schoolName='schoolName', schoolConcentration='schoolConcentration', isCurrent=True)
 

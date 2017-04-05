@@ -20,12 +20,12 @@ class Customer(with_metaclass(EntityMeta, object)):
     """
     __slots__ = ('attributes', 'node', 'customer_api_manager', 'event_api_manager', 'mute')
 
-    def __init__(self, node, default_props=None, **attributes):
+    def __init__(self, node, default_attributes=None, **attributes):
         """
         Initialize a customer in a node with the specified attributes.
 
         :param node: the node of the customer
-        :param default_props: the attributes schema. By default is the following dictionary:
+        :param default_attributes: the attributes schema. By default is the following dictionary:
             {
             'base':
                     {
@@ -41,7 +41,7 @@ class Customer(with_metaclass(EntityMeta, object)):
         """
 
         convert_properties_obj_in_prop(properties=attributes, properties_class=Properties)
-        if default_props is None:
+        if default_attributes is None:
             if 'base' not in attributes:
                 attributes['base'] = {}
 
@@ -55,8 +55,8 @@ class Customer(with_metaclass(EntityMeta, object)):
                 attributes['tags'] = {'auto': [], 'manual': []}
             self.attributes = attributes
         else:
-            default_props.update(attributes)
-            self.attributes = default_props
+            default_attributes.update(attributes)
+            self.attributes = default_attributes
 
         self.node = node
         self.customer_api_manager = _CustomerAPIManager(node=self.node)
@@ -180,7 +180,7 @@ class Customer(with_metaclass(EntityMeta, object)):
             body['base']['timezone'] = 'Europe/Rome'
         self.customer_api_manager.put(_id=self.attributes['id'], body=body)
 
-    def mutation_tracker(self):
+    def get_mutation_tracker(self):
         """
         Get the mutation tracker for this customer
 
