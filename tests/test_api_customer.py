@@ -39,6 +39,12 @@ class TestCustomerAPIManager(TestSuite):
         except HTTPError as e:
             mock_get.assert_called_with(self.base_url, headers=self.headers_expected, params=params_expected)
 
+    @mock.patch('requests.get', return_value=FakeHTTPResponse())
+    def test_get_customer_extra(self, mock_get):
+        params_expected = {'nodeId': '123'}
+        self.customer_manager.get(_id='01', urls_extra='extra')
+        mock_get.assert_called_with(self.base_url + '/01/extra', headers=self.headers_expected)
+
 
     @mock.patch('requests.post', return_value=FakeHTTPResponse(resp_path='tests/util/fake_query_response'))
     def test_post_customer(self, mock_get):

@@ -2,7 +2,7 @@ import unittest
 from contacthub.lib.read_only_list import ReadOnlyList
 import json
 
-from contacthub.lib.utils import DateEncoder, get_dictionary_paths, generate_mutation_tracker
+from contacthub.lib.utils import DateEncoder, get_dictionary_paths, generate_mutation_tracker, remove_empty_attributes
 import datetime
 
 
@@ -60,3 +60,9 @@ class TestEvent(unittest.TestCase):
         d_exp = {'a': {'beta': 'c', 'b': None, 'd': None}, 'f': None}
         tracker = generate_mutation_tracker(d1, d2)
         assert d_exp == tracker, tracker
+
+    def test_remove_empty_attributes(self):
+        d = {'s': [], 'a': None, 'b': {'r': None, 's': [], 'c': [{'a': None, 'd': 'd'}]}}
+        d1 = {'s': [], 'b': {'s': [], 'c': [{'d': 'd'}]}}
+        r = remove_empty_attributes(d)
+        assert d1 == r, r

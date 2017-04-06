@@ -3,7 +3,7 @@
 # Contacthub Python SDK
 
 ## Table of contents
--   [Introduction](#introdcution)
+-   [Introduction](#introduction)
 -   [Getting started](#getting_started)
     -   [Installing and importing the SDK](#installing)
 	-   [Performing simple operations on customers](#simpleoperations)
@@ -906,3 +906,4 @@ customer 8b321dce-53c4-4029-8388-1938efa2090c. Errors: []. Data: data}. Logref: 
 <a name="apireference"/>
 
 ##API Reference
+

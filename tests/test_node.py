@@ -312,6 +312,27 @@ class TestNode(TestSuite):
         assert isinstance(e, Event), type(e)
         assert e.customerId == '46cf4766-770b-4e2f-b5e2-c82273e45ab9', e.customerId
 
+    @mock.patch('requests.get', return_value=FakeHTTPResponse(resp_path='tests/util/fake_job_response'))
+    def test_get_job(self, mock_get):
+        j = self.node.get_customer_job(customer_id='123', job_id='456')
+        mock_get.assert_called_with(self.base_url + '/123/jobs/456', headers=self.headers_expected)
+        assert isinstance(j, Job), type(j)
+        assert j.companyIndustry == 'companyIndustry', j.companyIndustry
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse(resp_path='tests/util/fake_like_response'))
+    def test_get_like(self, mock_get):
+        l = self.node.get_customer_like(customer_id='123', like_id='456')
+        mock_get.assert_called_with(self.base_url + '/123/likes/456', headers=self.headers_expected)
+        assert isinstance(l, Like), type(l)
+        assert l.name == 'name', l.name
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse(resp_path='tests/util/fake_education_response'))
+    def test_get_education(self, mock_get):
+        e = self.node.get_customer_education(customer_id='123', education_id='456')
+        mock_get.assert_called_with(self.base_url + '/123/educations/456', headers=self.headers_expected)
+        assert isinstance(e, Education), type(e)
+        assert e.schoolType == Education.SCHOOL_TYPES.COLLEGE, e.schoolType
+
     @mock.patch('requests.post', return_value=FakeHTTPResponse(resp_path='tests/util/fake_single_event_response'))
     def test_post_event(self, mock_post):
         self.node.add_event(a=[Properties(a='b')], b='c', d=Properties(f='g', h=Properties(i='j')),
