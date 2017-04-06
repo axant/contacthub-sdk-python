@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import requests
 import json
+
+from copy import deepcopy
 from requests import HTTPError
 
 from contacthub.errors.api_error import APIError
@@ -56,15 +58,20 @@ class _CustomerAPIManager(object):
                                                                                            response_text['data'],
                                                                                            response_text['logref']))
 
-    def get(self, _id):
+    def get(self, _id, urls_extra=None):
         """
         Get a customer in the specified Node.
 
         :param _id: the id of the customer to get
+        :param urls_extra: The extra url at the end of the base url of this class, for reaching end point of other
+            entities like Job, Education and Like
         :return: A dictionary representing the JSON response from the API called if there were no errors, else raise an
             HTTPException
         """
-        resp = requests.get(self.request_url + '/' + str(_id), headers=self.headers)
+        request_url = self.request_url + '/' + str(_id)
+        if urls_extra:
+            request_url += "/" + urls_extra
+        resp = requests.get(request_url, headers=self.headers)
         response_text = json.loads(resp.text)
         if 200 <= resp.status_code < 300:
             return response_text
@@ -100,7 +107,7 @@ class _CustomerAPIManager(object):
         if 200 <= resp.status_code < 300:
             return response_text
         if resp.status_code == 409 and force_update:
-            body.pop('nodeId')
+            body.pop('nodeId', None)
             return self.patch(_id=response_text['data']['customer']['id'], body=body)
         raise APIError("Status code: %s. Message: %s. Errors: %s. Data: %s. Logref: %s" % (resp.status_code,
                                                                                            response_text['message'],

@@ -6,7 +6,7 @@ from contacthub._api_manager._api_event import _EventAPIManager
 from contacthub.errors.operation_not_permitted import OperationNotPermitted
 from contacthub.lib.read_only_list import ReadOnlyList
 from contacthub.lib.utils import generate_mutation_tracker, convert_properties_obj_in_prop, \
-    resolve_mutation_tracker
+    resolve_mutation_tracker, remove_empty_attributes
 from contacthub.models.event import Event
 from six import with_metaclass
 
@@ -154,7 +154,11 @@ class Customer(with_metaclass(EntityMeta, object)):
         :param force_update: if it's True and the customer already exists in the node, patch the customer with the
         modified properties.
         """
-        self.customer_api_manager.post(body=self.attributes, force_update=force_update)
+        self.attributes.pop('registeredAt', None)
+        self.attributes.pop('updatedAt', None)
+        self.attributes.pop('id', None)
+        body = remove_empty_attributes(self.attributes)
+        self.customer_api_manager.post(body=body, force_update=force_update)
 
     def delete(self):
         """
@@ -205,3 +209,10 @@ class Customer(with_metaclass(EntityMeta, object)):
         APN = 'APN',
         GCM = 'GCM',
         WP = 'WP'
+
+    class NOTIFICATION_SERVICES:
+        APN = "APN",
+        GCM = "GCM",
+        WNS = "WNS",
+        ADM = "ADM",
+        SNS = "SNS"

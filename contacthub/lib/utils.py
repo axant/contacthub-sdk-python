@@ -92,6 +92,20 @@ def generate_mutation_tracker(old_attributes, new_attributes):
     return mutation_tracker
 
 
+def remove_empty_attributes(body):
+    new = deepcopy(body)
+    for key in body:
+        if body[key] and isinstance(body[key], dict):
+            new[key] = remove_empty_attributes(body[key])
+        if body[key] and isinstance(body[key], list):
+            for elem in new[key]:
+                if isinstance(elem, dict):
+                    new[key][new[key].index(elem)] = remove_empty_attributes(elem)
+        if body[key] is None:
+            new.pop(key)
+    return new
+
+
 def convert_properties_obj_in_prop(properties, properties_class):
     """
     Convert the internal properties of `properties_class` object in a dictionary.

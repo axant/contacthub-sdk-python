@@ -87,3 +87,15 @@ class TestEvent(unittest.TestCase):
         mock_post.assert_called_with(self.base_url, headers=self.headers_expected,
                                      json={'a': [{'a': 'b'}], 'b': 'c', 'd':
                                          {'f': 'g', 'h': {'i': 'j'}}, 'k': {'l': {'m': 'n', 'o': 'p'}}})
+
+    @mock.patch('requests.post', return_value=FakeHTTPResponse(resp_path='tests/util/fake_event_response'))
+    def test_post_bring_back(self, mock_post):
+        e = Event(node=self.node, a=[Properties(a='b')], b='c', bringBackProperties=Properties(type='EXTERNAL_ID',
+                                                                                               value='01'),
+                  d=Properties(f='g', h=Properties(i='j')), k=dict(l=Properties(m='n', o='p')))
+        e.post()
+        mock_post.assert_called_with(self.base_url, headers=self.headers_expected,
+                                     json={'bringBackProperties':{'type':'EXTERNAL_ID', 'value': '01',
+                                                                  'nodeId':self.node.node_id},'a': [{'a': 'b'}],
+                                           'b': 'c', 'd': {'f': 'g', 'h': {'i': 'j'}}, 'k': {'l': {'m': 'n',
+                                                                                                   'o': 'p'}}})

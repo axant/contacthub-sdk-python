@@ -505,7 +505,6 @@ class TestCustomer(unittest.TestCase):
         body = {'extra': 'extra', 'base': {'contacts': {'email': 'email@email.email'}}}
         c = Customer.from_dict(node=self.node, attributes=body)
         posted = c.post(force_update=True)
-        body.pop('nodeId')
         mock_patch.assert_called_with(self.base_url_customer + '/01', headers=self.headers_expected, json=body)
 
     def test_create_customer_with_default_schema(self):

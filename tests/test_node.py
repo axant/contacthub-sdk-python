@@ -158,7 +158,7 @@ class TestNode(TestSuite):
     def test_add_customer_session(self, mock_get):
         s_id = self.node.create_session_id()
         body = {'value': str(s_id)}
-        self.node.add_customer_session(session_id=s_id, **Customer(id='01', node=self.node).to_dict())
+        self.node.add_customer_session(session_id=s_id, customer_id='01')
         mock_get.assert_called_with(self.base_url + '/01/sessions', headers=self.headers_expected, json=body)
 
     @mock.patch('requests.get',
@@ -213,8 +213,8 @@ class TestNode(TestSuite):
     @mock.patch('requests.get', return_value=FakeHTTPResponse())
     @mock.patch('requests.post', return_value=FakeHTTPResponse(resp_path='tests/util/fake_education_response'))
     def test_add_education(self, mock_post, mock_get):
-        e = self.node.add_education(customer_id='123', schoolType='schoolType', schoolName='schoolName',
-                                    schoolConcentration='schoolConcentration', isCurrent=True, id='01',
+        e = self.node.add_education(customer_id='123', id='01', schoolType='schoolType', schoolName='schoolName',
+                                    schoolConcentration='schoolConcentration', isCurrent=True,
                                     startYear='1994',
                                     endYear='2000')
         assert isinstance(e, Education), type(e)
@@ -240,17 +240,17 @@ class TestNode(TestSuite):
 
     @mock.patch('requests.delete', return_value=FakeHTTPResponse(resp_path=None))
     def test_remove_job(self, mock_delete):
-        self.node.remove_job(customer_id='01', **{'id': '02'})
+        self.node.remove_job(customer_id='01', job_id='02')
         mock_delete.assert_called_with(self.base_url + '/01/jobs/02', headers=self.headers_expected)
 
     @mock.patch('requests.delete', return_value=FakeHTTPResponse(resp_path=None))
     def test_remove_education(self, mock_delete):
-        self.node.remove_education(customer_id='01', **{'id': '02'})
+        self.node.remove_education(customer_id='01', education_id='02')
         mock_delete.assert_called_with(self.base_url + '/01/educations/02', headers=self.headers_expected)
 
     @mock.patch('requests.delete', return_value=FakeHTTPResponse(resp_path=None))
     def test_remove_like(self, mock_delete):
-        self.node.remove_like(customer_id='01', **{'id': '02'})
+        self.node.remove_like(customer_id='01', like_id='02')
         mock_delete.assert_called_with(self.base_url + '/01/likes/02', headers=self.headers_expected)
 
     @mock.patch('requests.get', return_value=FakeHTTPResponse())

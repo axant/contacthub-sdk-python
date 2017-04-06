@@ -93,6 +93,8 @@ class Event(object):
         'nodeId':'nodeId'
         }
         """
+        if 'bringBackProperties' in self.attributes and not 'nodeId' in self.attributes['bringBackProperties']:
+            self.attributes['bringBackProperties']['nodeId'] = self.node.node_id
         self.event_api_manager.post(body=self.attributes)
 
 

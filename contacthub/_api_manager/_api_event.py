@@ -2,6 +2,7 @@
 import json
 from datetime import datetime
 import requests
+from contacthub.lib.utils import DateEncoder
 from requests import HTTPError
 
 from contacthub.errors.api_error import APIError
@@ -97,7 +98,8 @@ class _EventAPIManager(object):
         :return: A dictionary representing the JSON response from the API called if there were no errors, else raise an
             HTTPException
         """
-        resp = requests.post(self.request_url, headers=self.headers, json=body)
+        body = json.dumps(body, cls=DateEncoder)
+        resp = requests.post(self.request_url, headers=self.headers, json=json.loads(body))
         if resp.text:
             response_text = json.loads(resp.text)
             if 200 <= resp.status_code < 300:

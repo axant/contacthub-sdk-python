@@ -111,17 +111,16 @@ class Node(object):
         else:
             return Customer(node=self, **self.customer_api_manager.patch(_id=id, body=attributes))
 
-    def add_customer_session(self, session_id, id, **attributes):
+    def add_customer_session(self, customer_id, session_id):
         """
         Add a new session id for a customer.
 
-        :param id: the customer ID for adding the session id
+        :param customer_id: the customer ID for adding the session id
         :param session_id: a session ID for create a new session
-        :param attributes: the customer attributes that should include the ID of the custoemr.
         :return: the session id of the new session inserted
         """
         body = {'value': str(session_id)}
-        return self.customer_api_manager.post(body=body, urls_extra=id + '/sessions')['value']
+        return self.customer_api_manager.post(body=body, urls_extra=customer_id + '/sessions')['value']
 
     @staticmethod
     def create_session_id():
@@ -161,6 +160,17 @@ class Node(object):
         except ValueError as e:
             raise ValueError("Tag not in Customer's Tags")
 
+    def get_customer_job(self, customer_id, job_id):
+        """
+        Get a job associated to a customer by its ID
+
+        :param job_id: the unique id of the job to get in a customer
+        :param customer_id: the id of the customer for getting the job
+        :return: a new Job object containing the attributes associated to the job
+        """
+        return Job(customer=self.get_customer(id=customer_id), **self.customer_api_manager.get(_id=customer_id, urls_extra='jobs/' +
+                                                                                                         job_id))
+
     def add_job(self, customer_id, **attributes):
         """
         Insert a new Job for the given Customer
@@ -172,15 +182,14 @@ class Node(object):
         entity_attrs = self.customer_api_manager.post(body=attributes, urls_extra=customer_id + '/jobs')
         return Job(customer=self.get_customer(id=customer_id), **entity_attrs)
 
-    def remove_job(self, customer_id, id, **attributes):
+    def remove_job(self, customer_id, job_id):
         """
         Remove a the given Job for the given Customer
 
         :param customer_id: the id of the customer associated to the job to remove
-        :param id: the id of the job to remove
-        :param attributes: the attributes representing the job to delete, including its id
+        :param job_id: the id of the job to remove
         """
-        self.customer_api_manager.delete(_id=customer_id, urls_extra='jobs/' + id)
+        self.customer_api_manager.delete(_id=customer_id, urls_extra='jobs/' + job_id)
 
     def update_job(self, customer_id, id, **attributes):
         """
@@ -194,6 +203,17 @@ class Node(object):
         entity_attrs = self.customer_api_manager.put(_id=customer_id, body=attributes, urls_extra='jobs/' + id)
         return Job(customer=self.get_customer(id=customer_id), **entity_attrs)
 
+    def get_customer_like(self, customer_id, like_id):
+        """
+        Get a like associated to a customer by its ID
+
+        :param like_id: the unique id of the like to get in a customer
+        :param customer_id: the id of the customer for getting the like
+        :return: a new Like object containing the attributes associated to the like
+        """
+        return Like(customer=self.get_customer(id=customer_id), **self.customer_api_manager.get(_id=customer_id, urls_extra='likes/' +
+                                                                                                         like_id))
+
     def add_like(self, customer_id, **attributes):
         """
         Insert a new Like for the given Customer
@@ -205,15 +225,14 @@ class Node(object):
         entity_attrs = self.customer_api_manager.post(body=attributes, urls_extra=customer_id + '/likes')
         return Like(customer=self.get_customer(id=customer_id), **entity_attrs)
 
-    def remove_like(self, customer_id, id, **attributes):
+    def remove_like(self, customer_id, like_id):
         """
         Remove a the given Like for the given Customer
 
         :param customer_id: the id of the customer associated to the Like to remove
-        :param id: the id of the Like to remove
-        :param attributes: the attributes representing the Like to delete, including its id
+        :param like_id: the id of the Like to remove
         """
-        self.customer_api_manager.delete(_id=customer_id, urls_extra='likes/' + id)
+        self.customer_api_manager.delete(_id=customer_id, urls_extra='likes/' + like_id)
 
     def update_like(self, customer_id, id, **attributes):
         """
@@ -227,6 +246,17 @@ class Node(object):
         entity_attrs = self.customer_api_manager.put(_id=customer_id, body=attributes, urls_extra='likes/' + id)
         return Like(customer=self.get_customer(id=customer_id), **entity_attrs)
 
+    def get_customer_education(self, customer_id, education_id):
+        """
+        Get an education associated to a customer by its ID
+
+        :param education_id: the unique id of the education to get in a customer
+        :param customer_id: the id of the customer for getting the education
+        :return: a new Education object containing the attributes associated to the education
+        """
+        return Education(customer=self.get_customer(id=customer_id), **self.customer_api_manager.get(_id=customer_id, urls_extra='educations/' +
+                                                                                                         education_id))
+
     def add_education(self, customer_id, **attributes):
         """
         Insert a new Education for the given Customer
@@ -238,15 +268,14 @@ class Node(object):
         entity_attrs = self.customer_api_manager.post(body=attributes, urls_extra=customer_id + '/educations')
         return Education(customer=self.get_customer(id=customer_id), **entity_attrs)
 
-    def remove_education(self, customer_id, id, **attributes):
+    def remove_education(self, customer_id, education_id):
         """
         Remove a the given Education for the given Customer
 
         :param customer_id: the id of the customer associated to the Education to remove
-        :param id: the id of the Education to remove
-        :param attributes: the attributes representing the Education to delete, including its id
+        :param education_id: the id of the Education to remove
         """
-        self.customer_api_manager.delete(_id=customer_id, urls_extra='educations/' + id)
+        self.customer_api_manager.delete(_id=customer_id, urls_extra='educations/' + education_id)
 
     def update_education(self, customer_id, id, **attributes):
         """
