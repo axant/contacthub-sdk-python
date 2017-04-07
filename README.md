@@ -65,21 +65,21 @@ import contacthub
 
 #### Getting Customer's data
 
-Retrieving entity's data can be easily archived with simple operations.
+Retrieving entity's data can be easily achieved with simple operations.
 
 First of all, you need to authenticate with credentials provided by `ContactHub`:
-```
+```python
 from contacthub import Workspace
 
 workspace = Workspace(workspace_id = 'workspace_id', token = 'token')
 ```
 After that you can get a `Node` object to perform all operations on customers and events:
-```
-my_node = workspace.get_node(node_id='node_id')
+```python
+node = workspace.get_node(node_id='node_id')
 ```
 With a node, is immediate to get all customers data in a ``list`` of ``Customer`` objects:
-```
-customers = my_node.customers
+```python
+customers = node.get_customers()
 
 for customer in customers:
   print(customer.base.firstName)
@@ -87,21 +87,22 @@ for customer in customers:
 
 Getting a single ``Customer``:
 
-```
-my_customer = my_node.get_customer(id='id')
+```python
+my_customer = node.get_customer(id='id')
 
 print('Welcome back %s', % my_customer.base.firstName)
 ```
 or querying on customers by theirs own properties:
 
-```
-fetched_customers = my_node.query(Customer).filter((Customer.base.firstName == 'Bruce') & (Customer.base.secondName == 'Wayne')).all()
+```python
+fetched_customers = node.query(Customer).filter((Customer.base.firstName == 'Bruce') & (Customer.base.secondName == 'Wayne')).all()
 ```
 
 #### Add a new Customer
 
-Creating and posting a Customer is simple as getting. The method `add_customer` of the node take a dictionary containing the structure of your customer as parameter and returns a new Customer object:
-```
+Creating and posting a Customer is simple as getting. The method `add_customer` of the node take a dictionary containing
+the structure of your customer as parameter and returns a new Customer object:
+```python
 customer_struct =   {
                     'base': {'contacts': {'email': 'myemail@email.com'}}, 
                     'extra': 'extra', 
@@ -110,17 +111,17 @@ customer_struct =   {
 my_customer = c.add_customer(**customer_struct)
 ```
 For creating the customer structure, you can also create a new Customer object and convert it to a dictionary for posting:
-```
+```python
 from contacthub.models import Customer
 
-my_customer = Customer(node = my_node)
+my_customer = Customer(node = node)
 my_customer.base.contacts.email = 'myemail@email.com'
 my_customer.extra = 'extra'
 my_customer.extended.my_string = 'my new extended property string'
-my_customer = c.add_customer(**my_customer.to_dict())
+my_customer = node.add_customer(**my_customer.to_dict())
 ```
 or posting it directly with the `post` method:
-```
+```python
 my_customer.post()
 ```
 
@@ -129,8 +130,8 @@ my_customer.post()
 In this SDK entities are easily connected.
 For retrieving all events associated to a ``Customer``, just:
 
-```
-my_customer = my_node.get_customer(id='id')
+```python
+my_customer = node.get_customer(id='id')
 events = my_customer.events
 ```
 
@@ -143,19 +144,19 @@ but you cannot add new ones or delete.
 
 You can create a `Workspace` object that allows the control of the workspace's nodes. It require the workspace id and the access token provided by ContactHub. 
 
-```
+```python
 my_workspace = Workspace(workspace_id='workspace_id', token='token')
 ```
 
 If not specified, the SDK will use the default URL for the ConctactHub API - `https://api.contactlab.it/hub/v1` - but you can specify a different base URL for the API:
 
-```
+```python
 my_workspace = Workspace(workspace_id='workspace_id', token='token', base_url='base_url')
 ```
 
 Once obtained a workspace, you're able to access the various nodes linked to it with the `get_node` method:
-```
-my_node = workspace.get_node(node_id='node_id')
+```python
+node = workspace.get_node(node_id='node_id')
 ```
 
 This method will return a `Node` object, that allows you to perform all operations on customers and events.
@@ -166,12 +167,12 @@ A ``Node`` is a key object for getting, posting, putting, patching and deleting 
 You can specify the workspace ID, the access token and the base url (not mandatory. If ommited, the default base URL for ContactHub will be used) 
 via INI file:
 
-```
+```python
 my_workspace = Workspace.from_INI_file('file.INI')
 ```
 
 The file must follow this template :
-```
+```python
 workspace_id = workspace_id
 token = token
 base_url = base_url
@@ -191,7 +192,7 @@ Like every other entities in ContactHub, you can perform an operation via two me
  
 #### 1. Adding a new customer via the methods provided by the `Node` class 
 In this first case, a new customer can be added in ContactHub by the `Node` object. By default, the `add_customer` method takes as parameter a dictionary containing the structure of your new customer and return a new `Customer` object:
-```
+```python
 customer_structure = {
                         'externalId': '01',
                         'extra': 'extra',
@@ -206,21 +207,21 @@ customer_structure = {
                                 }
                         }
                         
-my_customer = my_node.add_customer(**customer_structure)
+my_customer = node.add_customer(**customer_structure)
 ```
 
 To specify the structure of your new customer, you can also use the `Customer` class, creating a new `Customer` object and converting it to a dictionary:
 ```
 from contacthub.models import Customer
 
-post_customer = Customer(node = my_node)
+post_customer = Customer(node = node)
 post_customer.base.firstName = 'Bruce'
 post_customer.base.lastName = 'Wayne'
 post_customer.base.contacts.email = 'email@example.com'
 post_customer.extra = 'extra'
 post_customer.extended.my_string = 'my new extended property string'
 
-new_customer = my_node.add_customer(**post_customer.to_dict())
+new_customer = node.add_customer(**post_customer.to_dict())
 ```
 
 When you declare a new `Customer`, by default its internal structure start with this template:
@@ -237,18 +238,18 @@ When you declare a new `Customer`, by default its internal structure start with 
 ```
 You can directly access every simple attribute (strings, numbers) in a new customer created with the above structure.
 It's possibile to re-define your own internal structure for a customer with the `default_attributes` parameter of the `Customer` constructor:
-```
-c = Customer(node=my_node, default_attributes={'base':{}})
+```python
+c = Customer(node=node, default_attributes={'base':{}})
 ```
 In this case, you can directly set the `base` attribute, but you have to define beforehand all other objects in the internal structure.
 
 ##### Properties class
-An important tool for this SDK it's the `Properties` class. It represent a default generic object and you should use it for simplify the declarations of entity's properties.
+An important tool for this SDK it's the `Properties` class. It represents a default generic object and you should use it for simplify the declarations of entity's properties.
 In `Properties` object constructor you can declare every field you need for creating new properties. These fields can be strings, integer, datetime object, other `Properties` and lists of above types.
 
 For example:
-```
-from contacthub.entities import Properties
+```python
+from contacthub.models import Properties
 
 my_customer.base.contacts = Properties(email = 'bruce.wayne@darkknight.it', fax = 'fax', otherContacts = [Properties(value='123',name='phone', type='MOBILE')])
 
@@ -259,7 +260,7 @@ my_customer.base.address = Properties(city='city', province='province', geo=Prop
 
 By default the extended properties are already defined in the `Customer` structure, so you can populate it with new integers, strings or `Properties` object for storing what you need. Extended properties follow a standardized schema defined in the [ContactHub settings](https://hub.contactlab.it/#/settings/properties).
 
-```
+```python
 my_customer.extended.my_extended_int = 1
 my_customer.extended.my_extended_string = 'string'
 my_customer.extended.my_extended_object = Properties(key='value', k='v')
@@ -267,18 +268,18 @@ my_customer.extended.my_extended_object = Properties(key='value', k='v')
 
 #### 2. Posting a customer directly by its object
 In the second case, after the creation of the `Customer` you can post it directly with the `post` method:
-```
+```python
 my_customer.post()
 ```
 
 #### Force update
 
 If the customer already exists in the node, you can force its update with the new structure specified. If the system notice a match between the new customer posted and an existent one in the node, with the flag `force_update` set to True, the customer will be updated with new data. The match criteria between customers is a configurable option in the [ContactHub settings](https://hub.contactlab.it/#/settings/properties).
-```
-my_customer = my_node.add_customer(**customer_structure, forceUpdate=True)
+```python
+my_customer = node.add_customer(**customer_structure, forceUpdate=True)
 ```
 or alternatively:
-```
+```python
 my_customer.post(forceUpdate=True)
 ```
 
@@ -287,20 +288,21 @@ You must specify all required attribute, according to your ContactHub configurat
 
 **N.B.: You must follow the ContatHub schema selected for your base properties. Check the [ContactHub dashboard](https://hub.contactlab.it/#/settings/properties) for further information.**
 
+For errors related to the addition of customers, see [Exception handling](#exceptionhandling).
 <a name="getallc" />
 
 ### Get all customers
 To retrieve a list of customers in a node, just:
-```
+```python
 customers = node.get_customers()
 ```
 This method return a list of `Customer` objects. 
 For accessing the email of a customer the customer attributes:
-```
+```python
 print(my_customer.base.contacts.email)
 ```
 or
-```
+```python
 for tag in my_customer.tags.manual:
     print(tag)
 ```
@@ -317,32 +319,33 @@ and the page to get.
 For example, if you have 50 customers and you want to divide them in 10 per page, getting only the second page, use
 the `size` and the `page` parameters in this way:
 
-```
-customers = node.get_all_customers(size=10, page=2)
-```
-
-This call will return a list of 10 customers, taken from the 2nd page of the total 5.
-
-#### Getting customers by their externalId
-
-If there are many customers with the same `externalId`, you can get a list of them by:
-
-```
-customers = node.get_all_customers(externalId="01")
+```python
+customers = node.get_customers(size=10, page=2)
 ```
 
-Since the external id identifies unique customers, this call will return a single `Customer` object.
+This call will return a list of 10 customers, taken from the second subset (size 10) of 50 total clients.
 
-#### Getting specific fields of customers
+#### Get a customer by their externalId
+
+Since the external id identifies unique customers, specifying the externalId as parameter of the `get_customer` method 
+will create a single `Customer` object, insteaf of a `list`:
+
+
+```python
+customers = node.get_customers(external_id="01")
+```
+
+
+#### Get specific fields of customers
 
 It's possible to filter the fields present in a `Customer`, specifying them in a list of fields: 
 
-```
-customers = node.get_all_customers(fields=[Customer.base.email,Customer.base.dob,Customer.extra ])
+```python
+customers = node.get_customers(fields=[Customer.base.email,Customer.base.dob,Customer.extra ])
 ```
 Every element of the fetched list will only have the given fields.
 
-**None of the previous parameter passed to the `get_all_customers` method is required and you can combine them for getting the list of customers that suits your needs.**
+**None of the previous parameter passed to the `get_customers` method is required and you can combine them for getting the list of customers that suits your needs.**
 
 <a name="getc" />
 
@@ -351,13 +354,13 @@ Every element of the fetched list will only have the given fields.
 You can get a single customer by specifying its `id` or `externalId`, obtaining a new `Customer` object.
 
 By id:
-```
+```python
 my_customer = node.get_customer(id='01')
 ```
 
 or by the externalId:
-```
-my_customer = node.get_customer(externalId='02')
+```python
+my_customer = node.get_customer(external_id='02')
 ```
 
 <a name="query"/>
@@ -367,65 +370,65 @@ my_customer = node.get_customer(externalId='02')
 #### Simple queries
 ContactHub allows you to retrieve subsets of customers entry in a node, by querying on `Customer` entity.
 
-For retrieving a list of Customers that satisfy your fetching criteria, just create a new `Query` object: 
-``` 
+To retrieve a list of Customers that satisfy your fetching criteria, just create a new `Query` object: 
+```python
 new_query = node.query(Customer)
 ```
 
 Now you're ready to apply multiple filters on this  `Query`, specifying new criteria as parameter of the `.filter`method of `Query` class:
 
-``` 
+```python
 new_query = new_query.filter((Customer.base.firstName == 'Bruce') & (Customer.base.lastName == 'Wayne'))
 ```
 Each filter applied subsequently will put your new criteria in the `AND` condition, adding it to the criteria already present in the query:
-``` 
+```python
 new_query = new_query.filter((Customer.base.dob <= datetime(1994, 6, 10))
 ```
-Once obtained a full filtered query, call the `.all()` method for applying the filters and get a `list` of queried customers:
-``` 
+Once obtained a full filtered query, call the `.all()` method to apply the filters and get a `list` of queried customers:
+```python
 filtered_customers = new_query.all()
 ```
 
 #### Avaible operations for creating a criteria
 
 ##### Equality operator
-``` 
+```python
 new_query = node.query(Customer).filter(Customer.base.firstName == 'Bruce')
 ```
 
 ##### Not equals
-``` 
+```python
 new_query = node.query(Customer).filter(Customer.base.firstName != 'Bruce')
 ```
 
 ##### Greater than 
-``` 
+```python
 new_query = node.query(Customer).filter(Customer.base.dob > datetime(1994,6,10))
 ```
 
-##### Greater than equals
-``` 
+##### Greater than or equal
+```python
 new_query = node.query(Customer).filter(Customer.base.dob >= datetime(1994,6,10))
 ```
 
-##### Lower than
-``` 
+##### Less than
+```python
 new_query = node.query(Customer).filter(Customer.registeredAt < datetime(2010,6,10))
 ```
 
-##### Lower than equals
-``` 
+##### Less than or equal
+```python
 new_query = node.query(Customer).filter(Customer.registeredAt <= datetime(2010,6,10))
 ```
 
 ##### In, Not in
 You can verify the presence of a value in a customer `list` attribute, like `Customer.tags.manual`, with the `in_` and `not_in_` methods of the `query` module:
-```
+```python
 from contacthub.models.query import in_
 
 new_query = node.query(Customer).filter(in_('manual_tag', Customer.tags.manual))
 ```
-``` 
+```python
 from contacthub.models.query import not_in_
 
 new_query = node.query(Customer).filter(not_in_('manual_tag', Customer.tags.manual))
@@ -433,7 +436,7 @@ new_query = node.query(Customer).filter(not_in_('manual_tag', Customer.tags.manu
 
 ##### Between
 You can check if a customer date attribute is between two dates. These two dates can be `datetime` objects or normal string following the ISO8601 standard for dates.
-``` 
+```python
 from contacthub.models.query import between_
 
 new_query = node.query(Customer).filter(between_(Customer.base.dob, datetime(1950,1,1), datetime(1994,1,1)))
@@ -443,12 +446,12 @@ new_query = node.query(Customer).filter(between_(Customer.base.dob, datetime(195
 To combine the above criteria and create complex ones, you can use the `&` and  `|` operators:
 
 ##### AND
-``` 
+```python
 customers = node.query(Customer).filter((Customer.base.firstName == 'Bruce') & (Customer.base.lastName == 'Wayne')).all()
 ```
 
 ##### OR
-``` 
+```python
 customers = node.query(Customer).filter(((Customer.base.firstName == 'Bruce')) | ((Customer.base.firstName == 'Batman'))).all()
 ```
 
@@ -456,7 +459,7 @@ customers = node.query(Customer).filter(((Customer.base.firstName == 'Bruce')) |
 It's possibile to combine simple queries to create a combined query. 
 For this purpose, you can use the `&` operator to put two simple queries in the `AND` condition and the `|` operator for putting them in the `OR` condition.
 
-```
+```python
 q1 = node.query(Customer)
 q2 = node.query(Customer)
 
@@ -466,7 +469,7 @@ or_query = q1 | q2
 ```
  
  For apply all filters created in the new combined query, just like the simple queries call the `.all()`
-``` 
+```python
 filtered_customers = and_query.all()
 ```
 
@@ -481,23 +484,26 @@ Customers can be updated with new data. The update can be carried on an entire c
 The full update on customer - PUT method - totally replace old customer attributes with new ones.
 As all operations on this SDK, you can perform the full update in two ways: by the the methods in the `Node` class or directly by the `Customer` object.
 
-Note that if you perform the full update operation by the `update_customer` method of the node, you have to pass all attributes previously set on the customer, otherwise an APIError will occur (see [Exception handling](#exceptionhandling)). These attributes can be easily retrieved via the `to_dict` method. 
+Note that if you perform the full update operation by the `update_customer` method of the node, 
+you have to pass all attributes previously set on the customer, otherwise an APIError will occur (see [Exception handling](#exceptionhandling)). 
+These attributes can be easily retrieved via the `to_dict` method. 
 
 Set the `full_update` flag to `True` for a full update, eg:
-``` 
+```python
 my_customer = node.get_customer(id='id')
 my_customer.base.contacts.email = 'anotheremail@example.com'
 
 updated_customer = node.update_customer(**my_customer.to_dict(), full_update=True)
 ```
 To directly execute a full update on a customer by the `Customer` object:
-```
+```python
 my_customer = node.get_customer(id='customer_id')
 my_customer.base.contacts.email = 'anotheremail@example.com'
 
 my_customer.put()
 ```
-There are no difference between these two ways of working.
+There are no difference between these two ways of working. By default the parameter `full_update` is set to False, 
+so without specifying it you'll perform a partial update (see the next section **Partial update - Patch**).
 
 <a name="patch"/>
 
@@ -508,12 +514,12 @@ Since all list attributes don't allow normal list operation (`append`, `reverse`
 `__setitem__`,`__delitem__`,`__setslice__`), for adding an element in an 
 existing list attribute of a customer, you can use the `+=` operator:
 
-```
+```python
 customer.base.subscriptions += [Properties(id='id', name='name', type='type', kind=Cutomer.SUBSCRPTION_KINDS.SERVICE)]
 ```
 
 Once the customer is modified, you can get the changes occurred on its attributes by the `get_mutation_tracker` method, that returns a new dictionary:
-```
+```python
 my_customer = node.get_customer(id='customer_id')
 my_customer.base.contacts.email = 'anotheremail@example.com'
 
@@ -521,13 +527,13 @@ updated_customer = node.update_customer(**my_customer.get_mutation_tracker())
 ```
 
 You can also pass to the `update_customer` method a dictionary representing the mutations you want to apply on customer attributes and the id of the customer for applying it:
-```
+```python
 mutations = {'base':{'contacts':{'email':'anotheremail@example.com'}}}
 
 updated_customer = node.update_customer(id='customer_id',**mutations)
 ```
 To partially update a customer by the `Customer` object, just:
-```
+```python
 my_customer.base.contacts.email = 'anotheremail@example.com'
 
 my_customer.patch()
@@ -537,15 +543,15 @@ my_customer.patch()
 
 ### Delete a customer
 Via the node method, passing the id of a customer:
-```
+```python
 node.delete_customer(id='customer_id')
 ```
 or passing the dictionary form of the customer:
-```
+```python
 node.delete_customer(**my_customer.to_dict())
 ```
 Via `Customer` object:
-```
+```python
 my_customer.delete()
 ``` 
 <a name="tags">
@@ -553,19 +559,19 @@ my_customer.delete()
 ### Tags
 Tags are particular string values stored in two arrays: `auto` (autogenerated from elaborations) and `manual` (manually inserted).
 To get the tags associated to a customer, just access the `tags` attribute of a `Customer` object:
-```
+```python
  for auto in my_customer.tags.auto:
 	 print(auto)
-
+	 
 for manual in my_customer.tags.manual:
 	 print(manual)
 ```
 The `Node` class provides two methods for inserting and removing `manual` tags: 
-```
+```python
 node.add_tag('manual_tag')
 ```
 When removing a manual tag, if it doesn't exists in the customer tags a ValueError will be thrown:
-```
+```python
 try:
 	node.remove_tag('manual_tag')
 except ValueError as e:
@@ -575,8 +581,9 @@ except ValueError as e:
 <a name="additional"/>
 
 ### Additional entities
-ContactHub provides three endpoints to reach some particular and relevant attributes of a customer. These endpoint simplify the add, the delete, the update and the get operation of `educations` , `likes` and `jobs` base attributes.
-For this purpose, this SDK provides three additional classes for manage these attributes:
+ContactHub provides three endpoints to reach some particular and relevant attributes of a customer. 
+These endpoint simplify the add, the delete, the update and the get operations of `educations` , `likes` and `jobs` base attributes.
+For this purpose, this SDK provides three additional classes for managing these attributes:
 
 * `Education`
 * `Job`
@@ -590,22 +597,25 @@ These entities are identified by an internal ID and have their own attributes.
 #### Education
 
 ##### Get
-You can get an education associated to a customer by the customer ID and an education ID:
-```
+You can get an education associated to a customer by the customer ID and an education ID previously assigned to the 
+education:
+
+```python
 customer_education = node.get_education(customer_id='c_id', education_id='education_id')
 ```
-This method creates an `Education` object.
+This method creates an `Education` object. You can find the same object in the list of the educations for a customer, 
+accessing the `base.educations` attribute of a `Customer` object.
 
 ##### Add
 
 Add via the node method, creating a new `Education` object.:
-```
+```python
 new_educ = node.add_education(customer_id='123', id='01', schoolType=Education.SCHOOL_TYPES.COLLEGE, 
 schoolName='schoolName',schoolConcentration='schoolConcentration', isCurrent=False, startYear='1994', endYear='2000')
 ```
 
 or directly by the object:
-```
+```python
 new_educ = Education( id='01', schoolType=Education.SCHOOL_TYPES.COLLEGE, schoolName='schoolName', 
 schoolConcentration='schoolConcentration', isCurrent=False, startYear='1994', endYear='2000')
 
@@ -614,28 +624,28 @@ new_educ.post()
 
 ##### Remove
 Remove via the node method:
-```
+```python
 node.remove_education(customer_id='c_id', education_id='education_id')
 ```
 or directly by the object:
-```
+```python
 education.delete()
 ```
 
 ##### Update
 After some changes on a `Education`:
 
-```
+```python
 my_education = node.get_job(customer_id='c_id', education_id='education_id')
 my_education.schoolConcentration = 'updated'
 ```
 you can update it via the node method:
 
-```
+```python
 node.update_education(customer_id='c_id', **my_education.to_dict())
 ```
 or directly by the object
-```
+```python
 my_education.put()
 ```
 
@@ -645,20 +655,20 @@ my_education.put()
 
 ##### Get
 You can get a job associated to a customer by the customer ID and a job ID:
-```
+```python
 customer_job = node.get_job(customer_id='c_id', job_id='job_id')
 ```
 This method creates a `Job` object.
 
 ##### Add
 Add via the node method, creating a new `Job` object:
-```
+```python
 new_job = node.add_job(customer_id='123', id='01', jobTitle='jobTitle', companyName='companyName', 
 companyIndustry='companyIndustry', isCurrent=True, startDate='1994-10-06', endDate='1994-10-06')
 ```
 
 or directly by the object:
-```
+```python
 new_job = Job( id='01', jobTitle='jobTitle', companyName='companyName', companyIndustry='companyIndustry', 
 isCurrent=True, startDate='1994-10-06', endDate='1994-10-06')
 
@@ -667,28 +677,28 @@ new_job.post()
 
 ##### Remove
 Remove via the node method:
-```
+```python
 node.remove_job(customer_id='c_id', job_id='job_id')
 ```
 or directly by the object:
-```
+```python
 job.delete()
 ```
 
 ##### Update
 After some changes on a `Job`:
 
-```
+```python
 my_job = node.get_job(customer_id='c_id', job_id='job_id')
 my_job.jobTitle = 'updated'
 ```
 you can update it via the node method:
 
-```
+```python
 node.update_job(customer_id='c_id', **my_job.to_dict())
 ```
 or directly by the object
-```
+```python
 my_job.put()
 ```
 
@@ -698,21 +708,21 @@ my_job.put()
 
 ##### Get
 You can get a like associated to a customer by the customer ID and a like ID:
-```
+```python
 my_like = node.get_like(customer_id='c_id', like_id='like_id')
 ```
 This method creates a `Like` object.
 
 ##### Add
 Add via the node method, creating a new `Like` object.
-```
+```python
 new_like= node.add_like(customer_id='123', id='01', customer_id='123', name='name', category='category', 
 createdTime=datetime.now())
 ```
 
 
 or directly by the object:
-```
+```python
 new_like = Like(id='01', customer_id='123', name='name', category='category', createdTime=datetime.now())
 
 new_like.post()
@@ -720,30 +730,30 @@ new_like.post()
 
 ##### Remove
 Remove via the node method:
-```
+```python
 node.remove_like(customer_id='c_id', like_id='like_id')
 ```
 or directly by the object:
-```
+```python
 like.delete()
 ```
 
 ##### Update
 After some changes on a `Like`:
 
-```
+```python
 my_like = node.get_like(customer_id='c_id', like_id='like_id')
 my_like.name = 'updated'
 ```
 
 you can update it via the node method:
 
-```
+```python
 node.update_like(customer_id='c_id', **my_like.to_dict())
 ```
 
 or directly by the object
-```
+```python
 my_like.put()
 ```
 
@@ -790,7 +800,7 @@ When you create an `Event`, the attributes `type` and `context` are required and
 
 ### Add a new event
 To create a new event, you have to define its schema (according to the specified type) in `Event` class constructor:
-```
+```python
 event = Event(node=node, customer_id='c_id', type=Event.TYPES.SERVICE_SUBSCRIBE, context=Event.CONTEXTS.WEB, mode=Event.MODES.ACTIVE, 
 subscriberID = 's_id', serviceId='service_id', serviceName='serviceName', startDate=datetime.now(), endDate=None, 
 extraProperties=Properties(extra='extra'))
@@ -803,27 +813,27 @@ The field `mode` is required and its value must be:
 
 After the creation, you can add the event via the node method:
 
-```
+```python
 posted = node.add_event(**event.to_dict())
 
 ```
 
 or directly by the object:
 
-```
+```python
 event.post()
 
 ```
 <a name="sessions"/>
 
 #### Sessions
-Contacthub allows saving anonymous events of which it is expected that the customer will be identified.
+Contacthub allows saving anonymous events of which it is expected that the customer will be identified in the future.
 For this purpose, you can save an event using a Session ID, an unique identifier that is assigned to the anonymous 
 customer, without specify the customer ID.
 To save an event with a Session ID, use the `bringBackProperties` attribute. You can generate a new session ID conforming
 to the UUID standard V4 by the `create_session_id` method of the `Node`:
     
-```
+```python
 session_id = node.create_session_id()
 
 event = Event(node=node, bringBackProperties=Properties(type='SESSION_ID', value=session_id), 
@@ -837,7 +847,7 @@ If the anonymous customer will perform the authentication, you can add a new `Cu
 customer ID.
 To reconcile the events stored with the session ID previously associated to the anonymous Customer:
 
-```
+```python
 node.add_customer_session(customer_id='c_id', session_id=session_id)
 ```
 
@@ -849,7 +859,7 @@ will be associated to the customer specified.
 #### ExternalId
 In the same way of the Session ID, you can add a new event specifying the external ID of a customer:
 
-```
+```python
 event = Event(node=node, bringBackProperties=Properties(type='EXTERNAL_ID', value='ext_id'), 
 type=Event.TYPES.SERVICE_SUBSCRIBE, context=Event.CONTEXTS.WEB, mode=Event.MODES.ACTIVE, 
 subscriberID = 's_id', serviceId='service_id', serviceName='serviceName', startDate=datetime.now(), endDate=None, 
@@ -860,7 +870,7 @@ extraProperties=Properties(extra='extra'))
 
 ### Get all events
 To get all events associated to a customer, use `Node` method:
-```
+```python
 events = node.get_events(customer_id='c_id')
 ```
 You can filter events specifying the following parameters in `get_events` method:
@@ -873,11 +883,11 @@ You can filter events specifying the following parameters in `get_events` method
 * page
 * size
 
-```
+```python
 events = node.get_events(customer_id='c_id', event_type=Event.TYPES.SERVICE_SUBSCRIBED, context=Event.CONTEXTS.WEB)
 ```
 A shortcut for customer events is available as a property in a `Customer` object:
-```
+```python
 for event in my_customer.events:
 	print (event.type)
 ```
@@ -887,7 +897,7 @@ In this last case, the property will return an immutable list of `Event`: you ca
 
 ### Get a single event
 Retrieve a single event by its ID, obtaining a new `Event` object: 
-```
+```python
 customer_event = event.get_event(id='event_id')
 ```
 

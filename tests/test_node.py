@@ -72,7 +72,7 @@ class TestNode(TestSuite):
 
     def test_get_customer_id_external(self):
         try:
-            customers = self.node.get_customer(id='01', externalId='03')
+            customers = self.node.get_customer(id='01', external_id='03')
             assert False
         except ValueError as e:
             assert 'id' in str(e), str(e)
@@ -86,7 +86,7 @@ class TestNode(TestSuite):
 
     @mock.patch('requests.get', return_value=FakeHTTPResponse())
     def test_get_customer_external_id(self, mock_get):
-        customers = self.node.get_customer(externalId='01')
+        customers = self.node.get_customer(external_id='01')
         self.headers_expected = {'Authorization': 'Bearer 456', 'Content-Type': 'application/json'}
         base_url = 'https://api.contactlab.it/hub/v1/workspaces/123/customers'
         mock_get.assert_called_with(base_url, headers=self.headers_expected,
@@ -95,7 +95,7 @@ class TestNode(TestSuite):
 
     @mock.patch('requests.get', return_value=FakeHTTPResponse(resp_path='tests/util/fake_external_single_response'))
     def test_get_customer_external_id_single(self, mock_get):
-        customers = self.node.get_customer(externalId='01')
+        customers = self.node.get_customer(external_id='01')
         assert isinstance(customers, Customer), type(customers)
         self.headers_expected = {'Authorization': 'Bearer 456', 'Content-Type': 'application/json'}
         base_url = 'https://api.contactlab.it/hub/v1/workspaces/123/customers'

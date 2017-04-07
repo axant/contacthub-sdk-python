@@ -27,34 +27,37 @@ class Node(object):
         self.customer_api_manager = _CustomerAPIManager(node=self)
         self.event_api_manager = _EventAPIManager(node=self)
 
-    def get_customers(self, externalId=None, page=None, size=None):
+    def get_customers(self, external_id=None, page=None, size=None):
         """
         Get all the customers in this node
 
+        :param external_id:
+        :param page:
+        :param size:
         :return: A list containing Customer object of a node
         """
         customers = []
-        resp = self.customer_api_manager.get_all(externalId=externalId, page=page, size=size)
+        resp = self.customer_api_manager.get_all(externalId=external_id, page=page, size=size)
         for customer in resp['elements']:
             customers.append(Customer(node=self, **customer))
         return customers
 
-    def get_customer(self, id=None, externalId=None):
+    def get_customer(self, id=None, external_id=None):
         """
         Retrieve a customer from the associated node by its id or external ID. Only one parameter can be specified for
         getting a customer.
 
         :param id: the id of the customer to retrieve
-        :param externalId: the external id of the customer to retrieve
+        :param external_id: the external id of the customer to retrieve
         :return: a Customer object representing the fetched customer
         """
-        if id and externalId:
-            raise ValueError('Cannot get a customer by both its id and externalId')
-        if not id and not externalId:
-            raise ValueError('Insert an id or an externalId')
+        if id and external_id:
+            raise ValueError('Cannot get a customer by both its id and external_id')
+        if not id and not external_id:
+            raise ValueError('Insert an id or an external_id')
 
-        if externalId:
-            customers = self.get_customers(externalId=externalId)
+        if external_id:
+            customers = self.get_customers(external_id=external_id)
             if len(customers) == 1:
                 return customers[0]
             else:
