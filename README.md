@@ -391,7 +391,7 @@ filtered_customers = new_query.all()
 
 #### Avaible operations for creating a 
 
-| Criteria    | Operator                                       |
+| Criterium   | Operator                                       |
 |-------------|------------------------------------------------|
 | EQUAL       | ==                                             |
 | NE          | !=                                             |
