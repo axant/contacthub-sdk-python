@@ -389,7 +389,7 @@ Once obtained a full filtered query, call the `.all()` method to apply the filte
 filtered_customers = new_query.all()
 ```
 
-#### Available operations for creating a criterion
+#### Available operations for creating a filter
 
 | Criterion   | Operator                                       |
 |-------------|------------------------------------------------|
