@@ -389,9 +389,9 @@ Once obtained a full filtered query, call the `.all()` method to apply the filte
 filtered_customers = new_query.all()
 ```
 
-#### Avaible operations for creating a 
+#### Available operations for creating a criterion
 
-| Criterium   | Operator                                       |
+| Criterion   | Operator                                       |
 |-------------|------------------------------------------------|
 | EQUAL       | ==                                             |
 | NE          | !=                                             |
