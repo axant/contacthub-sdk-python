@@ -251,7 +251,7 @@ For example:
 ```python
 from contacthub.models import Properties
 
-my_customer.base.contacts = Properties(email = 'bruce.wayne@darkknight.it', fax = 'fax', otherContacts = [Properties(value='123',name='phone', type='MOBILE')])
+my_customer.base.contacts = Properties(email='bruce.wayne@darkknight.it', fax='fax', otherContacts=[Properties(value='123', name='phone', type='MOBILE')])
 
 my_customer.base.address = Properties(city='city', province='province', geo=Properties(lat=40, lon=100))
 ```
