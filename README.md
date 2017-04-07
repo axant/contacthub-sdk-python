@@ -71,7 +71,7 @@ First of all, you need to authenticate with credentials provided by `ContactHub`
 ```python
 from contacthub import Workspace
 
-workspace = Workspace(workspace_id = 'workspace_id', token = 'token')
+workspace = Workspace(workspace_id='workspace_id', token='token')
 ```
 After that you can get a `Node` object to perform all operations on customers and events:
 ```python
@@ -82,7 +82,7 @@ With a node, is immediate to get all customers data in a ``list`` of ``Customer`
 customers = node.get_customers()
 
 for customer in customers:
-  print(customer.base.firstName)
+    print(customer.base.firstName)
 ```
 
 Getting a single ``Customer``:
@@ -90,7 +90,7 @@ Getting a single ``Customer``:
 ```python
 my_customer = node.get_customer(id='id')
 
-print('Welcome back %s', % my_customer.base.firstName)
+print('Welcome back %s' % my_customer.base.firstName)
 ```
 or querying on customers by theirs own properties:
 
@@ -193,7 +193,7 @@ Like every other entities in ContactHub, you can perform an operation via two me
 #### 1. Adding a new customer via the methods provided by the `Node` class 
 In this first case, a new customer can be added in ContactHub by the `Node` object. By default, the `add_customer` method takes as parameter a dictionary containing the structure of your new customer and return a new `Customer` object:
 ```python
-customer_structure = {
+customer_structure = {  
                         'externalId': '01',
                         'extra': 'extra',
                         'base':
@@ -211,7 +211,7 @@ my_customer = node.add_customer(**customer_structure)
 ```
 
 To specify the structure of your new customer, you can also use the `Customer` class, creating a new `Customer` object and converting it to a dictionary:
-```
+```python
 from contacthub.models import Customer
 
 post_customer = Customer(node = node)
@@ -389,7 +389,22 @@ Once obtained a full filtered query, call the `.all()` method to apply the filte
 filtered_customers = new_query.all()
 ```
 
-#### Avaible operations for creating a criteria
+#### Avaible operations for creating a 
+
+| Criteria    | Operator                                       |
+|-------------|------------------------------------------------|
+| EQUAL       | ==                                             |
+| NE          | !=                                             |
+| GT          | >                                              |
+| GTE         | >=                                             |
+| LT          | <                                              |
+| LTE         | <=                                             |
+| IN          | function `in_` in contacthub.query module      |
+| NOT_IN      | function `not_in_` in contacthub.query module  |
+| BETWEEN     | function `between_` in contacthub.query module |
+| IS_NULL     | == None                                        |
+| IS_NOT_NULL | != None                                        |
+
 
 ##### Equality operator
 ```python
@@ -440,6 +455,16 @@ You can check if a customer date attribute is between two dates. These two dates
 from contacthub.models.query import between_
 
 new_query = node.query(Customer).filter(between_(Customer.base.dob, datetime(1950,1,1), datetime(1994,1,1)))
+```
+
+##### Is null
+```python
+new_query = node.query(Customer).filter(Customer.base.firstName == None)
+```
+
+##### Is not null
+```python
+new_query = node.query(Customer).filter(Customer.base.firstName != None)
 ```
 
 #### Combine criteria
