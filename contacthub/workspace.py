@@ -23,6 +23,7 @@ class Workspace(object):
     def from_ini_file(cls, file_path):
         """
         Create a new Workspace object, taking the Workspace id, the token and the base URL from a INI configuration file
+
         :param file_path: The path of the INI file for the parameters
         :return: a new Workspace object
         """
@@ -40,6 +41,7 @@ class Workspace(object):
     def get_node(self, node_id):
         """
         Retrieve the node associated at the specified node id
+
         :param node_id: The ID of the node to retrieve
         :return: a Node object with the Workspace object specified
         """

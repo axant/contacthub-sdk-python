@@ -18,7 +18,8 @@ Contents:
 
    getting_started
    authentication
-   customer_operations
+   customer_operation
    event_operations
+   exception_handling
    api_reference
 

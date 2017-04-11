@@ -92,7 +92,7 @@ my_customer = node.get_customer(id='id')
 
 print('Welcome back %s' % my_customer.base.firstName)
 ```
-or querying on customers by theirs own properties:
+or querying on customers by theirs own attributes:
 
 ```python
 fetched_customers = node.query(Customer).filter((Customer.base.firstName == 'Bruce') & (Customer.base.secondName == 'Wayne')).all()
@@ -297,11 +297,12 @@ To retrieve a list of customers in a node, just:
 customers = node.get_customers()
 ```
 This method return a list of `Customer` objects. 
-For accessing the email of a customer the customer attributes:
+For example, for accessing the email of a customer:
+
 ```python
 print(my_customer.base.contacts.email)
 ```
-or
+or getting the manual tags associated to a customer in a list:
 ```python
 for tag in my_customer.tags.manual:
     print(tag)

@@ -1,30 +1,18 @@
-contacthub.errors package
-=========================
+Errors
+======
 
-Submodules
-----------
-
-contacthub.errors.api_error module
-----------------------------------
+ApiError
+--------
 
 .. automodule:: contacthub.errors.api_error
     :members:
     :undoc-members:
     :show-inheritance:
 
-contacthub.errors.operation_not_permitted module
-------------------------------------------------
+OperationNotPermitted
+---------------------
 
 .. automodule:: contacthub.errors.operation_not_permitted
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: contacthub.errors
     :members:
     :undoc-members:
     :show-inheritance:

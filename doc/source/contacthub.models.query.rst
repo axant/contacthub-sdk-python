@@ -1,35 +1,32 @@
-contacthub.models.query package
-===============================
+Query
+=====
 
-Submodules
-----------
-
-contacthub.models.query.criterion module
-----------------------------------------
+Criterion
+---------
 
 .. automodule:: contacthub.models.query.criterion
     :members:
     :undoc-members:
     :show-inheritance:
 
-contacthub.models.query.entity_field module
--------------------------------------------
+EntityField
+-----------
 
 .. automodule:: contacthub.models.query.entity_field
     :members:
     :undoc-members:
     :show-inheritance:
 
-contacthub.models.query.entity_meta module
-------------------------------------------
+EntityMeta
+----------
 
 .. automodule:: contacthub.models.query.entity_meta
     :members:
     :undoc-members:
     :show-inheritance:
 
-contacthub.models.query.query module
-------------------------------------
+Query
+-----
 
 .. automodule:: contacthub.models.query.query
     :members:

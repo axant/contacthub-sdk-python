@@ -31,9 +31,9 @@ class Node(object):
         """
         Get all the customers in this node
 
-        :param external_id:
-        :param page:
-        :param size:
+        :param external_id: the external id of the customer to retrieve
+         :param size: the size of the pages containing customers
+        :param page: the number of the page for retrieve customer data
         :return: A list containing Customer object of a node
         """
         customers = []
@@ -76,8 +76,9 @@ class Node(object):
 
     def delete_customer(self, id, **attributes):
         """
-        Delete the specified Customer from contacthub. For deleting an existing customer object, you should:
-        node.delete_customer(**c.to_dict())
+        Delete the specified Customer from contacthub. For deleting an existing customer object, you should::
+
+            node.delete_customer(**c.to_dict())
 
         :param id: a the id of the customer to delete
         :param attributes: the attributes of the customer to delete
@@ -303,8 +304,8 @@ class Node(object):
         :param event_mode: the mode of event. ACTIVE if the customer made the event, PASSIVE if the customer recive the event
         :param date_from: From string or datetime for search of event
         :param date_to: From string or datetime for search of event
-        :param size: the size of the pages containing customers
-        :param page: the number of the page for retrieve customer's data
+        :param size: the size of the pages containing events
+        :param page: the number of the page for retrieve event data
         :return: a list containing the fetched events associated to the given customer id
         """
         events = []

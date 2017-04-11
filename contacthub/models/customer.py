@@ -16,7 +16,7 @@ from contacthub.models.query.entity_meta import EntityMeta
 
 class Customer(with_metaclass(EntityMeta, object)):
     """
-    Customer entity
+    Customer entity definition
     """
     __slots__ = ('attributes', 'node', 'customer_api_manager', 'event_api_manager', 'mute')
 
@@ -152,7 +152,7 @@ class Customer(with_metaclass(EntityMeta, object)):
         Post this Customer in the associated Node.
 
         :param force_update: if it's True and the customer already exists in the node, patch the customer with the
-        modified properties.
+                             modified properties.
         """
         self.attributes.pop('registeredAt', None)
         self.attributes.pop('updatedAt', None)

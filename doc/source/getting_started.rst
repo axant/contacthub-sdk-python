@@ -8,91 +8,82 @@ Installing the SDK
 
 The ContactHub SDK can be installed from PyPi::
 
-   pip install contacthub
+    pip install contacthub
 
-After installing, for importing the contacthub SDK in your project just::
+After installing, for importing the contacthub SDK just::
 
-   import contacthub
+    import contacthub
 
-Performing simple operations on entities
-----------------------------------------
+Performing simple operations on customers
+-----------------------------------------
 
 Getting Customer's data
 ^^^^^^^^^^^^^^^^^^^^^^^
-Retrieving entity's data can be easily archived with simple operations.
 
-First of all, you need to authenticate with credentials provided by `ContactHub`:
+Retrieving entity's data can be easily achieved with simple operations.
 
-.. code-block:: python
+First of all, you need to authenticate with credentials provided by `ContactHub`::
 
     from contacthub import Workspace
 
-    workspace = Workspace(workspace_id = 'workspace_id', token = 'token')
+    workspace = Workspace(workspace_id='workspace_id', token='token')
 
-After that you can get a `Node` object to perform all operations on customers and events:
+After that you can get a `Node` object to perform all operations on customers and events::
 
-.. code-block:: python
+    node = workspace.get_node(node_id='node_id')
 
-   my_node = workspace.get_node(node_id='node_id')
+With a node, is immediate to get all customers data in a ``list`` of ``Customer`` objects::
 
-A ``Node`` is the key object for get, post, put, patch and delete data on entities.
+    customers = node.get_customers()
 
-With a node, is immediate to get all customers data in a ``list`` of ``Customer`` objects:
+    for customer in customers:
+        print(customer.base.firstName)
 
-.. code-block:: python
+Getting a single ``Customer``::
 
-   customers = my_node.customers
+    my_customer = node.get_customer(id='id')
 
-   for customer in customers:
-      print(customer.base.firstName)
+    print('Welcome back %s' % my_customer.base.firstName)
+
+or querying on customers by theirs own attributes::
+
+    fetched_customers = node.query(Customer).filter((Customer.base.firstName == 'Bruce') & (Customer.base.secondName == 'Wayne')).all()
+
+Add a new Customer
+^^^^^^^^^^^^^^^^^^
+
+Creating and posting a Customer is simple as getting. The method `add_customer` of the node take a dictionary containing
+the structure of your customer as parameter and returns a new Customer object::
 
 
-Getting a single ``Customer``:
+    customer_struct =   {
+                        'base': {'contacts': {'email': 'myemail@email.com'}},
+                        'extra': 'extra',
+                        'extended': {'my_string':'my new extended property string'}
+                        }
+    my_customer = c.add_customer(**customer_struct)
 
-.. code-block:: python
-
-   my_customer = my_node.get_customer(id='id')
-
-   print('Welcome back %s', % my_customer.base.firstName)
-
-or querying on customers by theirs own properties:
-
-.. code-block:: python
-
-   fetched_customers = my_node.query(Customer).filter((Customer.base.firstName == 'Bruce') & (Customer.base.secondName == 'Wayne')).all()
-
-Posting a new Customer
-^^^^^^^^^^^^^^^^^^^^^^
-
-Creating and posting a Customer is simple as getting:
-
-.. code-block:: python
+For creating the customer structure, you can also create a new Customer object and convert it to a dictionary for posting::
 
     from contacthub.models import Customer
 
-    my_customer = Customer(node = my_node)
+    my_customer = Customer(node = node)
     my_customer.base.contacts.email = 'myemail@email.com'
-    my_customer.extended['my_string'] = 'my new extended property string'
+    my_customer.extra = 'extra'
+    my_customer.extended.my_string = 'my new extended property string'
+    my_customer = node.add_customer(**my_customer.to_dict())
+
+or posting it directly with the `post` method::
+
     my_customer.post()
-
-After creating, another way to post a new entity's object is using a ``Node``:
-
-.. code-block:: python
-
-    my_node.post(my_customer)
-
-Both instructions have same effects, you have only to choose the more comfortable way!
-
 
 Relationship between Customers and Events
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In this SDK entities are easily connected.
-For retrieving all events associated to a ``Customer``, just:
+For retrieving all events associated to a ``Customer``, just::
 
-.. code-block:: python
-
-    my_customer = my_node.get_customer(id='id')
+    my_customer = node.get_customer(id='id')
     events = my_customer.events
 
 Note that relations are immutable objects. You can just consult events associated to a ``Customer``,
