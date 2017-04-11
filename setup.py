@@ -19,7 +19,7 @@ setup(description='ContactHub SDK Python',
       packages=find_packages(exclude=['tests', 'tests.*']),
       extras_require={
           'testing': testpkgs,
-          'documentation': ['Sphinx==1.4.1']
+          'documentation': ['Sphinx==1.4.1', 'sphinx_rtd_theme']
       },
       scripts=[],
       name='contacthub',
