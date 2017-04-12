@@ -487,7 +487,8 @@ Additional entities
 -------------------
 
 ContactHub provides three endpoints to reach some particular and relevant attributes of a customer.
-These endpoint simplify the add, the delete, the update and the get operations of `educations` , `likes` and `jobs` base attributes.
+These endpoint simplify the add, the delete, the update and the get operations of `educations` , `likes`, `jobs` and
+`subscriptions` base attributes.
 For this purpose, this SDK provides three additional classes for managing these attributes:
 
 * `Education`
