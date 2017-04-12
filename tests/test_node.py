@@ -10,6 +10,7 @@ from contacthub.models.job import Job
 from contacthub.models.like import Like
 from contacthub.models.properties import Properties
 from contacthub.models.customer import Customer
+from contacthub.models.subscription import Subscription
 from contacthub.workspace import Workspace
 from tests.utility import FakeHTTPResponse
 
@@ -211,6 +212,15 @@ class TestNode(TestSuite):
                                                endDate='1994-10-06'))
 
     @mock.patch('requests.get', return_value=FakeHTTPResponse())
+    @mock.patch('requests.post', return_value=FakeHTTPResponse(resp_path='tests/util/fake_subscription_response'))
+    def test_add_subscription(self, mock_post, mock_get):
+        s = self.node.add_subscription(customer_id='123', id='01', name='name', kind='SERVICE')
+        assert isinstance(s, Subscription), type(s)
+        assert s.id == '01'
+        mock_post.assert_called_with(self.base_url + '/123/subscriptions', headers=self.headers_expected,
+                                     json=dict(id='01', name='name', kind='SERVICE'))
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse())
     @mock.patch('requests.post', return_value=FakeHTTPResponse(resp_path='tests/util/fake_education_response'))
     def test_add_education(self, mock_post, mock_get):
         e = self.node.add_education(customer_id='123', id='01', schoolType='schoolType', schoolName='schoolName',
@@ -242,6 +252,11 @@ class TestNode(TestSuite):
     def test_remove_job(self, mock_delete):
         self.node.remove_job(customer_id='01', job_id='02')
         mock_delete.assert_called_with(self.base_url + '/01/jobs/02', headers=self.headers_expected)
+
+    @mock.patch('requests.delete', return_value=FakeHTTPResponse(resp_path=None))
+    def test_remove_subscription(self, mock_delete):
+        self.node.remove_subscription(customer_id='01', subscription_id='02')
+        mock_delete.assert_called_with(self.base_url + '/01/subscriptions/02', headers=self.headers_expected)
 
     @mock.patch('requests.delete', return_value=FakeHTTPResponse(resp_path=None))
     def test_remove_education(self, mock_delete):
@@ -284,6 +299,16 @@ class TestNode(TestSuite):
                                                endYear='2000'))
 
     @mock.patch('requests.get', return_value=FakeHTTPResponse())
+    @mock.patch('requests.put', return_value=FakeHTTPResponse(resp_path='tests/util/fake_education_response'))
+    def test_update_subscription(self, mock_post, mock_get):
+        s1 = Subscription(name='name', kind='SERVICE', id='01', customer=Customer(node=self.node, id='123'))
+        s = self.node.update_subscription(customer_id='123', **s1.to_dict())
+        assert isinstance(s, Subscription), type(s)
+        assert s.id == '01', s.id
+        mock_post.assert_called_with(self.base_url + '/123/subscriptions/01', headers=self.headers_expected,
+                                     json=dict(name='name', kind='SERVICE'))
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse())
     @mock.patch('requests.put', return_value=FakeHTTPResponse(resp_path='tests/util/fake_job_response'))
     def test_update_job(self, mock_post, mock_get):
         j1 = Job(jobTitle='jobTitle1', companyName='companyName',
@@ -318,6 +343,13 @@ class TestNode(TestSuite):
         mock_get.assert_called_with(self.base_url + '/123/jobs/456', headers=self.headers_expected)
         assert isinstance(j, Job), type(j)
         assert j.companyIndustry == 'companyIndustry', j.companyIndustry
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse(resp_path='tests/util/fake_subscription_response'))
+    def test_get_subscription(self, mock_get):
+        s = self.node.get_customer_subscription(customer_id='123', subscription_id='456')
+        mock_get.assert_called_with(self.base_url + '/123/subscriptions/456', headers=self.headers_expected)
+        assert isinstance(s, Subscription), type(s)
+        assert s.id == '01', s.id
 
     @mock.patch('requests.get', return_value=FakeHTTPResponse(resp_path='tests/util/fake_like_response'))
     def test_get_like(self, mock_get):

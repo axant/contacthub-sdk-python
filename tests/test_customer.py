@@ -11,6 +11,7 @@ from contacthub.models.properties import Properties
 from contacthub.models.event import Event
 from contacthub.models.job import Job
 from contacthub.models.like import Like
+from contacthub.models.subscription import Subscription
 from contacthub.workspace import Workspace
 from copy import deepcopy
 from requests import HTTPError
@@ -137,8 +138,8 @@ class TestCustomer(unittest.TestCase):
         subscriptions = self.customers[0].base.subscriptions
         assert type(subscriptions) is ReadOnlyList, type(subscriptions)
         subscription = subscriptions[0]
-        assert type(subscription) is Properties, type(subscription)
-        assert subscription.id == "id", subscription.id
+        assert type(subscription) is Subscription, type(subscription)
+        assert subscription.id == "01", subscription.id
         assert subscription.name == "name", subscription.name
         assert subscription.type == "type", subscription.type
         assert subscription.subscribed, subscription.subscribed

@@ -24,10 +24,10 @@ object::
                             'base':
                                     {
                                     'timezone': 'Europe/Rome',
-                                    'fistName': 'Bruce',
+                                    'firstName': 'Bruce',
                                     'lastName': 'Wayne',
                                     'contacts': {
-                                                'email': 'email@email.com',
+                                                'email': 'email@email.com'
                                                 }
                                     }
                             }
@@ -62,6 +62,7 @@ When you declare a new `Customer`, by default its internal structure start with 
     }
 
 You can directly access every simple attribute (strings, numbers) in a new customer created with the above structure.
+
 It's possibile to re-define your own internal structure for a customer with the `default_attributes` parameter of the
 `Customer` constructor::
 
@@ -80,9 +81,11 @@ For example::
 
     from contacthub.models import Properties
 
+    my_customer = Customer(node=node)
     my_customer.base.contacts = Properties(email='bruce.wayne@darkknight.it', fax='fax', otherContacts=[Properties(value='123', name='phone', type='MOBILE')])
-
     my_customer.base.address = Properties(city='city', province='province', geo=Properties(lat=40, lon=100))
+
+    my_customer.post()
 
 Extended properties
 ```````````````````
@@ -91,11 +94,11 @@ By default the extended properties are already defined in the `Customer` structu
 integers, strings or `Properties` object for storing what you need. Extended properties follow a standardized schema
 defined in the `ContactHub settings <https://hub.contactlab.it/#/settings/properties/>`_.
 
+::
 
     my_customer.extended.my_extended_int = 1
     my_customer.extended.my_extended_string = 'string'
     my_customer.extended.my_extended_object = Properties(key='value', k='v')
-
 
 2. Posting a customer directly by its object
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -171,10 +174,12 @@ This call will return a list of 10 customers, taken from the second subset (size
 Get a customer by their externalId
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Since the external id identifies unique customers, specifying the externalId as parameter of the `get_customer` method
-will create a single `Customer` object, insteaf of a `list`::
+You can obtain a `list` of `Customer` objects associated to an external ID by::
 
     customers = node.get_customers(external_id="01")
+
+If there's only one customer associated to the given external ID, this method will create a single `Customer` object
+instead of a `list`
 
 Get specific fields of customers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -488,6 +493,7 @@ For this purpose, this SDK provides three additional classes for managing these 
 * `Education`
 * `Job`
 * `Like`
+* `Subscription`
 
 You can operate on these classes alike other entities (`Customer` and `Event`): via the methods of the `Node` class  or directly by the classes.
 These entities are identified by an internal ID and have their own attributes.
@@ -533,7 +539,7 @@ Update
 
 After some changes on a `Education`::
 
-    my_education = node.get_job(customer_id='c_id', education_id='education_id')
+    my_education = node.get_education(customer_id='c_id', education_id='education_id')
     my_education.schoolConcentration = 'updated'
 
 you can update it via the node method::
@@ -610,7 +616,7 @@ Add
 ^^^
 Add via the node method, creating a new `Like` object::
 
-    new_like= node.add_like(customer_id='123', id='01', customer_id='123', name='name', category='category',
+    new_like= node.add_like(customer_id='123', id='01', name='name', category='category',
     createdTime=datetime.now())
 
 or directly by the object::
@@ -644,3 +650,53 @@ you can update it via the node method::
 or directly by the object::
 
     my_like.put()
+
+Subscription
+------------
+
+Get
+^^^
+You can get a subscription associated to a customer by the customer ID and a subscription ID previously assigned to the
+subscription::
+
+    customer_sub = node.get_subscription(customer_id='c_id', subscription_id='subscription_id')
+
+Add
+^^^
+Add via the node method, creating a new `Subscription` object::
+
+    new_sub = node.add_subscription(customer_id='01', id='02', name='name', kind=Subscriptions.KINDS.SERVICE,
+    subscriberId='id', subscribed=True, preferences=[{'key':'value'}])
+
+or directly by the object::
+
+    new_sub = Subscription(id='02', name='name', kind=Subscriptions.KINDS.SERVICE,
+    subscriberId='id', subscribed=True, preferences=[{'key':'value'}])
+
+    new_sub.post()
+
+Remove
+^^^^^^
+Remove via the node method::
+
+    node.remove_subscription(customer_id='c_id', subscription_id='subscription_id')
+
+or directly by the object::
+
+    subscription.delete()
+
+Update
+^^^^^^
+
+After some changes on a `Subscription`::
+
+    my_sub = node.get_subscription(customer_id='c_id', subscription_id='subscription_id')
+    my_sub.name = 'updated'
+
+you can update it via the node method::
+
+    node.update_subscription(customer_id='c_id', **my_sub.to_dict())
+
+or directly by the object::
+
+    my_sub.put()

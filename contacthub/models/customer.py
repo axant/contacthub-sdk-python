@@ -18,7 +18,7 @@ class Customer(with_metaclass(EntityMeta, object)):
     """
     Customer entity definition
     """
-    __slots__ = ('attributes', 'node', 'customer_api_manager', 'event_api_manager', 'mute')
+    __attributes__ = ('attributes', 'node', 'customer_api_manager', 'event_api_manager', 'mute')
 
     def __init__(self, node, default_attributes=None, **attributes):
         """
@@ -112,7 +112,7 @@ class Customer(with_metaclass(EntityMeta, object)):
         values, otherwise, if `val` is instance of Properties, check for mutations in the Properties object.
         This method generate the mutation tracker dictionary.
         """
-        if attr in self.__slots__:
+        if attr in self.__attributes__:
             return super(Customer, self).__setattr__(attr, val)
         else:
             if isinstance(val, Properties):
@@ -192,11 +192,6 @@ class Customer(with_metaclass(EntityMeta, object)):
         :return: the mutation tracker of this customer
         """
         return resolve_mutation_tracker(self.mute)
-
-    class SUBSCRIPTION_KINDS:
-        DIGITAL_MESSAGE = 'DIGITAL_MESSAGE',
-        SERVICE = 'SERVICE',
-        OTHER = 'OTHER'
 
     class OTHER_CONTACT_TYPES:
         MOBILE = 'MOBILE',

@@ -1,40 +1,43 @@
 # -*- coding: utf-8 -*-
 from copy import deepcopy
 from contacthub._api_manager._api_customer import _CustomerAPIManager
+from contacthub.lib.read_only_list import ReadOnlyList
 
 
-class Like(object):
+class Subscription(object):
     """
-    Like entiti definition
+    Subscription entity definition.
     """
-    __attributes__ = ('attributes', 'customer', 'customer_api_manager', 'entity_name', 'parent_attr', 'properties_class')
+    __attributes__ = (
+    'attributes', 'customer', 'customer_api_manager', 'entity_name', 'parent_attr', 'properties_class')
 
     def __init__(self, customer, parent_attr=None, properties_class=None, **attributes):
         """
-        Initialize a new Like object for customer in a node with the specified attributes.
+        Initialize a new Subscription object for customer in a node with the specified attributes.
 
-        :param customer: the customer associated to this Like object
+        :param customer: the customer associated to this subscription object
         :param parent_attr: the parent attribute for compiling the mutation tracker dictionary
-        :param attributes: key-value arguments for generating the structure of the Like's attributes
+        :param attributes: key-value arguments for generating the structure of the Subscription's attributes
         :param properties_class: reference to the actual Properties class
         """
         self.customer = customer
         self.attributes = attributes
         self.customer_api_manager = _CustomerAPIManager(node=customer.node)
-        self.entity_name = 'likes'
+        self.entity_name = 'subscriptions'
         self.parent_attr = parent_attr
         self.properties_class = properties_class
 
     @classmethod
     def from_dict(cls, customer, attributes=None, parent_attr=None, properties_class=None):
         """
-        Create a new Like initialized by a specified dictionary of attributes
+        Create a new Subscription initialized by a specified dictionary of attributes
 
-        :param customer: the customer associated to this Like object
+
+        :param customer: the customer associated to this subscription object
         :param parent_attr: the parent attribute for compiling the mutation tracker dictionary
-        :param attributes: key-value arguments for generating the structure of the Like's attributes
+        :param attributes: key-value arguments for generating the structure of the Subscription's attributes
         :param properties_class: reference to the actual Properties class
-        :return: a new Like object
+        :return: a new Subscription object
         """
         o = cls(customer=customer, parent_attr=parent_attr, properties_class=properties_class)
         if attributes is None:
@@ -45,9 +48,9 @@ class Like(object):
 
     def to_dict(self):
         """
-        Convert this Like in a dictionary containing his attributes.
+        Convert this Subscription in a dictionary containing his attributes.
 
-        :return: a new dictionary representing the attributes of this Like
+        :return: a new dictionary representing the attributes of this Subscription
         """
         return deepcopy(self.attributes)
 
@@ -59,6 +62,18 @@ class Like(object):
         :return: the item in the attributes dictionary if it's present, raise AttributeError otherwise.
         """
         try:
+            if self.parent_attr:
+                if isinstance(self.attributes[item], list):
+                    if self.attributes[item] and isinstance(self.attributes[item][0], dict):
+                        list_sub_prob = []
+                        for elem in self.attributes[item]:
+                            list_sub_prob.append(
+                                self.properties_class.from_dict(parent_attr=self.parent_attr + '.' + item, parent=self,
+                                                               attributes=elem))
+                    else:
+                        list_sub_prob = self.attributes[item]
+                    return ReadOnlyList(list_sub_prob)
+                return self.attributes[item]
             return self.attributes[item]
         except KeyError as e:
             raise AttributeError("%s object has no attribute %s" % (type(self).__name__, e))
@@ -69,9 +84,17 @@ class Like(object):
         Update the attributes dictionary with the val specified.
         """
         if attr in self.__attributes__:
-            return super(Like, self).__setattr__(attr, val)
+            return super(Subscription, self).__setattr__(attr, val)
         else:
-            self.attributes[attr] = val
+            if isinstance(val, list):
+                self.attributes[attr] = []
+                for elem in val:
+                    try:
+                        self.attributes[attr] += [elem.attributes]
+                    except AttributeError:
+                        self.attributes[attr] += [elem]
+            else:
+                self.attributes[attr] = val
             if self.parent_attr:
                 attr = self.parent_attr.split('.')[-1:][0]
                 base_attr = self.parent_attr.split('.')[-2:][0]
@@ -81,9 +104,9 @@ class Like(object):
 
     def post(self):
         """
-        Post this Like in the list of the Like for a Customer(specified in the constructor of the Like)
+        Post this Subscription in the list of the Subscription for a Customer(specified in the constructor of the Subscription)
 
-        :return: a Like object representing the posted Like
+        :return: a Subscription object representing the posted Subscription
         """
         entity_attrs = self.customer_api_manager.post(body=self.attributes, urls_extra=self.customer.id + '/'
                                                                                        + self.entity_name)
@@ -95,34 +118,39 @@ class Like(object):
 
     def delete(self):
         """
-        Remove this Like from the list of the Like for a Customer(specified in the constructor of
-        the Like)
+        Remove this Subscription from the list of the Subscription for a Customer(specified in the constructor of
+        the Subscription)
 
-        :return: a Like object representing the deleted Like
+        :return: a Subscription object representing the deleted Subscription
         """
         self.customer_api_manager.delete(_id=self.customer.id,
                                          urls_extra=self.entity_name + '/' + self.attributes['id'])
 
     def put(self):
         """
-        Put this Like in the list of the Like for a Customer(specified in the constructor of the Like)
+        Put this Subscription in the list of the Subscription for a Customer(specified in the constructor of the Subscription)
 
-        :return: a Like object representing the putted Like
+        :return: a Subscription object representing the putted Subscription
         """
         try:
             find = False
-            for like in self.customer.attributes['base'][self.entity_name]:
-                if self.attributes['id'] == like['id']:
+            for subscription in self.customer.attributes['base'][self.entity_name]:
+                if self.attributes['id'] == subscription['id']:
                     find = True
             if not find:
-                raise ValueError("Like object doesn't exists in the specified customer")
+                raise ValueError("Subscription object doesn't exists in the specified customer")
         except KeyError as e:
-            raise ValueError("Like object doesn't exists in the specified customer")
+            raise ValueError("Subscription object doesn't exists in the specified customer")
 
         entity_attrs = self.customer_api_manager.put(_id=self.customer.id, body=self.attributes,
                                                      urls_extra=self.entity_name + '/' + self.attributes['id'])
 
-        for like in self.customer.attributes['base'][self.entity_name]:
-            if like['id'] == entity_attrs['id']:
-                index = self.customer.attributes['base'][self.entity_name].index(like)
+        for subscription in self.customer.attributes['base'][self.entity_name]:
+            if subscription['id'] == entity_attrs['id']:
+                index = self.customer.attributes['base'][self.entity_name].index(subscription)
                 self.customer.attributes['base'][self.entity_name][index] = entity_attrs
+
+    class KINDS:
+        DIGITAL_MESSAGE = 'DIGITAL_MESSAGE',
+        SERVICE = 'SERVICE',
+        OTHER = 'OTHER'

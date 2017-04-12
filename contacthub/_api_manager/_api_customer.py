@@ -38,6 +38,7 @@ class _CustomerAPIManager(object):
         :return: A dictionary representing the JSON response from the API called if there were no errors, else raise an
             HTTPException
         """
+
         params = {'nodeId': self.node.node_id}
         if query:
             params['query'] = json.dumps(query, cls=DateEncoder)
@@ -47,7 +48,6 @@ class _CustomerAPIManager(object):
             params['size'] = size
         if page:
             params['page'] = page
-
         resp = requests.get(self.request_url, params=params, headers=self.headers)
         response_text = json.loads(resp.text)
         if 200 <= resp.status_code < 300:

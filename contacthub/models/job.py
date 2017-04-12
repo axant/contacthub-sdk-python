@@ -8,33 +8,36 @@ class Job(object):
     Job entity definition.
     """
 
-    __attributes__ = ('attributes', 'customer','customer_api_manager','entity_name', 'parent_attr')
+    __attributes__ = ('attributes', 'customer','customer_api_manager','entity_name', 'parent_attr', 'properties_class')
 
-    def __init__(self, customer, parent_attr=None, **attributes):
+    def __init__(self, customer, parent_attr=None, properties_class=None, **attributes):
         """
         Initialize a new Job object for customer in a node with the specified attributes.
 
         :param customer: the customer associated to this Job object
         :param parent_attr: the parent attribute for compiling the mutation tracker dictionary
         :param attributes: key-value arguments for generating the structure of the Job's attributes
+        :param properties_class: reference to the actual Properties class
         """
         self.customer = customer
         self.attributes = attributes
         self.customer_api_manager = _CustomerAPIManager(node=customer.node)
         self.entity_name = 'jobs'
         self.parent_attr = parent_attr
+        self.properties_class = properties_class
 
     @classmethod
-    def from_dict(cls, customer, attributes=None, parent_attr=None):
+    def from_dict(cls, customer, attributes=None, parent_attr=None, properties_class=None):
         """
         Create a new Job initialized by a specified dictionary of attributes
 
         :param customer: the customer associated to this Job object
         :param parent_attr: the parent attribute for compiling the mutation tracker dictionary
         :param attributes: key-value arguments for generating the structure of the Job's attributes
+        :param properties_class: reference to the actual Properties class
         :return: a new Job object
         """
-        o = cls(customer=customer, parent_attr=parent_attr)
+        o = cls(customer=customer, parent_attr=parent_attr, properties_class=properties_class)
         if attributes is None:
             o.attributes = {}
         else:

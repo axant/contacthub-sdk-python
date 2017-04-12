@@ -29,3 +29,10 @@ class TestProperties(unittest.TestCase):
         p = Properties(parent=Customer(node=self.node))
         assert p.to_dict() == p.attributes, p.to_dict()
 
+    def test_properties_mute_list(self):
+        p = Properties(prova=list())
+        p.prova += [Properties(a='b'), {'c': 'd'}]
+        assert p.prova == [{'a': 'b'}, {'c': 'd'}], p.prova
+        assert isinstance(p.__repr__(), str), type(p.__repr__())
+
+

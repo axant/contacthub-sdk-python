@@ -11,6 +11,8 @@ from contacthub.models.like import Like
 from contacthub.models.query.query import Query
 import uuid
 
+from contacthub.models.subscription import Subscription
+
 
 class Node(object):
     """
@@ -32,7 +34,7 @@ class Node(object):
         Get all the customers in this node
 
         :param external_id: the external id of the customer to retrieve
-         :param size: the size of the pages containing customers
+        :param size: the size of the pages containing customers
         :param page: the number of the page for retrieve customer data
         :return: A list containing Customer object of a node
         """
@@ -340,3 +342,47 @@ class Node(object):
         convert_properties_obj_in_prop(properties=attributes, properties_class=Properties)
         self.event_api_manager.post(body=attributes)
         return Event(node=self, **attributes)
+
+    def get_customer_subscription(self, customer_id, subscription_id):
+        """
+        Get an subscription associated to a customer by its ID
+
+        :param subscription_id: the unique id of the subscription to get in a customer
+        :param customer_id: the id of the customer for getting the subscription
+        :return: a new Subscription object containing the attributes associated to the subscription
+        """
+        return Subscription(customer=self.get_customer(id=customer_id),
+                         **self.customer_api_manager.get(_id=customer_id, urls_extra='subscriptions/' +
+                                                                                     subscription_id))
+
+    def add_subscription(self, customer_id, **attributes):
+        """
+        Insert a new Subscription for the given Customer
+
+        :param customer_id: the id of the customer for adding the Subscription
+        :param attributes: the attributes representing the new Subscription to add
+        :return: a Subscription object representing the added Subscription
+        """
+        entity_attrs = self.customer_api_manager.post(body=attributes, urls_extra=customer_id + '/subscriptions')
+        return Subscription(customer=self.get_customer(id=customer_id), **entity_attrs)
+
+    def remove_subscription(self, customer_id, subscription_id):
+        """
+        Remove a the given Subscription for the given Customer
+
+        :param customer_id: the id of the customer associated to the Subscription to remove
+        :param subscription_id: the id of the Subscription to remove
+        """
+        self.customer_api_manager.delete(_id=customer_id, urls_extra='subscriptions/' + subscription_id)
+
+    def update_subscription(self, customer_id, id, **attributes):
+        """
+        Update the given Subscription of the given customer with new specified attributes
+
+        :param customer_id: the id of the customer associated to the Subscription to update
+        :param id: the id of the Subscription to update
+        :param attributes: the attributes for update the Subscription
+        :return: a Subscription object representing the updated Subscription
+        """
+        entity_attrs = self.customer_api_manager.put(_id=customer_id, body=attributes, urls_extra='subscriptions/' + id)
+        return Subscription(customer=self.get_customer(id=customer_id), **entity_attrs)

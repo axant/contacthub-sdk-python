@@ -5,13 +5,14 @@ from contacthub.lib.utils import generate_mutation_tracker, convert_properties_o
 from contacthub.models.education import Education
 from contacthub.models.job import Job
 from contacthub.models.like import Like
+from contacthub.models.subscription import Subscription
 
 
 class Properties(object):
     """
     Generic Properties for all entities
     """
-    __SUBPROPERTIES_LIST__ = {'educations': Education, 'likes': Like, 'jobs': Job}
+    __SUBPROPERTIES_LIST__ = {'educations': Education, 'likes': Like, 'jobs': Job, 'subscriptions': Subscription}
 
     __attributes__ = ('attributes', 'parent_attr', 'mute', 'parent')
 
@@ -21,11 +22,20 @@ class Properties(object):
         :param parent_attr: the parent attribute for compiling the mutation tracker dictionary
         :param attributes: key-value arguments for generating the structure of the Properties's attributes
         """
-        self.parent_attr = parent_attr
         self.parent = parent
-        self.mute = parent.mute if parent else None
+        self.parent_attr = parent_attr
+        if parent:
+            try:
+                self.mute = parent.mute
+            except AttributeError:
+                self.mute = parent.customer.mute
+        else:
+            self.mute = None
         convert_properties_obj_in_prop(properties=attributes, properties_class=Properties)
         self.attributes = attributes
+
+    def __repr__(self):
+        return str(self.attributes)
 
     @classmethod
     def from_dict(cls, parent=None, parent_attr=None, attributes=None):
@@ -62,28 +72,30 @@ class Properties(object):
         a list
         """
         try:
-            if item in self.__SUBPROPERTIES_LIST__:
-                obj_list_ret = []
-                for elements in self.attributes[item]:
-                    obj_list_ret.append(self.__SUBPROPERTIES_LIST__[item].from_dict(customer=self.parent,
-                                                                                attributes=elements,
-                                                                                parent_attr=self.parent_attr + '.'
-                                                                                + item))
-                return ReadOnlyList(obj_list_ret)
-            if isinstance(self.attributes[item], dict):
-                return Properties.from_dict(parent_attr=self.parent_attr + '.' + item, parent=self,
-                                            attributes=self.attributes[item])
-            elif isinstance(self.attributes[item], list):
-                if self.attributes[item] and isinstance(self.attributes[item][0], dict):
-                    list_sub_prob = []
-                    for elem in self.attributes[item]:
-                        list_sub_prob.append(
-                            Properties.from_dict(parent_attr=self.parent_attr + '.' + item, parent=self,
-                                                 attributes=elem))
-                else:
-                    list_sub_prob = self.attributes[item]
-                return ReadOnlyList(list_sub_prob)
-
+            if self.parent:
+                if item in self.__SUBPROPERTIES_LIST__:
+                    obj_list_ret = []
+                    for elements in self.attributes[item]:
+                        obj_list_ret.append(self.__SUBPROPERTIES_LIST__[item].from_dict(customer=self.parent,
+                                                                                        attributes=elements,
+                                                                                        parent_attr=self.parent_attr + '.'
+                                                                                                    + item,
+                                                                                        properties_class=Properties))
+                    return ReadOnlyList(obj_list_ret)
+                if isinstance(self.attributes[item], dict):
+                    return Properties.from_dict(parent_attr=self.parent_attr + '.' + item, parent=self,
+                                                attributes=self.attributes[item])
+                elif isinstance(self.attributes[item], list):
+                    if self.attributes[item] and isinstance(self.attributes[item][0], dict):
+                        list_sub_prob = []
+                        for elem in self.attributes[item]:
+                            list_sub_prob.append(
+                                Properties.from_dict(parent_attr=self.parent_attr + '.' + item, parent=self,
+                                                     attributes=elem))
+                    else:
+                        list_sub_prob = self.attributes[item]
+                    return ReadOnlyList(list_sub_prob)
+                return self.attributes[item]
             return self.attributes[item]
         except KeyError as e:
             raise AttributeError("%s object has no attribute %s" % (type(self).__name__, e))
@@ -108,16 +120,17 @@ class Properties(object):
                         self.mute[attr] = val.attributes
                 self.attributes[attr] = val.attributes
             else:
-                if isinstance(val, list) and val and (isinstance(val[0], Job)
-                                                      or isinstance(val[0], Education)
-                                                      or isinstance(val[0], Like)
-                                                      or isinstance(val[0], Properties)):
+                if isinstance(val, list):
                     self.attributes[attr] = []
                     for elem in val:
-                        self.attributes[attr] += [elem.attributes]
+                        if isinstance(elem, Job) or isinstance(elem, Education) or isinstance(elem, Like) \
+                                or isinstance(elem, Properties) or isinstance(elem, Subscription):
+                            self.attributes[attr] += [elem.attributes]
+                        else:
+                            self.attributes[attr] += [elem]
                 else:
                     self.attributes[attr] = val
-                if self.mute is not None:
+                if self.mute is not None and self.parent_attr:
                     field = self.parent_attr.split('.')[-1:][0]
                     if isinstance(self.parent.attributes[field], list):
                         self.mute[self.parent_attr] = self.parent.attributes[field]
