@@ -9,7 +9,7 @@ class Subscription(object):
     Subscription entity definition.
     """
     __attributes__ = (
-    'attributes', 'customer', 'customer_api_manager', 'entity_name', 'parent_attr', 'properties_class')
+        'attributes', 'customer', 'customer_api_manager', 'entity_name', 'parent_attr', 'properties_class')
 
     def __init__(self, customer, parent_attr=None, properties_class=None, **attributes):
         """
@@ -69,7 +69,7 @@ class Subscription(object):
                         for elem in self.attributes[item]:
                             list_sub_prob.append(
                                 self.properties_class.from_dict(parent_attr=self.parent_attr + '.' + item, parent=self,
-                                                               attributes=elem))
+                                                                attributes=elem))
                     else:
                         list_sub_prob = self.attributes[item]
                     return ReadOnlyList(list_sub_prob)

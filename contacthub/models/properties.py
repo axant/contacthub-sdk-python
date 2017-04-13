@@ -23,8 +23,8 @@ class Properties(object):
         :param attributes: key-value arguments for generating the structure of the Properties's attributes
         """
         self.parent = parent
-        self.parent_attr = parent_attr
-        if parent:
+        if self.parent:
+            self.parent_attr = parent_attr
             try:
                 self.mute = parent.mute
             except AttributeError:
@@ -72,30 +72,31 @@ class Properties(object):
         a list
         """
         try:
-            if self.parent:
-                if item in self.__SUBPROPERTIES_LIST__:
-                    obj_list_ret = []
-                    for elements in self.attributes[item]:
-                        obj_list_ret.append(self.__SUBPROPERTIES_LIST__[item].from_dict(customer=self.parent,
-                                                                                        attributes=elements,
-                                                                                        parent_attr=self.parent_attr + '.'
-                                                                                                    + item,
-                                                                                        properties_class=Properties))
-                    return ReadOnlyList(obj_list_ret)
-                if isinstance(self.attributes[item], dict):
-                    return Properties.from_dict(parent_attr=self.parent_attr + '.' + item, parent=self,
-                                                attributes=self.attributes[item])
-                elif isinstance(self.attributes[item], list):
-                    if self.attributes[item] and isinstance(self.attributes[item][0], dict):
-                        list_sub_prob = []
-                        for elem in self.attributes[item]:
-                            list_sub_prob.append(
-                                Properties.from_dict(parent_attr=self.parent_attr + '.' + item, parent=self,
-                                                     attributes=elem))
-                    else:
-                        list_sub_prob = self.attributes[item]
-                    return ReadOnlyList(list_sub_prob)
+            if not self.parent:
                 return self.attributes[item]
+
+            if item in self.__SUBPROPERTIES_LIST__:
+                obj_list_ret = []
+                for elements in self.attributes[item]:
+                    obj_list_ret.append(self.__SUBPROPERTIES_LIST__[item].from_dict(customer=self.parent,
+                                                                                    attributes=elements,
+                                                                                    parent_attr=self.parent_attr + '.' +
+                                                                                                item,
+                                                                                    properties_class=Properties))
+                return ReadOnlyList(obj_list_ret)
+            if isinstance(self.attributes[item], dict):
+                return Properties.from_dict(parent_attr=self.parent_attr + '.' + item, parent=self,
+                                            attributes=self.attributes[item])
+            elif isinstance(self.attributes[item], list):
+                if self.attributes[item] and isinstance(self.attributes[item][0], dict):
+                    list_sub_prob = []
+                    for elem in self.attributes[item]:
+                        list_sub_prob.append(
+                            Properties.from_dict(parent_attr=self.parent_attr + '.' + item, parent=self,
+                                                 attributes=elem))
+                else:
+                    list_sub_prob = self.attributes[item]
+                return ReadOnlyList(list_sub_prob)
             return self.attributes[item]
         except KeyError as e:
             raise AttributeError("%s object has no attribute %s" % (type(self).__name__, e))
@@ -111,7 +112,7 @@ class Properties(object):
             return super(Properties, self).__setattr__(attr, val)
         else:
             if isinstance(val, Properties):
-                if self.mute is not None:
+                if self.parent:
                     try:
                         mutations = generate_mutation_tracker(self.attributes[attr], val.attributes)
                         update_tracking_with_new_prop(mutations, val.attributes)
@@ -123,14 +124,13 @@ class Properties(object):
                 if isinstance(val, list):
                     self.attributes[attr] = []
                     for elem in val:
-                        if isinstance(elem, Job) or isinstance(elem, Education) or isinstance(elem, Like) \
-                                or isinstance(elem, Properties) or isinstance(elem, Subscription):
+                        try:
                             self.attributes[attr] += [elem.attributes]
-                        else:
+                        except AttributeError as e:
                             self.attributes[attr] += [elem]
                 else:
                     self.attributes[attr] = val
-                if self.mute is not None and self.parent_attr:
+                if self.parent:
                     field = self.parent_attr.split('.')[-1:][0]
                     if isinstance(self.parent.attributes[field], list):
                         self.mute[self.parent_attr] = self.parent.attributes[field]

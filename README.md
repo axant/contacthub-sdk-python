@@ -30,6 +30,7 @@ For all information about ContactHub, check [here](http://contactlab.com/en/offe
         -   [Education](http://contacthub-sdk-python.readthedocs.io/en/latest/customer_operation.html#education)
         -   [Job](http://contacthub-sdk-python.readthedocs.io/en/latest/customer_operation.html#job)
         -   [Like](http://contacthub-sdk-python.readthedocs.io/en/latest/customer_operation.html#like)
+        -   [Subscription](http://contacthub-sdk-python.readthedocs.io/en/latest/customer_operation.html#subscription)
 -   [Operations on Events](http://contacthub-sdk-python.readthedocs.io/en/latest/event_operations.html)
     - [Add a new event](http://contacthub-sdk-python.readthedocs.io/en/latest/event_operations.html#add-a-new-event)
         - [Sessions](http://contacthub-sdk-python.readthedocs.io/en/latest/event_operations.html#sessions)
