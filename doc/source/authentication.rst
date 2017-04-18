@@ -36,3 +36,15 @@ The file must follow this template::
     workspace_id = workspace_id
     token = token
     base_url = base_url
+
+Proxies
+-------
+If you need to use a proxy, you can configure requests by setting the environment variables HTTP_PROXY and HTTPS_PROXY::
+
+    $ export HTTP_PROXY="http://10.10.1.10:3128"
+    $ export HTTPS_PROXY="http://10.10.1.10:1080"
+
+To use HTTP Basic Auth with your proxy, use the *http://user:password@host/* syntax::
+
+    $ export HTTPS_PROXY="http://user:pass@10.10.1.10:3128/"
+
