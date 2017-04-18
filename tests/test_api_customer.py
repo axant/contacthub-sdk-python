@@ -124,6 +124,14 @@ class TestCustomerAPIManager(TestSuite):
         except HTTPError as e:
             assert 'Message' in str(e), str(e)
 
+    @mock.patch('requests.get',
+                return_value=FakeHTTPResponse())
+    def test_get_all_fields(self, mock_get):
+        self.customer_manager.get_all(fields=['a','b','c'])
+        params_expected = {'nodeId': '123', 'fields': 'a,b,c'}
+        mock_get.assert_called_with(self.base_url, headers=self.headers_expected, params=params_expected)
+
+
 
 
 

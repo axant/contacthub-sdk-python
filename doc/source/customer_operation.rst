@@ -184,11 +184,10 @@ instead of a `list`
 Get specific fields of customers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-It's possible to filter the fields present in a `Customer`, specifying them in a list of fields::
+It's possible to filter the fields present in a `Customer`, specifying them in a list strings representing the
+attributes::
 
-    customers = node.get_customers(fields=[Customer.base.email,Customer.base.dob,Customer.extra ])
-
-Every element of the fetched list will only have the given fields.
+   node.get_customers(fields=['base.firstName', 'base.lastName'])
 
 **None of the previous parameter passed to the `get_customers` method is required and you can combine them for getting
 the list of customers that suits your needs.**
@@ -368,8 +367,8 @@ It's possibile to combine simple queries to create a combined query.
 For this purpose, you can use the `&` operator to put two simple queries in the `AND` condition and the `|` operator
 for putting them in the `OR` condition::
 
-    q1 = node.query(Customer)
-    q2 = node.query(Customer)
+    q1 = node.query(Customer).filter(Customer.base.firstName == 'Bruce')
+    q2 = node.query(Customer).filter(Customer.base.lastName == 'Wayne')
 
     and_query = q1 & q2
 
@@ -520,7 +519,7 @@ Add via the node method, creating a new `Education` object::
 
 or directly by the object::
 
-    new_educ = Education( id='01', schoolType=Education.SCHOOL_TYPES.COLLEGE, schoolName='schoolName',
+    new_educ = Education(customer=my_customer, id='01', schoolType=Education.SCHOOL_TYPES.COLLEGE, schoolName='schoolName',
     schoolConcentration='schoolConcentration', isCurrent=False, startYear='1994', endYear='2000')
 
     new_educ.post()
@@ -571,7 +570,7 @@ Add via the node method, creating a new `Job` object::
 
 or directly by the object::
 
-    new_job = Job( id='01', jobTitle='jobTitle', companyName='companyName', companyIndustry='companyIndustry',
+    new_job = Job(customer=my_customer, id='01', jobTitle='jobTitle', companyName='companyName', companyIndustry='companyIndustry',
     isCurrent=True, startDate='1994-10-06', endDate='1994-10-06')
 
     new_job.post()
@@ -622,7 +621,7 @@ Add via the node method, creating a new `Like` object::
 
 or directly by the object::
 
-    new_like = Like(id='01', customer_id='123', name='name', category='category', createdTime=datetime.now())
+    new_like = Like(customer=my_customer, id='01', name='name', category='category', createdTime=datetime.now())
 
     new_like.post()
 
@@ -666,12 +665,12 @@ Add
 ^^^
 Add via the node method, creating a new `Subscription` object::
 
-    new_sub = node.add_subscription(customer_id='01', id='02', name='name', kind=Subscriptions.KINDS.SERVICE,
+    new_sub = node.add_subscription(customer_id='01', id='02', name='name', kind=Subscription.KINDS.SERVICE,
     subscriberId='id', subscribed=True, preferences=[{'key':'value'}])
 
 or directly by the object::
 
-    new_sub = Subscription(id='02', name='name', kind=Subscriptions.KINDS.SERVICE,
+    new_sub = Subscription(customer=my_customer, id='02', name='name', kind=Subscription.KINDS.SERVICE,
     subscriberId='id', subscribed=True, preferences=[{'key':'value'}])
 
     new_sub.post()

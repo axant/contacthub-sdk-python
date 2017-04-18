@@ -5,13 +5,12 @@ Operations on Events
 
 The second important entity of ContactHub are events, particular actions performed by customers in particular contexts.
 
-The attribute `type` of an `Event` defines the schema that you must follow for his attributes.
+The attribute `type` of an `Event` defines the schema that you must follow for his attributes. His schema must be specified
+in the `properties` attribute of the `Event`.
+
 Eg:
-If you create a new event whose type is `serviceSubscribed`::
-
-    event = Event(node=node, customer_id='c_id', type='serviceSubscribed', context=Event.CONTEXTS.WEB)
-
-You must follow its own schema, specifying these attributes:
+If you create a new event whose type is `serviceSubscribed` you,
+must follow its own schema, specifying these attributes in the `properties` attributes of the Event:
 
 +-----------------+--------+
 | Name            | Type   |
@@ -45,20 +44,18 @@ Events are also associated to a context of use. The available contexts for an ev
 * DIGITAL_CAMPAIGN
 * OTHER
 
-When you create an `Event`, the attributes `type` and `context` are required and must contain a valid event type and one of the above event context.
+When you create an `Event`, the attributes `type`, `context` and `properties` are required.
 
 Add a new event
 ---------------
 To create a new event, you have to define its schema (according to the specified type) in `Event` class constructor::
 
-    event = Event(node=node, customer_id='c_id', type=Event.TYPES.SERVICE_SUBSCRIBE, context=Event.CONTEXTS.WEB, mode=Event.MODES.ACTIVE,
-    subscriberID = 's_id', serviceId='service_id', serviceName='serviceName', startDate=datetime.now(), endDate=None,
-    extraProperties=Properties(extra='extra'))
+    event = Event(node=node, customerId=customers[0].id, type=Event.TYPES.SERVICE_SUBSCRIBED, context=Event.CONTEXTS.WEB,
+                  properties=Properties(
+                  subscriberId='s_id', serviceId='service_id', serviceName='serviceName', startDate=datetime.now(),
+                  extraProperties=Properties(extra='extra')))
 
-The field `mode` is required and its value must be:
-
-*  ACTIVE: if the customer made the event
-*  PASSIVE: if the customer receive the event
+**The attribute `customerId` is required for specifying the customer who will be associated with the event.**
 
 After the creation, you can add the event via the node method::
 
@@ -67,6 +64,11 @@ After the creation, you can add the event via the node method::
 or directly by the object::
 
     event.post()
+
+For some events, you have to specify the `mode` attribute. Its value must be:
+
+* ACTIVE: if the customer made the event
+* PASSIVE: if the customer receive the event
 
 Sessions
 --------
@@ -82,9 +84,9 @@ You can generate a new session ID conforming to the UUID standard V4 by the `cre
     session_id = node.create_session_id()
 
     event = Event(node=node, bringBackProperties=Properties(type='SESSION_ID', value=session_id),
-    type=Event.TYPES.SERVICE_SUBSCRIBE, context=Event.CONTEXTS.WEB, mode=Event.MODES.ACTIVE,
-    subscriberID = 's_id', serviceId='service_id', serviceName='serviceName', startDate=datetime.now(), endDate=None,
-    extraProperties=Properties(extra='extra'))
+    type=Event.TYPES.SERVICE_SUBSCRIBED, context=Event.CONTEXTS.WEB,
+    properties=Properties(subscriberId = 's_id', serviceId='service_id', serviceName='serviceName', startDate=datetime.now(),
+    extraProperties=Properties(extra='extra')))
 
 If the anonymous customer will perform the authentication, you can add a new `Customer` on ContactHub, obtaining a new
 customer ID.
@@ -100,10 +102,10 @@ ExternalId
 
 In the same way of the Session ID, you can add a new event specifying the external ID of a customer::
 
-    event = Event(node=node, bringBackProperties=Properties(type='EXTERNAL_ID', value='ext_id'),
-    type=Event.TYPES.SERVICE_SUBSCRIBE, context=Event.CONTEXTS.WEB, mode=Event.MODES.ACTIVE,
-    subscriberID = 's_id', serviceId='service_id', serviceName='serviceName', startDate=datetime.now(), endDate=None,
-    extraProperties=Properties(extra='extra'))
+    event = Event(node=node, bringBackProperties=Properties(type='externalId', value='e_id'),
+    type=Event.TYPES.SERVICE_SUBSCRIBED, context=Event.CONTEXTS.WEB,
+    properties=Properties(subscriberId = 's_id', serviceId='service_id', serviceName='serviceName', startDate=datetime.now(),
+    extraProperties=Properties(extra='extra')))
 
 Get all events
 --------------
@@ -138,4 +140,6 @@ Get a single event
 Retrieve a single event by its ID, obtaining a new `Event` object::
 
     customer_event = event.get_event(id='event_id')
+
+
 

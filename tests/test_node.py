@@ -349,7 +349,7 @@ class TestNode(TestSuite):
         s = self.node.get_customer_subscription(customer_id='123', subscription_id='456')
         mock_get.assert_called_with(self.base_url + '/123/subscriptions/456', headers=self.headers_expected)
         assert isinstance(s, Subscription), type(s)
-        assert s.id == '01', s.id
+        assert s.preferences[0].key == 'key', s.preferences[0].key
 
     @mock.patch('requests.get', return_value=FakeHTTPResponse(resp_path='tests/util/fake_like_response'))
     def test_get_like(self, mock_get):

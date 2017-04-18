@@ -120,7 +120,7 @@ class Education(object):
             raise ValueError("Education object doesn't exists in the specified customer")
 
         entity_attrs = self.customer_api_manager.put(_id=self.customer.id, body=self.attributes,
-                                                 urls_extra=self.entity_name + '/' + self.attributes['id'])
+                                                     urls_extra=self.entity_name + '/' + self.attributes['id'])
 
         for education in self.customer.attributes['base'][self.entity_name]:
             if education['id'] == entity_attrs['id']:

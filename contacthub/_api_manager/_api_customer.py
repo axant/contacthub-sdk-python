@@ -48,6 +48,8 @@ class _CustomerAPIManager(object):
             params['size'] = size
         if page:
             params['page'] = page
+        if fields:
+            params['fields'] = ",".join(fields)
         resp = requests.get(self.request_url, params=params, headers=self.headers)
         response_text = json.loads(resp.text)
         if 200 <= resp.status_code < 300:

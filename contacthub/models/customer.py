@@ -194,20 +194,20 @@ class Customer(with_metaclass(EntityMeta, object)):
         return resolve_mutation_tracker(self.mute)
 
     class OTHER_CONTACT_TYPES:
-        MOBILE = 'MOBILE',
-        PHONE = 'PHONE',
-        EMAIL = 'EMAIL',
-        FAX = 'FAX',
+        MOBILE = 'MOBILE'
+        PHONE = 'PHONE'
+        EMAIL = 'EMAIL'
+        FAX = 'FAX'
         OTHER = 'OTHER'
 
     class MOBILE_DEVICE_TYPES:
-        APN = 'APN',
-        GCM = 'GCM',
+        APN = 'APN'
+        GCM = 'GCM'
         WP = 'WP'
 
     class NOTIFICATION_SERVICES:
-        APN = "APN",
-        GCM = "GCM",
-        WNS = "WNS",
-        ADM = "ADM",
+        APN = "APN"
+        GCM = "GCM"
+        WNS = "WNS"
+        ADM = "ADM"
         SNS = "SNS"

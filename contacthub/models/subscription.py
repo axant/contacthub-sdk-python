@@ -62,19 +62,21 @@ class Subscription(object):
         :return: the item in the attributes dictionary if it's present, raise AttributeError otherwise.
         """
         try:
-            if self.parent_attr:
-                if isinstance(self.attributes[item], list):
-                    if self.attributes[item] and isinstance(self.attributes[item][0], dict):
-                        list_sub_prob = []
-                        for elem in self.attributes[item]:
-                            list_sub_prob.append(
-                                self.properties_class.from_dict(parent_attr=self.parent_attr + '.' + item, parent=self,
-                                                                attributes=elem))
-                    else:
-                        list_sub_prob = self.attributes[item]
-                    return ReadOnlyList(list_sub_prob)
-                return self.attributes[item]
+            if isinstance(self.attributes[item], list):
+                if self.attributes[item] and isinstance(self.attributes[item][0], dict):
+                    list_sub_prob = []
+                    for elem in self.attributes[item]:
+                        if self.parent_attr:
+                            list_sub_prob.append(self.properties_class.from_dict(parent_attr=
+                                                                                 self.parent_attr + '.' + item,
+                                                                                 parent=self, attributes=elem))
+                        else:
+                            list_sub_prob.append(self.properties_class.from_dict(parent=self, attributes=elem))
+                else:
+                    list_sub_prob = self.attributes[item]
+                return ReadOnlyList(list_sub_prob)
             return self.attributes[item]
+
         except KeyError as e:
             raise AttributeError("%s object has no attribute %s" % (type(self).__name__, e))
 
@@ -151,6 +153,6 @@ class Subscription(object):
                 self.customer.attributes['base'][self.entity_name][index] = entity_attrs
 
     class KINDS:
-        DIGITAL_MESSAGE = 'DIGITAL_MESSAGE',
-        SERVICE = 'SERVICE',
+        DIGITAL_MESSAGE = 'DIGITAL_MESSAGE'
+        SERVICE = 'SERVICE'
         OTHER = 'OTHER'

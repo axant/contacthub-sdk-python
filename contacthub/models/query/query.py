@@ -34,6 +34,7 @@ class Query(object):
     def _combine_query(query1, query2, operation):
         """
         Take two queries and complex operation and create a combined query.
+
         :param query1: the first query to combine
         :param query2: the second query to combine
         :param operation: the operation for combining the query
@@ -52,10 +53,14 @@ class Query(object):
         return query_ret
 
     def __and__(self, other):
+        if not self.inner_query or not other.inner_query:
+            raise OperationNotPermitted('Cannot combine empty queries.')
         return Query(node=self.node, entity=self.entity,
                      previous_query=self._combine_query(query1=self, query2=other, operation='INTERSECT'))
 
     def __or__(self, other):
+        if not self.inner_query or not other.inner_query:
+            raise OperationNotPermitted('Cannot combine empty queries.')
         return Query(node=self.node, entity=self.entity,
                      previous_query=self._combine_query(query1=self, query2=other, operation='UNION'))
 

@@ -683,3 +683,23 @@ class TestQuery(unittest.TestCase):
         except OperationNotPermitted as e:
             assert 'Cannot apply a filter on a combined query' in str(e), str(e)
 
+    @mock.patch('contacthub._api_manager._api_customer._CustomerAPIManager.get_all',
+                return_value=json.loads(FakeHTTPResponse().text))
+    def test_combine_empty_or(self, mock_get):
+        try:
+            q1 = self.node.query(Customer)
+            q2 = self.node.query(Customer)
+            qor = q1 | q2
+        except OperationNotPermitted as e:
+            assert 'Cannot combine empty queries.' in str(e), str(e)
+
+    @mock.patch('contacthub._api_manager._api_customer._CustomerAPIManager.get_all',
+                return_value=json.loads(FakeHTTPResponse().text))
+    def test_combine_empty_and(self, mock_get):
+        try:
+            q1 = self.node.query(Customer)
+            q2 = self.node.query(Customer)
+            qor = q1 & q2
+        except OperationNotPermitted as e:
+            assert 'Cannot combine empty queries.' in str(e), str(e)
+

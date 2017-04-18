@@ -29,17 +29,18 @@ class Node(object):
         self.customer_api_manager = _CustomerAPIManager(node=self)
         self.event_api_manager = _EventAPIManager(node=self)
 
-    def get_customers(self, external_id=None, page=None, size=None):
+    def get_customers(self, external_id=None, page=None, size=None, fields=None):
         """
         Get all the customers in this node
 
         :param external_id: the external id of the customer to retrieve
         :param size: the size of the pages containing customers
         :param page: the number of the page for retrieve customer data
+        :param fields: : a list of strings representing the properties to include in the response
         :return: A list containing Customer object of a node
         """
         customers = []
-        resp = self.customer_api_manager.get_all(externalId=external_id, page=page, size=size)
+        resp = self.customer_api_manager.get_all(externalId=external_id, page=page, size=size, fields=fields)
         for customer in resp['elements']:
             customers.append(Customer(node=self, **customer))
         return customers
@@ -135,7 +136,7 @@ class Node(object):
 
         :return: a new session id conformed to the UUID standard
         """
-        return uuid.uuid4()
+        return str(uuid.uuid4())
 
     def add_tag(self, customer_id, tag):
         """
@@ -351,7 +352,7 @@ class Node(object):
         :param customer_id: the id of the customer for getting the subscription
         :return: a new Subscription object containing the attributes associated to the subscription
         """
-        return Subscription(customer=self.get_customer(id=customer_id),
+        return Subscription(customer=self.get_customer(id=customer_id), properties_class=Properties,
                          **self.customer_api_manager.get(_id=customer_id, urls_extra='subscriptions/' +
                                                                                      subscription_id))
 

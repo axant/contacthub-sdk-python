@@ -156,7 +156,7 @@ class Event(object):
         OTHER = "OTHER"
 
     class MODES:
-        ACTIVE = 'ACTIVE',
+        ACTIVE = 'ACTIVE'
         PASSIVE = 'PASSIVE'
 
 
