@@ -16,6 +16,7 @@ For all information about ContactHub, check [here](http://contactlab.com/en/offe
 	-   [Performing simple operations on customers](http://contacthub-sdk-python.readthedocs.io/en/latest/getting_started.html#performing-simple-operations-on-customers)
 -   [Authentication](http://contacthub-sdk-python.readthedocs.io/en/latest/authentication.html)
     -    [Authentication via configuration file](http://contacthub-sdk-python.readthedocs.io/en/latest/authentication.html#authenticating-via-configuration-file)
+    -    [Proxies](http://contacthub-sdk-python.readthedocs.io/en/latest/authentication.html#proxies)
 -   [Operations on Customers](http://contacthub-sdk-python.readthedocs.io/en/latest/customer_operation.html)
     -   [Add a new customer](http://contacthub-sdk-python.readthedocs.io/en/latest/customer_operation.html#create-and-add-a-new-customer)
     -   [Get all customers](http://contacthub-sdk-python.readthedocs.io/en/latest/customer_operation.html#get-all-customers)

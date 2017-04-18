@@ -169,7 +169,7 @@ the `size` and the `page` parameters in this way::
     customers = node.get_customers(size=10, page=2)
 
 
-This call will return a list of 10 customers, taken from the second subset (size 10) of 50 total clients.
+This call will return a list of 10 customers, taken from the second subset (size 10) of 50 total customers.
 
 Get a customer by their externalId
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -303,8 +303,8 @@ Less than or equal
 
 In, Not in
 ``````````
-You can verify the presence of a value in a customer `list` attribute, like `Customer.tags.manual`, with the `in_` and
-`not_in_` methods of the `query` module:
+You can verify the presence of a specific value in a customer attribute with the `in_` and `not_in_` methods of the
+`query` module:
 
 .. code-block:: python
 
