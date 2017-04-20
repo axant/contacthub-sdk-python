@@ -84,7 +84,7 @@ In this SDK entities are easily connected.
 For retrieving all events associated to a ``Customer``, just::
 
     my_customer = node.get_customer(id='id')
-    events = my_customer.events
+    events = my_customer.get_events()
 
 Note that relations are immutable objects. You can just consult events associated to a ``Customer``,
 but you cannot add new ones or delete.

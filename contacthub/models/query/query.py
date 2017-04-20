@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from contacthub._api_manager._api_customer import _CustomerAPIManager
 from contacthub.errors.operation_not_permitted import OperationNotPermitted
+from contacthub.lib.paginated_list import PaginatedList
 from contacthub.lib.read_only_list import ReadOnlyList
 from contacthub.models.customer import Customer
 from contacthub.models.query.criterion import Criterion
@@ -70,13 +71,12 @@ class Query(object):
 
         :return: a ReadOnly list with all object queried
         """
-        complete_query = {'name': 'query', 'query': self.inner_query}
+
+        complete_query = {'name': 'query', 'query': self.inner_query} if self.inner_query else None
+
         if self.entity is Customer:
-            customers = []
-            resp = _CustomerAPIManager(self.node).get_all(query=complete_query)
-            for customer in resp['elements']:
-                customers.append(self.entity.from_dict(node=self.node, attributes=customer))
-            return ReadOnlyList(customers)
+            return PaginatedList(node=self.node, function=_CustomerAPIManager(self.node).get_all, entity_class=Customer,
+                                 query=complete_query)
 
     def filter(self, criterion):
         """

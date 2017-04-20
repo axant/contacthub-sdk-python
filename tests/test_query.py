@@ -288,7 +288,7 @@ class TestQuery(unittest.TestCase):
                  }
              }
                                                                     }
-        mock_get.assert_called_with(query=query)
+        mock_get.assert_called_with(page=0, query=query)
 
     @mock.patch('contacthub._api_manager._api_customer._CustomerAPIManager.get_all',
                 return_value=json.loads(FakeHTTPResponse().text))
@@ -306,7 +306,7 @@ class TestQuery(unittest.TestCase):
                  }
              }
                                                                     }
-        mock_get.assert_called_with(query=query)
+        mock_get.assert_called_with(page=0, query=query)
 
     @mock.patch('contacthub._api_manager._api_customer._CustomerAPIManager.get_all',
                 return_value=json.loads(FakeHTTPResponse().text))
@@ -332,7 +332,7 @@ class TestQuery(unittest.TestCase):
              }
                                                                     }
 
-        mock_get.assert_called_with(query=query)
+        mock_get.assert_called_with(page=0, query=query)
 
     @mock.patch('contacthub._api_manager._api_customer._CustomerAPIManager.get_all',
                 return_value=json.loads(FakeHTTPResponse().text))
@@ -358,7 +358,7 @@ class TestQuery(unittest.TestCase):
              }
                                                                     }
 
-        mock_get.assert_called_with(query=query)
+        mock_get.assert_called_with(page=0, query=query)
 
     @mock.patch('contacthub._api_manager._api_customer._CustomerAPIManager.get_all',
                 return_value=json.loads(FakeHTTPResponse().text))
@@ -378,7 +378,7 @@ class TestQuery(unittest.TestCase):
              }
                                                                     }
 
-        mock_get.assert_called_with(query=query)
+        mock_get.assert_called_with(page=0, query=query)
 
     @mock.patch('contacthub._api_manager._api_customer._CustomerAPIManager.get_all', return_value=json.loads(FakeHTTPResponse().text))
     def test_succesive_complex_filters(self, mock_get):
@@ -405,7 +405,7 @@ class TestQuery(unittest.TestCase):
                  }
              }
                                                                     }
-        mock_get.assert_called_with(query=query)
+        mock_get.assert_called_with(page=0, query=query)
 
     @mock.patch('contacthub._api_manager._api_customer._CustomerAPIManager.get_all',
                 return_value=json.loads(FakeHTTPResponse().text))
@@ -439,7 +439,7 @@ class TestQuery(unittest.TestCase):
                  }
              }
                  }
-        mock_get.assert_called_with(query=query)
+        mock_get.assert_called_with(page=0, query=query)
 
     @mock.patch('contacthub._api_manager._api_customer._CustomerAPIManager.get_all',
                 return_value=json.loads(FakeHTTPResponse().text))
@@ -471,7 +471,7 @@ class TestQuery(unittest.TestCase):
                  }
              }
                  }
-        mock_get.assert_called_with(query=query)
+        mock_get.assert_called_with(page=0, query=query)
 
     @mock.patch('contacthub._api_manager._api_customer._CustomerAPIManager.get_all',
                 return_value=json.loads(FakeHTTPResponse().text))
@@ -508,7 +508,7 @@ class TestQuery(unittest.TestCase):
              }
                  }
 
-        mock_get.assert_called_with(query=query)
+        mock_get.assert_called_with(page=0, query=query)
 
     @mock.patch('contacthub._api_manager._api_customer._CustomerAPIManager.get_all',
                 return_value=json.loads(FakeHTTPResponse().text))
@@ -544,7 +544,7 @@ class TestQuery(unittest.TestCase):
              }
                  }
 
-        mock_get.assert_called_with(query=query)
+        mock_get.assert_called_with(page=0, query=query)
 
     @mock.patch('contacthub._api_manager._api_customer._CustomerAPIManager.get_all',
                 return_value=json.loads(FakeHTTPResponse().text))
@@ -607,7 +607,7 @@ class TestQuery(unittest.TestCase):
                   }]
                  }}
 
-        mock_get.assert_called_with(query=query)
+        mock_get.assert_called_with(page=0, query=query)
 
     @mock.patch('contacthub._api_manager._api_customer._CustomerAPIManager.get_all',
                 return_value=json.loads(FakeHTTPResponse().text))
@@ -669,7 +669,7 @@ class TestQuery(unittest.TestCase):
                 ]
                  }]
                                             }}
-        mock_get.assert_called_with(query=query)
+        mock_get.assert_called_with(page=0, query=query)
 
     @mock.patch('contacthub._api_manager._api_customer._CustomerAPIManager.get_all',
                 return_value=json.loads(FakeHTTPResponse().text))

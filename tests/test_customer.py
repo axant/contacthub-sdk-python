@@ -4,6 +4,7 @@ from datetime import datetime
 
 import mock
 
+from contacthub.lib.paginated_list import PaginatedList
 from contacthub.lib.read_only_list import ReadOnlyList
 from contacthub.models.customer import Customer
 from contacthub.models.education import Education
@@ -264,15 +265,15 @@ class TestCustomer(unittest.TestCase):
 
     @mock.patch('requests.get', return_value=FakeHTTPResponse(resp_path='tests/util/fake_event_response'))
     def test_all_events(self, mock_get_event):
-        events = self.customers[0].events
+        events = self.customers[0].get_events()
         params_expected = {'customerId': self.customers[0].id}
         mock_get_event.assert_called_with(self.base_url_events, params=params_expected, headers=self.headers_expected)
-        assert isinstance(events, ReadOnlyList), type(events)
+        assert isinstance(events, PaginatedList), type(events)
         assert events[0].type == Event.TYPES.ADDED_COMPARE, events[0].type
 
     def test_all_events_new_customer(self):
         try:
-            Customer(node=self.node).events
+            Customer(node=self.node).get_events()
         except Exception as e:
             assert 'events' in str(e), str(e)
 

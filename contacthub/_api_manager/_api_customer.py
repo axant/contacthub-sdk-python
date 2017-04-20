@@ -38,7 +38,6 @@ class _CustomerAPIManager(object):
         :return: A dictionary representing the JSON response from the API called if there were no errors, else raise an
             HTTPException
         """
-
         params = {'nodeId': self.node.node_id}
         if query:
             params['query'] = json.dumps(query, cls=DateEncoder)

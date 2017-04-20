@@ -127,9 +127,10 @@ You can filter events specifying the following parameters in `get_events` method
 
     events = node.get_events(customer_id='c_id', event_type=Event.TYPES.SERVICE_SUBSCRIBED, context=Event.CONTEXTS.WEB)
 
+This method will result a `PaginatedList` (see :ref:`paging_customers`)
 A shortcut for customer events is available as a property in a `Customer` object::
 
-    for event in my_customer.events:
+    for event in my_customer.get_events:
         print (event.type)
 
 In this last case, the property will return an immutable list of `Event`: you can only read the events associated to a

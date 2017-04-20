@@ -4,6 +4,7 @@ from copy import deepcopy
 from contacthub._api_manager._api_customer import _CustomerAPIManager
 from contacthub._api_manager._api_event import _EventAPIManager
 from contacthub.errors.operation_not_permitted import OperationNotPermitted
+from contacthub.lib.paginated_list import PaginatedList
 from contacthub.lib.read_only_list import ReadOnlyList
 from contacthub.lib.utils import generate_mutation_tracker, convert_properties_obj_in_prop, \
     resolve_mutation_tracker, remove_empty_attributes
@@ -131,8 +132,7 @@ class Customer(with_metaclass(EntityMeta, object)):
 
     __metaclass__ = EntityMeta
 
-    @property
-    def events(self):
+    def get_events(self):
         """
         Get all the events associated to this Customer.
 
@@ -140,11 +140,8 @@ class Customer(with_metaclass(EntityMeta, object)):
         :return: A list containing Events object associated to this Customer
         """
         if self.node and 'id' in self.attributes:
-            events = []
-            resp = self.event_api_manager.get_all(customer_id=self.attributes['id'])
-            for event in resp['elements']:
-                events.append(Event.from_dict(node=self.node, attributes=event))
-            return ReadOnlyList(events)
+            return PaginatedList(node=self.node, function=self.event_api_manager.get_all, entity_class=Event,
+                                 customer_id=self.attributes['id'])
         raise OperationNotPermitted('Cannot retrieve events from a new customer created.')
 
     def post(self, force_update=False):

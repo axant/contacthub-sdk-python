@@ -178,7 +178,8 @@
 	"page": {
 		"size": 10,
 		"totalElements": 2,
-		"totalPages": 1,
+		"totalPages": 2,
+		"totalUnfilteredElements": 0,
 		"number": 0
 	}
 }

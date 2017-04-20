@@ -1,4 +1,6 @@
 import unittest
+
+from contacthub.lib.paginated_list import PaginatedList
 from contacthub.lib.read_only_list import ReadOnlyList
 import json
 

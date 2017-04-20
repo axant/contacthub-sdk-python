@@ -4,6 +4,8 @@ from unittest import TestSuite
 import mock
 from datetime import datetime
 
+from contacthub.errors.operation_not_permitted import OperationNotPermitted
+from contacthub.lib.paginated_list import PaginatedList
 from contacthub.models.education import Education
 from contacthub.models.event import Event
 from contacthub.models.job import Job
@@ -35,7 +37,7 @@ class TestNode(TestSuite):
         base_url = 'https://api.contactlab.it/hub/v1/workspaces/123/customers'
         params_expected = {'nodeId': '123'}
         mock_get.assert_called_with(base_url, params=params_expected, headers=self.headers_expected)
-        assert type(customers) is list, type(customers)
+        assert type(customers) is PaginatedList, type(customers)
         assert customers[0].enabled, customers[0]
 
     @mock.patch('requests.get')
@@ -383,5 +385,32 @@ class TestNode(TestSuite):
                                      json={'a': [{'a': 'b'}], 'b': 'c', 'd':
                                          {'f': 'g', 'h': {'i': 'j'}}, 'k': {'l': {'m': 'n', 'o': 'p'}}})
 
+    @mock.patch('requests.get', return_value=FakeHTTPResponse())
+    def test_customer_paginated(self, mock_get):
+        l = self.node.get_customers().next_page()
+        assert isinstance(l, PaginatedList), type(l)
+        params_expected = {'nodeId': '123', 'page': 1}
+        mock_get.assert_called_with(self.base_url, params=params_expected, headers=self.headers_expected)
+        assert isinstance(l[0], Customer), type(l[0])
 
+    @mock.patch('requests.get', return_value=FakeHTTPResponse(resp_path='tests/util/fake_response_page'))
+    def test_customer_paginated_exception(self, mock_get):
+        try:
+            l = self.node.get_customers().next_page().next_page().next_page()
+        except OperationNotPermitted as e:
+            assert 'Last page reached' in str(e), str(e)
 
+    @mock.patch('requests.get', return_value=FakeHTTPResponse())
+    def test_customer_paginated_exception_prev(self, mock_get):
+        try:
+            l = self.node.get_customers().previous_page()
+        except OperationNotPermitted as e:
+            assert 'First page reached' in str(e), str(e)
+
+    @mock.patch('requests.get', return_value=FakeHTTPResponse(resp_path='tests/util/fake_response_page_prev'))
+    def test_customer_paginated_prev(self, mock_get):
+        l = self.node.get_customers().previous_page()
+        assert isinstance(l, PaginatedList), type(l)
+        params_expected = {'nodeId': '123'}
+        mock_get.assert_called_with(self.base_url, params=params_expected, headers=self.headers_expected)
+        assert isinstance(l[0], Customer), type(l[0])

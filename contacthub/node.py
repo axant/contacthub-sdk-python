@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from contacthub._api_manager._api_customer import _CustomerAPIManager
 from contacthub._api_manager._api_event import _EventAPIManager
+from contacthub.lib.paginated_list import PaginatedList
 from contacthub.lib.utils import resolve_mutation_tracker, convert_properties_obj_in_prop
 from contacthub.models import Properties
 from contacthub.models.customer import Customer
@@ -39,11 +40,8 @@ class Node(object):
         :param fields: : a list of strings representing the properties to include in the response
         :return: A list containing Customer object of a node
         """
-        customers = []
-        resp = self.customer_api_manager.get_all(externalId=external_id, page=page, size=size, fields=fields)
-        for customer in resp['elements']:
-            customers.append(Customer(node=self, **customer))
-        return customers
+        return PaginatedList(node=self, function=self.customer_api_manager.get_all, entity_class=Customer,
+                             externalId=external_id, page=page, size=size, fields=fields)
 
     def get_customer(self, id=None, external_id=None):
         """
@@ -311,12 +309,9 @@ class Node(object):
         :param page: the number of the page for retrieve event data
         :return: a list containing the fetched events associated to the given customer id
         """
-        events = []
-        resp = self.event_api_manager.get_all(customer_id=customer_id, type=event_type, mode=event_mode, dateFrom=date_from,
-                                       dateTo=date_to, page=page, size=size, context=context)
-        for event in resp['elements']:
-            events.append(Event(node=self, **event))
-        return events
+        return PaginatedList(node=self, function=self.event_api_manager.get_all, entity_class=Event,
+                             customer_id=customer_id, type=event_type, mode=event_mode, dateFrom=date_from,
+                             dateTo=date_to, page=page, size=size, context=context)
 
     def get_event(self, id):
         """

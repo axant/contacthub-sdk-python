@@ -157,29 +157,52 @@ In this way you can access every attribute of a single `Customer`.
 Note that if you'll try to access for example the `base` attribute of a `Customer`, it will return an `Properties`
 object, that will contain all the base properties of the `Customer` object.
 
+.. _paging_customers:
+
 Paging the customers
 ^^^^^^^^^^^^^^^^^^^^
 
-ContactHub allows you to page the list of your customers. You can specify the maximum number of customers per page
+When you retrieve a list of entities (e.g. `get_customers`) , a new `PaginatedList` object will be returned.
+The `PaginatedList` object allows you scrolling through the result pages from the API. By default you'll get the first
+10 elements of total result, coming from the first page, but you can specify the maximum number of customers per page
 and the page to get.
 
-For example, if you have 50 customers and you want to divide them in 10 per page, getting only the second page, use
+For example, if you have 50 customers and you want to divide them in 5 per page, getting only the second page, use
 the `size` and the `page` parameters in this way::
 
-    customers = node.get_customers(size=10, page=2)
+    customers = node.get_customers(size=5, page=2)
 
 
-This call will return a list of 10 customers, taken from the second subset (size 10) of 50 total customers.
+This call will return a `PaginatedList` of 5 customers, taken from the second subset (size 5) of 50 total customers.
+
+Now you can navigate trough the result pages with two metods::
+
+    customers.next_page()
+
+    customer.previous_page()
+
+By these two methods you can navigate through pages containing `Customers` object.
+
+In a `PaginatedList` object you can find these attributes:
+
+    * `size`: the number of elements per each page
+    * `total_elements`: the number of total elements obtained
+    * `total_pages`: the number of total pages in wich are divided the elements
+    * `total_unfiltered_elements`: the element excluded from this set of elements
+    * `page_number`: the number of the current page. For increment it or decrement it, use the `next_page` and the `previous_page` methods.
+
+Note that a `PaginatedList` is immutable: you can only read the elements from it and adding or removing elements to the
+list is not allowed.
 
 Get a customer by their externalId
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can obtain a `list` of `Customer` objects associated to an external ID by::
+You can obtain a `PaginatedList` of `Customer` objects associated to an external ID by::
 
     customers = node.get_customers(external_id="01")
 
 If there's only one customer associated to the given external ID, this method will create a single `Customer` object
-instead of a `list`
+instead of a `PaginatedList`
 
 Get specific fields of customers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -227,7 +250,7 @@ present in the query::
 
     new_query = new_query.filter((Customer.base.dob <= datetime(1994, 6, 10))
 
-Once obtained a full filtered query, call the `.all()` method to apply the filters and get a `list` of queried customers:
+Once obtained a full filtered query, call the `.all()` method to apply the filters and get a `PaginatedList` of queried customers:
 
     filtered_customers = new_query.all()
 

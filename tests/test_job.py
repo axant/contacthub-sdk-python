@@ -147,3 +147,10 @@ class TestJob(unittest.TestCase):
             job.put()
         except ValueError as e:
             assert 'Job' in str(e)
+
+    def test_create_job_new_c(self):
+        j = Job(customer=Customer(node=self.node), a='b')
+        try:
+            j.post()
+        except AttributeError as e:
+            assert "Customer object has no attribute 'id'" in str(e), str(e)

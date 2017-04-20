@@ -2,6 +2,7 @@ import unittest
 
 import mock
 
+from contacthub.lib.paginated_list import PaginatedList
 from contacthub.lib.read_only_list import ReadOnlyList
 from contacthub.models import properties, Properties
 from contacthub.models.event import Event
@@ -17,7 +18,7 @@ class TestEvent(unittest.TestCase):
         w = Workspace(workspace_id="123", token="456")
         cls.node = w.get_node("123")
         cls.customer = cls.node.get_customers()[0]
-        cls.events = cls.customer.events
+        cls.events = cls.customer.get_events()
         cls.base_url = 'https://api.contactlab.it/hub/v1/workspaces/123/events'
         cls.headers_expected = {'Authorization': 'Bearer 456', 'Content-Type': 'application/json'}
 
@@ -28,8 +29,8 @@ class TestEvent(unittest.TestCase):
     @mock.patch('requests.get', return_value=FakeHTTPResponse(resp_path='tests/util/fake_event_response'))
     @mock.patch('requests.get', return_value=FakeHTTPResponse())
     def test_get_event_from_customers(self, mock_get_customers, mock_get_events):
-        events = self.node.get_customers()[0].events
-        assert isinstance(events, ReadOnlyList), type(events)
+        events = self.node.get_customers()[0].get_events()
+        assert isinstance(events, PaginatedList), type(events)
         assert isinstance(events[0], Event), type(events[0])
         try:
             events.append(Event(node=self.node))
