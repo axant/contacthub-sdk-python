@@ -9,6 +9,14 @@ ReadOnlyList
     :undoc-members:
     :show-inheritance:
 
+PaginatedList
+-------------
+
+.. automodule:: contacthub.lib.paginated_list
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 utils
 -----
 
