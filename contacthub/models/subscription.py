@@ -40,10 +40,7 @@ class Subscription(object):
         :return: a new Subscription object
         """
         o = cls(customer=customer, parent_attr=parent_attr, properties_class=properties_class)
-        if attributes is None:
-            o.attributes = {}
-        else:
-            o.attributes = attributes
+        o.attributes = {} if attributes is None else attributes
         return o
 
     def to_dict(self):
@@ -100,9 +97,7 @@ class Subscription(object):
             if self.parent_attr:
                 attr = self.parent_attr.split('.')[-1:][0]
                 base_attr = self.parent_attr.split('.')[-2:][0]
-                if base_attr not in self.customer.mute:
-                    self.customer.mute[base_attr] = {}
-                self.customer.mute[base_attr][attr] = self.customer.attributes[base_attr][attr]
+                self.customer.mute[base_attr + '.' + attr] = self.customer.attributes[base_attr][attr]
 
     def post(self):
         """

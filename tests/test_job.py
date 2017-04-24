@@ -3,6 +3,7 @@ import unittest
 import mock
 
 from contacthub.lib.read_only_list import ReadOnlyList
+from contacthub.lib.utils import resolve_mutation_tracker
 from contacthub.models import properties, Properties
 from contacthub.models.customer import Customer
 from contacthub.models.job import Job
@@ -44,7 +45,14 @@ class TestJob(unittest.TestCase):
         edu = self.customers[0].base.jobs[0]
         edu.isCurrent = False
 
-        mute = {'base': {'jobs':
+        mute = {'base.jobs':
+                             [{u'companyIndustry': u'companyIndustry',
+                               u'companyName': u'companyName',
+                               u'startDate': u'1994-10-06',
+                               u'endDate': u'1994-10-06',
+                               u'jobTitle': u'title',
+                               u'isCurrent': False}]}
+        mute_res = {'base': {'jobs':
                              [{u'companyIndustry': u'companyIndustry',
                                u'companyName': u'companyName',
                                u'startDate': u'1994-10-06',
@@ -52,12 +60,24 @@ class TestJob(unittest.TestCase):
                                u'jobTitle': u'title',
                                u'isCurrent': False}]}}
         assert self.customers[0].mute == mute, self.customers[0].mute
+        res = resolve_mutation_tracker(self.customers[0].mute)
+        assert res == mute_res, res
 
     def test_set_job_customer_add(self):
         self.customers[0].base.jobs[0].isCurrent = False
         self.customers[0].base.jobs += [Job(customer=self.customers[0], id='01')]
 
-        mute = {'base': {'jobs': [
+        mute = {'base.jobs': [
+            {u'companyIndustry': u'companyIndustry',
+             u'companyName': u'companyName',
+             u'startDate': u'1994-10-06',
+             u'endDate': u'1994-10-06',
+             u'jobTitle': u'jobTitle',
+             u'isCurrent': False},
+            {u'id': u'01'}
+        ]
+        }
+        mute_res = {'base': {'jobs': [
             {u'companyIndustry': u'companyIndustry',
              u'companyName': u'companyName',
              u'startDate': u'1994-10-06',
@@ -69,7 +89,8 @@ class TestJob(unittest.TestCase):
         }
         }
         assert self.customers[0].mute == mute, self.customers[0].mute
-
+        res = resolve_mutation_tracker(self.customers[0].mute)
+        assert res == mute_res, res
 
     @mock.patch('requests.post', return_value=FakeHTTPResponse(resp_path='tests/util/fake_job_response'))
     def test_post_job(self, mock_post):

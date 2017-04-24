@@ -33,10 +33,7 @@ class Event(object):
         :return: a new Properties object
         """
         o = cls(node=node)
-        if attributes is None:
-            o.attributes = {}
-        else:
-            o.attributes = attributes
+        o.attributes = {} if attributes is None else attributes
         return o
 
     def to_dict(self):

@@ -51,27 +51,27 @@ class TestSubscription(unittest.TestCase):
     def test_customer_mute_subscription(self, mock_get):
         customers = self.node.get_customers()
         customers[0].base.subscriptions[0].kind = 'kind'
-        assert customers[0].mute == {'base': {'subscriptions': [{'id': '01', 'name': 'name', 'type': 'type',
+        assert customers[0].mute == {'base.subscriptions': [{'id': '01', 'name': 'name', 'type': 'type',
                                                                  'kind': 'kind', 'subscribed': True,
                                                                  'startDate': '1994-10-06', 'endDate': '1994-10-10',
                                                                  'subscriberId': 'subscriberId',
                                                                  'registeredAt': '1994-10-06',
                                                                  'updatedAt': '1994-10-06',
                                                                  'preferences': [{'key': 'key', 'value': 'value'}],
-                                                                 'a': ['a']}]}}, customers[0].mute
+                                                                 'a': ['a']}]}, customers[0].mute
 
-    def test_set_job_customer_add(self):
+    def test_set_subscription_customer_add(self):
         self.customers[0].base.subscriptions[0].name = 'name1'
         self.customers[0].base.subscriptions += [Subscription(customer=self.customers[0], id='02')]
 
-        mute = {'base': {'subscriptions': [{'id': '01', 'name': 'name1', 'type': 'type',
+        mute = {'base.subscriptions': [{'id': '01', 'name': 'name1', 'type': 'type',
                                             'kind': 'SERVICE', 'subscribed': True,
                                             'startDate': '1994-10-06', 'endDate': '1994-10-10',
                                             'subscriberId': 'subscriberId',
                                             'registeredAt': '1994-10-06',
                                             'updatedAt': '1994-10-06',
                                             'preferences': [{'key': 'key', 'value': 'value'}],
-                                            'a': ['a']}, {'id': '02'}]}}
+                                            'a': ['a']}, {'id': '02'}]}
         assert self.customers[0].mute == mute, self.customers[0].mute
 
     @mock.patch('requests.post', return_value=FakeHTTPResponse(resp_path='tests/util/fake_subscription_response'))

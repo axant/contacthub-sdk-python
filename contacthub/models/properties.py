@@ -23,14 +23,14 @@ class Properties(object):
         :param attributes: key-value arguments for generating the structure of the Properties's attributes
         """
         self.parent = parent
+        self.mute = {}
+        self.parent_attr = parent_attr
         if self.parent:
-            self.parent_attr = parent_attr
             try:
                 self.mute = parent.mute
             except AttributeError:
                 self.mute = parent.customer.mute
-        else:
-            self.mute = None
+
         convert_properties_obj_in_prop(properties=attributes, properties_class=Properties)
         self.attributes = attributes
 
@@ -48,10 +48,7 @@ class Properties(object):
         :return: a new Properties object
         """
         o = cls(parent=parent, parent_attr=parent_attr)
-        if attributes is None:
-            o.attributes = {}
-        else:
-            o.attributes = attributes
+        o.attributes = {} if attributes is None else attributes
         return o
 
     def to_dict(self):
@@ -72,27 +69,27 @@ class Properties(object):
         a list
         """
         try:
-            if not self.parent:
-                return self.attributes[item]
-
+            if not self.parent_attr:
+                parent_attr = item
+            else:
+                parent_attr = self.parent_attr + '.' + item
             if item in self.__SUBPROPERTIES_LIST__:
                 obj_list_ret = []
                 for elements in self.attributes[item]:
                     obj_list_ret.append(self.__SUBPROPERTIES_LIST__[item].from_dict(customer=self.parent,
                                                                                     attributes=elements,
-                                                                                    parent_attr=self.parent_attr + '.' +
-                                                                                                item,
+                                                                                    parent_attr=parent_attr,
                                                                                     properties_class=Properties))
                 return ReadOnlyList(obj_list_ret)
             if isinstance(self.attributes[item], dict):
-                return Properties.from_dict(parent_attr=self.parent_attr + '.' + item, parent=self,
+                return Properties.from_dict(parent_attr=parent_attr, parent=self,
                                             attributes=self.attributes[item])
             elif isinstance(self.attributes[item], list):
                 if self.attributes[item] and isinstance(self.attributes[item][0], dict):
                     list_sub_prob = []
                     for elem in self.attributes[item]:
                         list_sub_prob.append(
-                            Properties.from_dict(parent_attr=self.parent_attr + '.' + item, parent=self,
+                            Properties.from_dict(parent_attr=parent_attr, parent=self,
                                                  attributes=elem))
                 else:
                     list_sub_prob = self.attributes[item]
@@ -135,9 +132,10 @@ class Properties(object):
                     if isinstance(self.parent.attributes[field], list):
                         self.mute[self.parent_attr] = self.parent.attributes[field]
                     elif isinstance(self.parent.attributes[field][attr], list):
-                        if self.parent_attr not in self.mute:
-                            self.mute[self.parent_attr] = {}
-                        self.mute[self.parent_attr][attr] = self.parent.attributes[field][attr]
+                        if self.parent_attr in self.mute:
+                            self.mute[self.parent_attr][attr] = self.parent.attributes[field][attr]
+                        else:
+                            self.mute[self.parent_attr + '.' + attr] = self.parent.attributes[field][attr]
                     else:
                         self.mute[self.parent_attr + '.' + attr] = val
 

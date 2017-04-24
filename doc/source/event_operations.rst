@@ -102,6 +102,8 @@ ExternalId
 
 In the same way of the Session ID, you can add a new event specifying the external ID of a customer::
 
+    from contacthub.model import Event
+
     event = Event(node=node, bringBackProperties=Properties(type='externalId', value='e_id'),
     type=Event.TYPES.SERVICE_SUBSCRIBED, context=Event.CONTEXTS.WEB,
     properties=Properties(subscriberId = 's_id', serviceId='service_id', serviceName='serviceName', startDate=datetime.now(),
@@ -127,11 +129,11 @@ You can filter events specifying the following parameters in `get_events` method
 
     events = node.get_events(customer_id='c_id', event_type=Event.TYPES.SERVICE_SUBSCRIBED, context=Event.CONTEXTS.WEB)
 
-This method will result a `PaginatedList` (see :ref:`paging_customers`).
+This method will return a `PaginatedList` (see :ref:`paging_customers`).
 
 A shortcut for customer events is available as a property in a `Customer` object::
 
-    for event in my_customer.get_events:
+    for event in my_customer.get_events():
         print (event.type)
 
 In this last case, the property will return an immutable list of `Event`: you can only read the events associated to a

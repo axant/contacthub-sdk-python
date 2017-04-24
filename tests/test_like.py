@@ -3,6 +3,7 @@ import unittest
 import mock
 
 from contacthub.lib.read_only_list import ReadOnlyList
+from contacthub.lib.utils import resolve_mutation_tracker
 from contacthub.models import properties, Properties
 from contacthub.models.customer import Customer
 from contacthub.models.like import Like
@@ -43,18 +44,25 @@ class TestLike(unittest.TestCase):
 
         like = self.customers[0].base.likes[0]
 
-        mute = {'base': {'likes':
+        mute = {'base.likes':
+                             [{'name':'name1',
+                               'category':'category1',
+                               'id':'id',
+                               'createdTime':'1994-02-11 14:05'}]}
+        mute_res= {'base': {'likes':
                              [{'name':'name1',
                                'category':'category1',
                                'id':'id',
                                'createdTime':'1994-02-11 14:05'}]}}
         assert self.customers[0].mute == mute, self.customers[0].mute
+        res = resolve_mutation_tracker(self.customers[0].mute)
+        assert res == mute_res, res
 
     def test_set_like_customer_add(self):
         self.customers[0].base.likes[0].name = 'name1'
         self.customers[0].base.likes += [Like(customer=self.customers[0], id='01')]
 
-        mute = {'base': {'likes': [
+        mute_res = {'base': {'likes': [
             {'name': 'name1',
              'category': 'category',
              'id': 'id',
@@ -63,7 +71,18 @@ class TestLike(unittest.TestCase):
         ]
         }
         }
+        mute = {'base.likes': [
+            {'name': 'name1',
+             'category': 'category',
+             'id': 'id',
+             'createdTime': '1994-02-11 14:05'},
+            {u'id': u'01'}
+        ]
+        }
+
         assert self.customers[0].mute == mute, self.customers[0].mute
+        res = resolve_mutation_tracker(self.customers[0].mute)
+        assert res == mute_res, res
 
 
     @mock.patch('requests.post', return_value=FakeHTTPResponse(resp_path='tests/util/fake_like_response'))

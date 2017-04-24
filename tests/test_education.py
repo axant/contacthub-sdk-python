@@ -42,20 +42,20 @@ class TestEducation(unittest.TestCase):
         edu = self.customers[0].base.educations[0]
         edu.isCurrent = False
 
-        mute = {'base': {'educations':
+        mute = {'base.educations':
                              [{u'schoolType': 'SECONDARY_SCHOOL',
                                u'startYear': 1992,
                                u'schoolName': u'schoolName',
                                u'schoolConcentration': u'schoolConcentration',
                                u'endYear': 2000,
-                               u'isCurrent': False}]}}
+                               u'isCurrent': False}]}
         assert self.customers[0].mute == mute, self.customers[0].mute
 
     def test_set_education_customer_add(self):
         self.customers[0].base.educations[0].isCurrent = False
         self.customers[0].base.educations += [Education(customer=self.customers[0], id='01')]
 
-        mute = {'base': {'educations': [
+        mute = {'base.educations': [
             {u'schoolType': 'COLLEGE',
              u'startYear': 1994,
              u'schoolName': u'schoolName',
@@ -65,7 +65,7 @@ class TestEducation(unittest.TestCase):
             {u'id': u'01'}
         ]
         }
-        }
+
         assert self.customers[0].mute == mute, self.customers[0].mute
 
     @mock.patch('requests.post', return_value=FakeHTTPResponse(resp_path='tests/util/fake_education_response'))

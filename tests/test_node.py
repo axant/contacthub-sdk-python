@@ -370,7 +370,7 @@ class TestNode(TestSuite):
     @mock.patch('requests.post', return_value=FakeHTTPResponse(resp_path='tests/util/fake_single_event_response'))
     def test_post_event(self, mock_post):
         self.node.add_event(a=[Properties(a='b')], b='c', d=Properties(f='g', h=Properties(i='j')),
-                  k=dict(l=Properties(m='n', o='p')))
+                            k=dict(l=Properties(m='n', o='p')))
 
         mock_post.assert_called_with(self.base_events_url, headers=self.headers_expected,
                                      json={'a': [{'a': 'b'}], 'b': 'c', 'd':
@@ -380,10 +380,9 @@ class TestNode(TestSuite):
     def test_post_event_dict(self, mock_post):
         self.node.add_event(**{'a': [{'a': 'b'}], 'b': 'c', 'd':
                                          {'f': 'g', 'h': {'i': 'j'}}, 'k': {'l': {'m': 'n', 'o': 'p'}}})
-
         mock_post.assert_called_with(self.base_events_url, headers=self.headers_expected,
-                                     json={'a': [{'a': 'b'}], 'b': 'c', 'd':
-                                         {'f': 'g', 'h': {'i': 'j'}}, 'k': {'l': {'m': 'n', 'o': 'p'}}})
+                                     json={'a': [{'a': 'b'}], 'b': 'c', 'd': {'f': 'g', 'h': {'i': 'j'}},
+                                           'k': {'l': {'m': 'n', 'o': 'p'}}})
 
     @mock.patch('requests.get', return_value=FakeHTTPResponse())
     def test_customer_paginated(self, mock_get):
@@ -414,3 +413,4 @@ class TestNode(TestSuite):
         params_expected = {'nodeId': '123'}
         mock_get.assert_called_with(self.base_url, params=params_expected, headers=self.headers_expected)
         assert isinstance(l[0], Customer), type(l[0])
+        assert l.size == 10, l.size

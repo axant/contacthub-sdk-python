@@ -15,6 +15,11 @@ class PaginatedList(ReadOnlyList):
         self._retrieve_data()
 
     def next_page(self):
+        """
+        Retrieve the next page of entities in this PaginatedList
+
+        :return: a PaginatedList containing the next page of entities compared to the current one
+        """
         if self.page_number == self.total_pages - 1:
             raise OperationNotPermitted('Last page reached.')
 
@@ -22,6 +27,11 @@ class PaginatedList(ReadOnlyList):
         return self._retrieve_data()
 
     def previous_page(self):
+        """
+        Retrieve the previous page of entities in this PaginatedList
+
+        :return: a PaginatedList containing the previous page of entities compared to the current one
+        """
         if self.page_number == 0:
             raise OperationNotPermitted('First page reached.')
 

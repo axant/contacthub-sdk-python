@@ -181,7 +181,8 @@ Now you can navigate trough the result pages with two metods::
 
     customer.previous_page()
 
-By these two methods you can navigate through pages containing `Customers` object.
+By these two methods you can navigate through pages containing `Customers` object. The number of Customers for each page
+is determined by the `size` parameter of the `get_customer`, by default 10.
 
 In a `PaginatedList` object you can find these attributes:
 
@@ -288,38 +289,39 @@ Available operations for creating a filter
 Equality operator
 `````````````````
 
-.. code-block:: python
+::
 
     new_query = node.query(Customer).filter(Customer.base.firstName == 'Bruce')
 
 Not equals
 ``````````
 
-.. code-block:: python
+::
 
     new_query = node.query(Customer).filter(Customer.base.firstName != 'Bruce')
 
 Greater than
 ````````````
-.. code-block:: python
+::
 
     new_query = node.query(Customer).filter(Customer.base.dob > datetime(1994,6,10))
 
 Greater than or equal
 `````````````````````
-.. code-block:: python
+::
 
     new_query = node.query(Customer).filter(Customer.base.dob >= datetime(1994,6,10))
 
 Less than
 `````````
-.. code-block:: python
+::
 
     new_query = node.query(Customer).filter(Customer.registeredAt < datetime(2010,6,10))
 
 Less than or equal
 ``````````````````
-.. code-block:: python
+::
+
 
     new_query = node.query(Customer).filter(Customer.registeredAt <= datetime(2010,6,10))
 
@@ -328,13 +330,13 @@ In, Not in
 You can verify the presence of a specific value in a customer attribute with the `in_` and `not_in_` methods of the
 `query` module:
 
-.. code-block:: python
+::
 
     from contacthub.models.query import in_
 
     new_query = node.query(Customer).filter(in_('manual_tag', Customer.tags.manual))
 
-.. code-block:: python
+::
 
     from contacthub.models.query import not_in_
 
@@ -345,7 +347,7 @@ Between
 
 You can check if a customer date attribute is between two dates. These two dates can be `datetime` objects or normal string following the ISO8601 standard for dates.
 
-.. code-block:: python
+::
 
     from contacthub.models.query import between_
 
@@ -353,14 +355,14 @@ You can check if a customer date attribute is between two dates. These two dates
 
 Is null
 ```````
-.. code-block:: python
+::
 
     new_query = node.query(Customer).filter(Customer.base.firstName == None)
 
 Is not null
 ```````````
 
-.. code-block:: python
+::
 
     new_query = node.query(Customer).filter(Customer.base.firstName != None)
 
@@ -372,14 +374,14 @@ To combine the above criteria and create complex ones, you can use the `&` and  
 AND
 ```
 
-.. code-block:: python
+::
 
     customers = node.query(Customer).filter((Customer.base.firstName == 'Bruce') & (Customer.base.lastName == 'Wayne')).all()
 
 OR
 ``
 
-.. code-block:: python
+::
 
     customers = node.query(Customer).filter(((Customer.base.firstName == 'Bruce')) | ((Customer.base.firstName == 'Batman'))).all()
 
@@ -541,6 +543,8 @@ Add via the node method, creating a new `Education` object::
     schoolName='schoolName',schoolConcentration='schoolConcentration', isCurrent=False, startYear='1994', endYear='2000')
 
 or directly by the object::
+
+    from contacthub.model import Education
 
     new_educ = Education(customer=my_customer, id='01', schoolType=Education.SCHOOL_TYPES.COLLEGE, schoolName='schoolName',
     schoolConcentration='schoolConcentration', isCurrent=False, startYear='1994', endYear='2000')
