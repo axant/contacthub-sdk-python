@@ -59,19 +59,14 @@ class Subscription(object):
         :return: the item in the attributes dictionary if it's present, raise AttributeError otherwise.
         """
         try:
+            parent_attr = self.parent_attr + '.' + item if self.parent_attr else item
             if isinstance(self.attributes[item], list):
                 if self.attributes[item] and isinstance(self.attributes[item][0], dict):
-                    list_sub_prob = []
-                    for elem in self.attributes[item]:
-                        if self.parent_attr:
-                            list_sub_prob.append(self.properties_class.from_dict(parent_attr=
-                                                                                 self.parent_attr + '.' + item,
-                                                                                 parent=self, attributes=elem))
-                        else:
-                            list_sub_prob.append(self.properties_class.from_dict(parent=self, attributes=elem))
+                    return ReadOnlyList([self.properties_class.from_dict(parent_attr=parent_attr, parent=self,
+                                                                         attributes=elem)
+                                         for elem in self.attributes[item]])
                 else:
-                    list_sub_prob = self.attributes[item]
-                return ReadOnlyList(list_sub_prob)
+                    ReadOnlyList(self.attributes[item])
             return self.attributes[item]
 
         except KeyError as e:

@@ -3,7 +3,6 @@ import unittest
 import mock
 
 from contacthub.models.customer import Customer
-from contacthub.models.job import Job
 from contacthub.models.subscription import Subscription
 from contacthub.workspace import Workspace
 from tests.utility import FakeHTTPResponse

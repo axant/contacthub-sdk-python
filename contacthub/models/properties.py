@@ -69,31 +69,22 @@ class Properties(object):
         a list
         """
         try:
-            if not self.parent_attr:
-                parent_attr = item
-            else:
-                parent_attr = self.parent_attr + '.' + item
+            parent_attr = item if not self.parent_attr else self.parent_attr + '.' + item
             if item in self.__SUBPROPERTIES_LIST__:
-                obj_list_ret = []
-                for elements in self.attributes[item]:
-                    obj_list_ret.append(self.__SUBPROPERTIES_LIST__[item].from_dict(customer=self.parent,
-                                                                                    attributes=elements,
-                                                                                    parent_attr=parent_attr,
-                                                                                    properties_class=Properties))
-                return ReadOnlyList(obj_list_ret)
+                return ReadOnlyList([self.__SUBPROPERTIES_LIST__[item].from_dict(customer=self.parent,
+                                                                                 attributes=elements,
+                                                                                 parent_attr=parent_attr,
+                                                                                 properties_class=Properties)
+                                     for elements in self.attributes[item]])
             if isinstance(self.attributes[item], dict):
                 return Properties.from_dict(parent_attr=parent_attr, parent=self,
                                             attributes=self.attributes[item])
-            elif isinstance(self.attributes[item], list):
+            if isinstance(self.attributes[item], list):
                 if self.attributes[item] and isinstance(self.attributes[item][0], dict):
-                    list_sub_prob = []
-                    for elem in self.attributes[item]:
-                        list_sub_prob.append(
-                            Properties.from_dict(parent_attr=parent_attr, parent=self,
-                                                 attributes=elem))
+                    return ReadOnlyList([Properties.from_dict(parent_attr=parent_attr, parent=self, attributes=elem)
+                                         for elem in self.attributes[item]])
                 else:
-                    list_sub_prob = self.attributes[item]
-                return ReadOnlyList(list_sub_prob)
+                    return ReadOnlyList(self.attributes[item])
             return self.attributes[item]
         except KeyError as e:
             raise AttributeError("%s object has no attribute %s" % (type(self).__name__, e))
