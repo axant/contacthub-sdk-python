@@ -9,8 +9,8 @@ The attribute `type` of an `Event` defines the schema that you must follow for h
 in the `properties` attribute of the `Event`.
 
 Eg:
-If you create a new event whose type is `serviceSubscribed` you,
-must follow its own schema, specifying these attributes in the `properties` attributes of the Event:
+If you create a new event whose type is `serviceSubscribed`, you must specify these attributes in the `properties`
+attribute of the Event:
 
 +-----------------+--------+
 | Name            | Type   |
@@ -35,12 +35,12 @@ must follow its own schema, specifying these attributes in the `properties` attr
 Events are also associated to a context of use. The available contexts for an event are:
 
 * CONTACT_CENTER
-*  WEB
+* WEB
 * MOBILE
 * ECOMMERCE
 * RETAIL
-*  IOT
-*  SOCIAL
+* IOT
+* SOCIAL
 * DIGITAL_CAMPAIGN
 * OTHER
 
@@ -50,7 +50,7 @@ Add a new event
 ---------------
 To create a new event, you have to define its schema (according to the specified type) in `Event` class constructor::
 
-    event = Event(node=node, customerId=customers[0].id, type=Event.TYPES.SERVICE_SUBSCRIBED, context=Event.CONTEXTS.WEB,
+    event = Event(node=node, customerId=my_customer.id, type=Event.TYPES.SERVICE_SUBSCRIBED, context=Event.CONTEXTS.WEB,
                   properties=Properties(
                   subscriberId='s_id', serviceId='service_id', serviceName='serviceName', startDate=datetime.now(),
                   extraProperties=Properties(extra='extra')))
@@ -144,6 +144,4 @@ Get a single event
 Retrieve a single event by its ID, obtaining a new `Event` object::
 
     customer_event = event.get_event(id='event_id')
-
-
 
