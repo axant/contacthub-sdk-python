@@ -136,6 +136,7 @@ class Event(object):
         VIEWED_PAGE = "viewedPage"
         VIEWED_PRODUCT = "viewedProduct"
         VIEWED_PRODUCT_CATEGORY = "viewedProductCategory"
+        ABANDONED_SESSION = "abandonedSession"
 
     class CONTEXTS:
         """`
